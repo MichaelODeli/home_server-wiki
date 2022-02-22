@@ -22,10 +22,10 @@
 Система управления умным домом.   
 
 ## Структура проекта.
-Проект представляет собой объединение некоторых репозиториев, для более удобного управления
-[Библиотека 'File sorter'](https://github.com/MichaelODeli/home_server-filesorter)
-[localGUI-PC](https://github.com/MichaelODeli/home_server-localGUI)
-[Информационный репозиторий](https://github.com/MichaelODeli/home_server)
+Проект представляет собой объединение некоторых репозиториев, для более удобного управления   
+[Библиотека 'File sorter'](https://github.com/MichaelODeli/home_server-filesorter)   
+[localGUI-PC](https://github.com/MichaelODeli/home_server-localGUI)   
+[Информационный репозиторий](https://github.com/MichaelODeli/home_server)   
 
 ### Клиент:
 [localGUI-PC](https://github.com/MichaelODeli/home_server-localGUI) может быть полноценно запущен с клиентского устройства с минимальным разрешением 1024*600. Включает все необходимые библиотеки   
