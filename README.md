@@ -1,3 +1,4 @@
+<!-- alt+m hotkey -->
 # Документация по проекту 'Home server'
 ## Содержание
 0. [Содержание](#содержание)
@@ -22,7 +23,39 @@
 
 ## Структура проекта.
 Проект представляет собой объединение некоторых репозиториев, для более удобного управления
+[Библиотека 'File sorter'](https://github.com/MichaelODeli/home_server-filesorter)
+[localGUI-PC](https://github.com/MichaelODeli/home_server-localGUI)
+[Информационный репозиторий](https://github.com/MichaelODeli/home_server)
 
+### Клиент:
+[localGUI-PC](https://github.com/MichaelODeli/home_server-localGUI) может быть полноценно запущен с клиентского устройства с минимальным разрешением 1024*600. Включает все необходимые библиотеки   
+Структура файлов:
+```
+localGUI-PC/
+    localScreenGUI.py
+    settings.ini
+```
+### Сервер:
+Структура файлов:
+```
+server-side/
+    storage/
+        youtube/
+            channel-name/*.mp4
+        serials/
+            serial-name/*.mp4
+        films/
+            films-category/*.mp4
+        settings.ini
+        fileSearch.py
+        fileManager.py
+        storageLib_Yt.ini
+        storageLib_Films.ini
+        storageLib_Serials.ini
+    subs_manager/
+    system_stats/    
+```
+> Обратите внимание, папка server-side должна быть прописана в конфигурации apache2 как домашняя директория.
 ## Установка и необходимые зависимости.
 WIP
 
