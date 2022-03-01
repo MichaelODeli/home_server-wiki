@@ -39,6 +39,15 @@ localGUI-PC/
 Структура файлов:
 ```
 server-side/
+    cgi-bin/
+        HTML.py
+        search.py
+        settings.ini.symlink
+        fileSearch.py.symlink
+        fileManager.py.symlink
+        storageLib_Yt.ini.symlink
+        storageLib_Films.ini.symlink
+        storageLib_Serials.ini.symlink
     storage/
         youtube/
             channel-name/*.mp4
@@ -52,10 +61,16 @@ server-side/
         storageLib_Yt.ini
         storageLib_Films.ini
         storageLib_Serials.ini
+        mklinks.py
     subs_manager/
+        engine.py
     system_stats/    
+        engine.py
+    index.html
+    search.html
 ```
 > Обратите внимание, папка server-side должна быть прописана в конфигурации apache2 как домашняя директория.
+> Файлы с припиской `.symlink` относятся к своим оригиналам без данной приписки
 ## Установка и необходимые зависимости.
 WIP
 
