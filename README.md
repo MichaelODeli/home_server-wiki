@@ -45,8 +45,6 @@ server-side/
         search.py
         systemstats.py
         fileSorterGUI-server.py
-        
-        
         HTML.py.symlink
         settings.ini.symlink
         fileSearch.py.symlink
