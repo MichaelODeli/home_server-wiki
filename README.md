@@ -34,43 +34,38 @@
 localGUI-PC/
     localScreenGUI.py
     settings.ini
+    fileSorterGUI-client.py
+    storageLib_[type].ini #(загружается с сервера)
 ```
 ### Сервер:
 Структура файлов:
 ```
 server-side/
     cgi-bin/
-        HTML.py
         search.py
+        systemstats.py
+        fileSorterGUI-server.py
+        
+        
+        HTML.py.symlink
         settings.ini.symlink
         fileSearch.py.symlink
         fileManager.py.symlink
-        storageLib_Yt.ini.symlink
-        storageLib_Films.ini.symlink
-        storageLib_Serials.ini.symlink
+        storageLib_[type].ini.symlink
     storage/
-        youtube/
-            channel-name/*.mp4
-        serials/
-            serial-name/*.mp4
-        films/
-            films-category/*.mp4
+        [type]/
+            [category]/*.*
         settings.ini
         fileSearch.py
         fileManager.py
-        storageLib_Yt.ini
-        storageLib_Films.ini
-        storageLib_Serials.ini
+        storageLib_[type].ini
         mklinks.py
-    subs_manager/
-        engine.py
-    system_stats/    
-        engine.py
+        HTML.py
     index.html
     search.html
 ```
 > Обратите внимание, папка server-side должна быть прописана в конфигурации apache2 как домашняя директория.    
-   
+    
 > Файлы с припиской `.symlink` относятся к своим оригиналам без данной приписки
 ## Установка и необходимые зависимости.
 WIP
@@ -82,71 +77,106 @@ WIP
 WIP
 
 ### Панель для удаленного управления.
-PySimpleGUIWeb (Remi)
+Apache2 with Python-cgi scripts
+#### Доступные возможности:
+- Монитор системных показателей (ручное обновление)
+- Поиск по файлам в базе
 
 ### Панель для локального управления.
 PySimpleGUI (TKinter)
 
 ## Модуль 1. Загрузчик торрентов.
+#### Статус
+![Проблемы в реализации](https://img.shields.io/badge/status-Problems%20in%20creating-red)
 #### Используемые зависимости
-`qbittorrent`
-#### Стуктура кода
-Описание
-#### Использование
-Вкладка 'Torrents'
+`transmission`
+<!-- #### Стуктура кода
+
+#### Использование -->
+
 
 ## Модуль 2. Менеджер файлов.
+#### Статус
+![Released](https://img.shields.io/badge/status-released-green)
+#### Платформа для запуска
+- localGUI-PC
+- webGUI
 #### Используемые зависимости
-Встроенная библиотека `torrentSorter`
+Встроенная библиотека `fileSorterGUI`
 #### Стуктура кода
-Описание
+![Работа в процессе](https://img.shields.io/badge/status-WIP-lightgrey)
 #### Использование
-Библиотека запускается автоматически, после завершения загрузки торрент-файлов
+Библиотека запускается вручную с клиентского устройства. В процессе реализация в качетве веб-приложения.
 
 ## Модуль 3. Менеджер подписок.
+#### Статус
+![Работа в процессе](https://img.shields.io/badge/status-WIP-lightgrey)
+<!-- #### Платформа для запуска
+- localGUI-PC
+- webGUI
 #### Используемые зависимости
 Встроенная библиотека `subsManager`
 #### Стуктура кода
-Описание
+
 #### Использование
-Вкладка 'Subs'
+Вкладка 'Subs' -->
 
 ## Модуль 4. Системный монитор.
+#### Статус
+![Released](https://img.shields.io/badge/status-released-green)
+#### Платформа для запуска
+- localGUI-PC
 #### Используемые зависимости
 Сторонняя библиотека `psutil`
 #### Стуктура кода
-По нажатию пользователем кнопки 'Update stats', происходит обновление системных показателей - потребление ОЗУ и процент нагрузки ЦП. Данные запрашиваются с помощью библиотеки `psutil`
+По нажатию пользователем кнопки 'Update stats', происходит обновление системных показателей - потребление ОЗУ и процент нагрузки ЦП. Данные запрашиваются с помощью `requests`
 #### Использование
 Вкладка 'Stats'
 
 ## Модуль 5. Сортировщик данных.
+#### Платформа для запуска
+- Только на серверной стороне по расписанию
 #### Используемые зависимости
 Встроенная библиотека `fileManager`
-#### Стуктура кода
-Описание
+<!-- #### Стуктура кода -->
+
 #### Использование
-Вкладка 'Video' / Кнопки Rebuild lists
+По расписанию из cron
 
 ## Модуль 6. Видеонаблюдение.
-#### Используемые зависимости
-WIP
+#### Статус
+![Работа в процессе](https://img.shields.io/badge/status-WIP-lightgrey)
+#### Платформа для запуска
+- localGUI-PC
+<!-- #### Используемые зависимости
+
 #### Стуктура кода
-WIP
+
 #### Использование
-WIP
+ -->
 
 ## Модуль 7. Поиск.
+#### Статус
+![Released](https://img.shields.io/badge/status-released-green)
+#### Платформа для запуска
+- localGUI-PC
+- webGUI
 #### Используемые зависимости
 Встроенная библиотека `fileSearch`
-#### Стуктура кода
-Описание
+<!-- #### Стуктура кода -->
+
 #### Использование
 Вкладка 'Search'
 
 ## Модуль 8. Видеоплеер.
+#### Статус
+![Released](https://img.shields.io/badge/status-released-green)
+#### Платформа для запуска
+- localGUI-PC
+- webGUI (только *.mp4)
 #### Используемые зависимости
 `vlc`
-#### Стуктура кода
-Описание
+<!-- #### Стуктура кода -->
+
 #### Использование
 Вкладка 'Video'
