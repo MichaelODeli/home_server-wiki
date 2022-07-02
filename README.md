@@ -24,16 +24,16 @@
 [localGUI-PC](https://github.com/MichaelODeli/home_server-localGUI) 
 ### Сервер:
 [Библиотека 'File sorter'](https://github.com/MichaelODeli/home_server-filesorter)    
-[webGUI]()
+[webGUI](https://github.com/MichaelODeli/home_server-webGUI)
 ### Список доступных приложения для данных платформ   
-[Список]()
+[Список](https://github.com/MichaelODeli/home_server/blob/main/apps_list.md)
 
 ---
 ## Установка и необходимые зависимости.
 Для установки серверного и клиентского ПО используется автоустановщик с графическим интерфейсом (WIP)
 
-[Инструкции и описние процесса установки на сервере]()  
-[Инструкции и описние процесса установки на клиенте]()
+[Инструкции и описние процесса установки на сервере](https://github.com/MichaelODeli/home_server/blob/main/guide_server.md)  
+[Инструкции и описние процесса установки на клиенте](https://github.com/MichaelODeli/home_server/blob/main/guide_client.md)
 
 ---
 ## Запуск и работа проекта.
