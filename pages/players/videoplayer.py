@@ -32,7 +32,7 @@ layout = dmc.Container(
                             className="video_container",
                         ),
                         dmc.Space(h=5),
-                        html.H4("Big buck bunny", style={"width": "100%"}),
+                        html.H4("Big buck bunny", style={"width": "100%"}, id='player_videoname'),
                         dmc.Space(h=10),
                         dmc.Grid(
                             children=[
@@ -43,6 +43,7 @@ layout = dmc.Container(
                                                 "Такой-то канал",
                                                 href="/",
                                                 style={"textDecoration": "none"},
+                                                id='player_channelLink'
                                             ),
                                             compact=True,
                                             variant="subtle",
@@ -64,6 +65,7 @@ layout = dmc.Container(
                                                 compact=True,
                                                 variant="subtle",
                                                 color="black",
+                                                id='player_download'
                                             ),
                                             dmc.Button(
                                                 "Добавить в плейлист",
@@ -74,6 +76,7 @@ layout = dmc.Container(
                                                 compact=True,
                                                 variant="subtle",
                                                 color="black",
+                                                id='player_addToPlaylist'
                                             ),
                                             dmc.Button(
                                                 # "Сообщить",
@@ -84,6 +87,7 @@ layout = dmc.Container(
                                                 compact=True,
                                                 variant="subtle",
                                                 color="black",
+                                                id='player_report'
                                             ),
                                         ],
                                         spacing='xs'
@@ -98,7 +102,7 @@ layout = dmc.Container(
                     className="block-background mrrow",
                     width="auto",
                 ),
-                dbc.Col("Nice!", className="block-background mrrow"),
+                dbc.Col("А тут плейлист, и рекомендации следующих видео с автовоспроизведением (?)", className="block-background mrrow"),
             ],
             className="gx-3",
         ),

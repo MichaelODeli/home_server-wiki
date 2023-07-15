@@ -86,7 +86,8 @@ navbar = dbc.Navbar(
                                     children=[
                                         dbc.DropdownMenuItem("Плееры", header=True),
                                         dbc.DropdownMenuItem("Аудио", href="/players/audioplayer"),
-                                        dbc.DropdownMenuItem("Видео", href="/players/videoplayer"),
+                                        dbc.DropdownMenuItem("Видео с сервера", href="/players/videoplayer"),
+                                        dbc.DropdownMenuItem("Видео из ТикТока", href="/players/tiktokplayer"),
                                     ],
                                     nav=True,
                                     in_navbar=True,
