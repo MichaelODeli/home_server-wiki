@@ -3,9 +3,34 @@ body {
 }
 
 .Card-element {
-    max-width: 2000;
     width: 100%;
     background-color: white;
     border-radius: 16px;
     padding: 16px
+}
+
+.block-background {
+    background-color: white;
+    border-radius: 5px;
+    /* margin-right: 5px; */
+    padding: 10px;
+    -webkit-box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+    -moz-box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+    box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+}
+
+.mrrow {
+    margin-right: 10px;
+    margin-top: 10px;
+}
+
+.mrrow:last-child {
+    margin-right: 0px;
+}
+
+
+video,
+.video_container {
+    max-width: 100% !important;
+    height: auto !important;
 }
