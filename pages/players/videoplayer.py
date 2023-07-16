@@ -19,7 +19,10 @@ import sqlite3
 
 register_page(__name__, path="/players/videoplayer", icon="fa-solid:home")
 
+link = ''
+
 def layout(v=None, **other_unknown_query_strings):
+    global link
     if v!=None:
         conn = sqlite3.connect('bases/nstorage.sqlite3')
         c = conn.cursor()
@@ -85,7 +88,8 @@ def layout(v=None, **other_unknown_query_strings):
                                                     compact=True,
                                                     variant="subtle",
                                                     color="black",
-                                                    id='player_download'
+                                                    id='player_download',
+                                                    disabled=True,
                                                 ),
                                                 dmc.Button(
                                                     "Добавить в плейлист",
@@ -96,7 +100,8 @@ def layout(v=None, **other_unknown_query_strings):
                                                     compact=True,
                                                     variant="subtle",
                                                     color="black",
-                                                    id='player_addToPlaylist'
+                                                    id='player_addToPlaylist',
+                                                    disabled=True,
                                                 ),
                                                 dmc.Button(
                                                     # "Сообщить",
@@ -107,7 +112,8 @@ def layout(v=None, **other_unknown_query_strings):
                                                     compact=True,
                                                     variant="subtle",
                                                     color="black",
-                                                    id='player_report'
+                                                    id='player_report',
+                                                    disabled=True,
                                                 ),
                                             ],
                                             spacing='xs'
