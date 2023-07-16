@@ -61,7 +61,7 @@ def layout(v=None, **other_unknown_query_strings):
                                             dmc.Button(
                                                 html.A(
                                                     channel,
-                                                    href="/",
+                                                    href=f"/search?from_video_view=True&query={channel}",
                                                     style={"textDecoration": "none"},
                                                     id='player_channelLink'
                                                 ),
