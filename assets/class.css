@@ -2,6 +2,10 @@ body {
     background-color: rgba(240, 241, 242, 1);
 }
 
+.navbar-collapse{
+    flex-grow: unset !important;
+}
+
 .Card-element {
     width: 100%;
     background-color: white;

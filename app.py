@@ -4,6 +4,7 @@ import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 import dash_bootstrap_components as dbc
 from dash_bootstrap_components._components.Container import Container
+from dash_extensions import Purify
 
 # logging.basicConfig(filename='files/logs.log', encoding='utf-8', level=logging.DEBUG)
 app = dash.Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -22,16 +23,32 @@ def get_icon(icon):
 
 
 # header
-search_bar = dbc.Row(
-    [
-        dbc.Col(dbc.Input(type="search", placeholder="Search")),
-        dbc.Col(
-            dbc.Button("Search", color="primary", className="ms-2", n_clicks=0),
-            width="auto",
-        ),
-    ],
-    className="g-0 ms-auto flex-nowrap mt-3 mt-md-0",
-    align="center",
+# search_bar = dbc.Form(
+#     [dbc.Row(
+#         [
+#             dbc.Col(
+#                 dbc.Input(placeholder="Search", id='search', name='search', value='')
+#             ),
+#             dbc.Col(
+#                 dbc.Button("Search", color="primary", className="ms-2", href='/search'),
+#                 width="auto",
+#             ),
+#         ],
+#         className="g-0 ms-auto flex-nowrap mt-3 mt-md-0",
+#         align="center",
+#     )],
+#     action='/search',
+#     method='GET'
+# )
+search_bar = Purify(
+    """
+        <form action="/search" method="GET" class="">
+        <div class="g-0 ms-auto flex-nowrap mt-3 mt-md-0 align-items-center row">
+            <div class="col"><input class="form-control" id="query" name="query" placeholder="Search"
+                    step="any"></div>
+            <div class="col-auto"><button class="ms-2 btn btn-primary">Search</button></div>
+        </div>
+    </form>"""
 )
 
 navbar = dbc.Navbar(
@@ -75,45 +92,9 @@ navbar = dbc.Navbar(
                                         dbc.DropdownMenuItem(
                                             "Kiwix", href="http://192.168.3.33:789/"
                                         ),
-                                    ],
-                                    nav=True,
-                                    in_navbar=True,
-                                    label="Серверные приложения",
-                                ),
-                            ),
-                            dbc.Col(
-                                dbc.DropdownMenu(
-                                    children=[
-                                        dbc.DropdownMenuItem("Плееры", header=True),
-                                        dbc.DropdownMenuItem("Аудио", href="/players/audioplayer"),
-                                        dbc.DropdownMenuItem("Видео с сервера", href="/players/videoplayer"),
-                                        dbc.DropdownMenuItem("Видео из ТикТока", href="/players/tiktokplayer"),
-                                    ],
-                                    nav=True,
-                                    in_navbar=True,
-                                    label="Медиа",
-                                ),
-                            ),
-                            dbc.Col(
-                                dbc.DropdownMenu(
-                                    children=[
-                                        dbc.DropdownMenuItem("Учеба", header=True),
-                                        dbc.DropdownMenuItem("Конструктор ссылок", href="/services/learning/links_builder"),
-                                        dbc.DropdownMenuItem("Планнер", href="/services/learning/planner"),
-                                        dbc.DropdownMenuItem("Заполнение документов", href="/services/learning/documents_filler"),
-                                        dbc.DropdownMenuItem("Работа с фото", header=True),
-                                        dbc.DropdownMenuItem("Просмотр EXIF", href="/services/photo/exif_view"),
-                                        dbc.DropdownMenuItem("Игры", header=True),
-                                        dbc.DropdownMenuItem("5 букв", href="/services/games/five_letters"),
-                                    ],
-                                    nav=True,
-                                    in_navbar=True,
-                                    label="Разные сервисы",
-                                ),
-                            ),
-                            dbc.Col(
-                                dbc.DropdownMenu(
-                                    children=[
+                                        dbc.DropdownMenuItem(
+                                            "Основные параметры", header=True
+                                        ),
                                         dbc.DropdownMenuItem(
                                             "Основные параметры", href="/"
                                         ),
@@ -125,13 +106,70 @@ navbar = dbc.Navbar(
                                             "Управление хранилищем", header=True
                                         ),
                                         dbc.DropdownMenuItem("FileManager", href="/"),
-                                        dbc.DropdownMenuItem("StorageCleaner", href="/"),
+                                        dbc.DropdownMenuItem(
+                                            "StorageCleaner", href="/"
+                                        ),
                                     ],
                                     nav=True,
                                     in_navbar=True,
-                                    label="Параметры приложения",
+                                    label="Серверные утилиты",
                                 ),
                             ),
+                            dbc.Col(
+                                dbc.DropdownMenu(
+                                    children=[
+                                        dbc.DropdownMenuItem("Плееры", header=True),
+                                        dbc.DropdownMenuItem(
+                                            "Аудио", href="/players/audioplayer"
+                                        ),
+                                        dbc.DropdownMenuItem(
+                                            "Видео с сервера",
+                                            href="/players/videoplayer",
+                                        ),
+                                        dbc.DropdownMenuItem(
+                                            "Видео из ТикТока",
+                                            href="/players/tiktokplayer",
+                                        ),
+                                    ],
+                                    nav=True,
+                                    in_navbar=True,
+                                    label="Медиа",
+                                ),
+                            ),
+                            dbc.Col(
+                                dbc.DropdownMenu(
+                                    children=[
+                                        dbc.DropdownMenuItem("Учеба", header=True),
+                                        dbc.DropdownMenuItem(
+                                            "Конструктор ссылок",
+                                            href="/services/learning/links_builder",
+                                        ),
+                                        dbc.DropdownMenuItem(
+                                            "Планнер", href="/services/learning/planner"
+                                        ),
+                                        dbc.DropdownMenuItem(
+                                            "Заполнение документов",
+                                            href="/services/learning/documents_filler",
+                                        ),
+                                        dbc.DropdownMenuItem(
+                                            "Работа с фото", header=True
+                                        ),
+                                        dbc.DropdownMenuItem(
+                                            "Просмотр EXIF",
+                                            href="/services/photo/exif_view",
+                                        ),
+                                        dbc.DropdownMenuItem("Игры", header=True),
+                                        dbc.DropdownMenuItem(
+                                            "5 букв",
+                                            href="/services/games/five_letters",
+                                        ),
+                                    ],
+                                    nav=True,
+                                    in_navbar=True,
+                                    label="Разное",
+                                ),
+                            ),
+                            dbc.Col(width="auto"),
                         ]
                     ),
                     search_bar,
