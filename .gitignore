@@ -50,3 +50,9 @@ Thumbs.db
 
 # VScode configs
 .vscode/
+
+# bases
+*.sqlite3
+
+# tests
+test.py

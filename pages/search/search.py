@@ -37,6 +37,7 @@ def layout(query="", **other_unknown_query_strings):
                                                 label="Поисковый запрос",
                                                 style={"width": "100%"},
                                                 value=str(query),
+                                                id='search_query'
                                             ),
                                             dmc.CheckboxGroup(
                                                 label="Категории для поиска",
