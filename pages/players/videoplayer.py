@@ -21,17 +21,17 @@ register_page(__name__, path="/players/videoplayer", icon="fa-solid:home")
 
 link = ''
 
-def layout(v=None, **other_unknown_query_strings):
+def layout(v=None, v_type='youtube', **other_unknown_query_strings):
     global link
     if v!=None:
         conn = sqlite3.connect('bases/nstorage.sqlite3')
         c = conn.cursor()
-        c.execute(f"SELECT * FROM youtube WHERE youtube_filehash = '{v}'")
+        c.execute(f"SELECT * FROM {v_type} WHERE {v_type}_filehash = '{v}'")
         one_result = c.fetchone()
         channel = one_result[1]
         filename = one_result[2]
         name = '.'.join(filename.split('.')[:-1])
-        link = f'http://192.168.3.33/storage/youtube/{channel}/{filename}'
+        link = f'http://192.168.3.33/storage/{v_type}/{channel}/{filename}'
         c.close()
         conn.close()
     else:

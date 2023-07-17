@@ -48,28 +48,29 @@ def layout(query="", from_video_view='False', **other_unknown_query_strings):
                                                 orientation="horizontal",
                                                 offset="md",
                                                 mb=10,
+                                                id='search_in_type',
                                                 children=[
                                                     dmc.Radio(
                                                         label="YouTube",
-                                                        value="category_YT",
+                                                        value="youtube",
                                                     ),
-                                                    dmc.Radio(
-                                                        label="Сериалы",
-                                                        value="category_serials",
-                                                        # disabled=True,
-                                                    ),
+                                                    # dmc.Radio(
+                                                    #     label="Сериалы",
+                                                    #     value="category_serials",
+                                                    #     # disabled=True,
+                                                    # ),
                                                     dmc.Radio(
                                                         label="Фильмы",
-                                                        value="category_films",
+                                                        value="films",
                                                         # disabled=True,
                                                     ),
                                                     dmc.Radio(
                                                         label="Программы",
-                                                        value="category_apps",
+                                                        value="apps",
                                                         # disabled=True,
                                                     ),
                                                 ],
-                                                value="category_YT",
+                                                value="youtube",
                                             ),
                                             # dmc.Space(h=3),
                                             dmc.RadioGroup(
@@ -131,13 +132,14 @@ def layout(query="", from_video_view='False', **other_unknown_query_strings):
     [
         State("search_by", "value"),
         State("search_query", 'value'),
+        State("search_in_type", 'value'),
     ],
     [
         Input("search_button", "n_clicks")
     ],
     prevent_initial_call=False,
 )
-def table_results(search_by, search_query, n_clicks):
+def table_results(search_by, search_query, search_in_type, n_clicks):
     if search_query == '': 
         return 'А их нет ¯\_(ツ)_/¯'
     else:
@@ -147,10 +149,10 @@ def table_results(search_by, search_query, n_clicks):
                 return name
             else: return name[0:limiter]+'...'
 
-        def name_builder(name, hash):
-            return html.A(str_hider(name), href=f'/players/videoplayer?v={hash}')
+        def link_builder(name, hash, v_type):
+            return html.A(str_hider(name), href=f'/players/videoplayer?v={hash}&v_type={v_type}') if v_type in ['films', 'youtube'] else str_hider(name)
 
-        filetype = 'youtube'
+        filetype = search_in_type
         if search_by == 'search_by_category': 
             column = 'type'
         else:
@@ -178,11 +180,11 @@ def table_results(search_by, search_query, n_clicks):
             category = result_line[1]
             filename = result_line[2]
             name = '.'.join(filename.split('.')[:-1])
-            table_content += [html.Tr([html.Td(filetype),html.Td(str_hider(category)),html.Td(name_builder(name, result_line[0])),])]
+            table_content += [html.Tr([html.Td(filetype),html.Td(str_hider(category)),html.Td(link_builder(name, result_line[0], filetype)),])]
 
         table_content = [html.Tbody(table_content)]
 
         c.close()
         conn.close()
 
-        return [dmc.Table(table_header + table_content)]
+        return [dmc.Table(table_header + table_content)] if len(results) > 0 else [dmc.Center([html.H5('По Вашему запросу нет результатов.')])]

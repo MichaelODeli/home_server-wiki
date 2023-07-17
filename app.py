@@ -92,23 +92,23 @@ navbar = dbc.Navbar(
                                         dbc.DropdownMenuItem(
                                             "Kiwix", href="http://192.168.3.33:789/"
                                         ),
-                                        dbc.DropdownMenuItem(
-                                            "Основные параметры", header=True
-                                        ),
-                                        dbc.DropdownMenuItem(
-                                            "Основные параметры", href="/"
-                                        ),
-                                        dbc.DropdownMenuItem(
-                                            "Параметры приложений", header=True
-                                        ),
-                                        dbc.DropdownMenuItem("Плееры", href="/"),
-                                        dbc.DropdownMenuItem(
-                                            "Управление хранилищем", header=True
-                                        ),
-                                        dbc.DropdownMenuItem("FileManager", href="/"),
-                                        dbc.DropdownMenuItem(
-                                            "StorageCleaner", href="/"
-                                        ),
+                                        # dbc.DropdownMenuItem(
+                                        #     "Основные параметры", header=True
+                                        # ),
+                                        # dbc.DropdownMenuItem(
+                                        #     "Основные параметры", href="/"
+                                        # ),
+                                        # dbc.DropdownMenuItem(
+                                        #     "Параметры приложений", header=True
+                                        # ),
+                                        # dbc.DropdownMenuItem("Плееры", href="/"),
+                                        # dbc.DropdownMenuItem(
+                                        #     "Управление хранилищем", header=True
+                                        # ),
+                                        # dbc.DropdownMenuItem("FileManager", href="/"),
+                                        # dbc.DropdownMenuItem(
+                                        #     "StorageCleaner", href="/"
+                                        # ),
                                     ],
                                     nav=True,
                                     in_navbar=True,
@@ -119,17 +119,17 @@ navbar = dbc.Navbar(
                                 dbc.DropdownMenu(
                                     children=[
                                         dbc.DropdownMenuItem("Плееры", header=True),
-                                        dbc.DropdownMenuItem(
-                                            "Аудио", href="/players/audioplayer"
-                                        ),
+                                        # dbc.DropdownMenuItem(
+                                        #     "Аудио", href="/players/audioplayer"
+                                        # ),
                                         dbc.DropdownMenuItem(
                                             "Видео с сервера",
                                             href="/players/videoplayer",
                                         ),
-                                        dbc.DropdownMenuItem(
-                                            "Видео из ТикТока",
-                                            href="/players/tiktokplayer",
-                                        ),
+                                        # dbc.DropdownMenuItem(
+                                        #     "Видео из ТикТока",
+                                        #     href="/players/tiktokplayer",
+                                        # ),
                                     ],
                                     nav=True,
                                     in_navbar=True,
@@ -137,37 +137,37 @@ navbar = dbc.Navbar(
                                 ),
                             ),
                             dbc.Col(
-                                dbc.DropdownMenu(
-                                    children=[
-                                        dbc.DropdownMenuItem("Учеба", header=True),
-                                        dbc.DropdownMenuItem(
-                                            "Конструктор ссылок",
-                                            href="/services/learning/links_builder",
-                                        ),
-                                        dbc.DropdownMenuItem(
-                                            "Планнер", href="/services/learning/planner"
-                                        ),
-                                        dbc.DropdownMenuItem(
-                                            "Заполнение документов",
-                                            href="/services/learning/documents_filler",
-                                        ),
-                                        dbc.DropdownMenuItem(
-                                            "Работа с фото", header=True
-                                        ),
-                                        dbc.DropdownMenuItem(
-                                            "Просмотр EXIF",
-                                            href="/services/photo/exif_view",
-                                        ),
-                                        dbc.DropdownMenuItem("Игры", header=True),
-                                        dbc.DropdownMenuItem(
-                                            "5 букв",
-                                            href="/services/games/five_letters",
-                                        ),
-                                    ],
-                                    nav=True,
-                                    in_navbar=True,
-                                    label="Разное",
-                                ),
+                                # dbc.DropdownMenu(
+                                #     children=[
+                                #         dbc.DropdownMenuItem("Учеба", header=True),
+                                #         dbc.DropdownMenuItem(
+                                #             "Конструктор ссылок",
+                                #             href="/services/learning/links_builder",
+                                #         ),
+                                #         dbc.DropdownMenuItem(
+                                #             "Планнер", href="/services/learning/planner"
+                                #         ),
+                                #         dbc.DropdownMenuItem(
+                                #             "Заполнение документов",
+                                #             href="/services/learning/documents_filler",
+                                #         ),
+                                #         dbc.DropdownMenuItem(
+                                #             "Работа с фото", header=True
+                                #         ),
+                                #         dbc.DropdownMenuItem(
+                                #             "Просмотр EXIF",
+                                #             href="/services/photo/exif_view",
+                                #         ),
+                                #         dbc.DropdownMenuItem("Игры", header=True),
+                                #         dbc.DropdownMenuItem(
+                                #             "5 букв",
+                                #             href="/services/games/five_letters",
+                                #         ),
+                                #     ],
+                                #     nav=True,
+                                #     in_navbar=True,
+                                #     label="Разное",
+                                # ),
                             ),
                             dbc.Col(width="auto"),
                         ]
