@@ -15,7 +15,6 @@ import dash_mantine_components as dmc
 import dash_player as dp
 import dash_bootstrap_components as dbc
 from dash_iconify import DashIconify
-import sqlite3
 
 register_page(__name__, path="/players/videoplayer", icon="fa-solid:home")
 
@@ -35,7 +34,7 @@ def layout(v=None, v_type='youtube', **other_unknown_query_strings):
         c.close()
         conn.close()
     else:
-        channel = 'Saple'
+        channel = 'Sample'
         name = 'Big buck bunny'
         link = 'https://www.w3schools.com/html/mov_bbb.mp4'
 
