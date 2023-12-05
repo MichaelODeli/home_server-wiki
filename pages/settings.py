@@ -12,7 +12,7 @@ from dash import (
 )
 import dash_mantine_components as dmc
 
-register_page(__name__, path="/services/games/five_letters", icon="fa-solid:home")
+register_page(__name__, path="/settings", icon="fa-solid:home")
 
 layout = dmc.Container(
     children=[],

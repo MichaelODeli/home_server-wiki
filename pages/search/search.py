@@ -16,6 +16,8 @@ from dash import (
 )
 import dash_mantine_components as dmc
 import sqlite3
+from dash_iconify import DashIconify
+import time
 
 register_page(__name__, path="/search", icon="fa-solid:home")
 
@@ -57,6 +59,7 @@ def layout(query="", from_video_view="False", **other_unknown_query_strings):
         print(other_unknown_query_strings)
     return dmc.Container(
         children=[
+            html.Div(id="notifications-container"),
             dmc.Space(h=10),
             dmc.Grid(
                 children=[
@@ -161,6 +164,7 @@ def layout(query="", from_video_view="False", **other_unknown_query_strings):
 @callback(
     [
         Output("table_search", "children"),
+        Output("notifications-container", "children"),
     ],
     [
         State("search_by", "value"),
@@ -172,13 +176,14 @@ def layout(query="", from_video_view="False", **other_unknown_query_strings):
 )
 def table_results(search_by, search_query, search_in_filetype, n_clicks):
     if search_query == "":
-        return "А их нет ¯\_(ツ)_/¯"
+        return "Введен пустой поисковый запрос", None
     else:
         if search_by == "search_by_category":
             column = "type"
         else:
             column = "filename"
 
+        start_time = time.time()
         conn = sqlite3.connect("bases/nstorage.sqlite3")
         c = conn.cursor()
         c.execute(f"SELECT * FROM {search_in_filetype} WHERE {column} LIKE '%{search_query}%'")
@@ -219,5 +224,12 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
         return (
             [dmc.Table(table_header + table_content)]
             if len(results) > 0
-            else [dmc.Center([html.H5("По Вашему запросу нет результатов.")])]
+            else [dmc.Center([html.H5("По Вашему запросу нет результатов.")])],
+            dmc.Notification(
+                title="Запрос выполнен",
+                id="my-notif",
+                action="show",
+                message="Результаты получены за %s секунд" % round(time.time() - start_time, 3),
+                icon=DashIconify(icon="ep:success-filled"),
+            )
         )

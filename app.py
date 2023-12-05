@@ -5,8 +5,9 @@ from dash_iconify import DashIconify
 import dash_bootstrap_components as dbc
 from dash_bootstrap_components._components.Container import Container
 from dash_extensions import Purify
+import logging
 
-# logging.basicConfig(filename='files/logs.log', encoding='utf-8', level=logging.DEBUG)
+logging.basicConfig(filename='logs/main_log.log', encoding='utf-8', level=logging.DEBUG)
 app = dash.Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 server = app.server
@@ -22,24 +23,6 @@ def get_icon(icon):
     )
 
 
-# header
-# search_bar = dbc.Form(
-#     [dbc.Row(
-#         [
-#             dbc.Col(
-#                 dbc.Input(placeholder="Search", id='search', name='search', value='')
-#             ),
-#             dbc.Col(
-#                 dbc.Button("Search", color="primary", className="ms-2", href='/search'),
-#                 width="auto",
-#             ),
-#         ],
-#         className="g-0 ms-auto flex-nowrap mt-3 mt-md-0",
-#         align="center",
-#     )],
-#     action='/search',
-#     method='GET'
-# )
 search_bar = Purify(
     """
         <form action="/search" method="GET" class="">
@@ -76,6 +59,9 @@ navbar = dbc.Navbar(
                                             "Webmin", href="https://192.168.3.33:10000/"
                                         ),
                                         dbc.DropdownMenuItem(
+                                            "Параметры ПО", href="/settings"
+                                        ),
+                                        dbc.DropdownMenuItem(
                                             "Торрент клиенты", header=True
                                         ),
                                         dbc.DropdownMenuItem(
@@ -92,23 +78,6 @@ navbar = dbc.Navbar(
                                         dbc.DropdownMenuItem(
                                             "Kiwix", href="http://192.168.3.33:789/"
                                         ),
-                                        # dbc.DropdownMenuItem(
-                                        #     "Основные параметры", header=True
-                                        # ),
-                                        # dbc.DropdownMenuItem(
-                                        #     "Основные параметры", href="/"
-                                        # ),
-                                        # dbc.DropdownMenuItem(
-                                        #     "Параметры приложений", header=True
-                                        # ),
-                                        # dbc.DropdownMenuItem("Плееры", href="/"),
-                                        # dbc.DropdownMenuItem(
-                                        #     "Управление хранилищем", header=True
-                                        # ),
-                                        # dbc.DropdownMenuItem("FileManager", href="/"),
-                                        # dbc.DropdownMenuItem(
-                                        #     "StorageCleaner", href="/"
-                                        # ),
                                     ],
                                     nav=True,
                                     in_navbar=True,
@@ -136,39 +105,6 @@ navbar = dbc.Navbar(
                                     label="Медиа",
                                 ),
                             ),
-                            dbc.Col(
-                                # dbc.DropdownMenu(
-                                #     children=[
-                                #         dbc.DropdownMenuItem("Учеба", header=True),
-                                #         dbc.DropdownMenuItem(
-                                #             "Конструктор ссылок",
-                                #             href="/services/learning/links_builder",
-                                #         ),
-                                #         dbc.DropdownMenuItem(
-                                #             "Планнер", href="/services/learning/planner"
-                                #         ),
-                                #         dbc.DropdownMenuItem(
-                                #             "Заполнение документов",
-                                #             href="/services/learning/documents_filler",
-                                #         ),
-                                #         dbc.DropdownMenuItem(
-                                #             "Работа с фото", header=True
-                                #         ),
-                                #         dbc.DropdownMenuItem(
-                                #             "Просмотр EXIF",
-                                #             href="/services/photo/exif_view",
-                                #         ),
-                                #         dbc.DropdownMenuItem("Игры", header=True),
-                                #         dbc.DropdownMenuItem(
-                                #             "5 букв",
-                                #             href="/services/games/five_letters",
-                                #         ),
-                                #     ],
-                                #     nav=True,
-                                #     in_navbar=True,
-                                #     label="Разное",
-                                # ),
-                            ),
                             dbc.Col(width="auto"),
                         ]
                     ),
@@ -186,7 +122,7 @@ navbar = dbc.Navbar(
 
 
 # Конструкция всего макета
-app.layout = html.Div(children=[navbar, dash.page_container])
+app.layout = dmc.NotificationsProvider(html.Div(children=[navbar, dash.page_container]))
 
 
 # add callback for toggling the collapse on small screens
