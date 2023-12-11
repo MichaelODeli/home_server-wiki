@@ -8,7 +8,8 @@ from dash_extensions import Purify
 import logging
 
 logging.basicConfig(filename='logs/main_log.log', encoding='utf-8', level=logging.DEBUG)
-app = dash.Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
+# app = dash.Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.FLATLY])
 
 server = app.server
 app.config.suppress_callback_exceptions = True
@@ -42,7 +43,7 @@ navbar = dbc.Navbar(
                 "Home server",
                 href="/",
                 className="h3 me-5",
-                style={"textDecoration": "none", "color": "black"},
+                style={"textDecoration": "none", "color": "black", "margin-bottom": '0px !important'},
             ),
             dbc.NavbarToggler(id="navbar-toggler", n_clicks=0),
             dbc.Collapse(
@@ -52,18 +53,11 @@ navbar = dbc.Navbar(
                             dbc.Col(
                                 dbc.DropdownMenu(
                                     children=[
-                                        dbc.DropdownMenuItem(
-                                            "Настройка сервера", header=True
-                                        ),
-                                        dbc.DropdownMenuItem(
-                                            "Webmin", href="https://192.168.3.33:10000/"
-                                        ),
-                                        dbc.DropdownMenuItem(
-                                            "Параметры ПО", href="/settings"
-                                        ),
-                                        dbc.DropdownMenuItem(
-                                            "Торрент клиенты", header=True
-                                        ),
+                                        dbc.DropdownMenuItem("Настройка сервера", header=True),
+                                        dbc.DropdownMenuItem("Webmin", href="https://192.168.3.33:10000/"),
+                                        dbc.DropdownMenuItem("Параметры ПО", href="/settings"),
+                                        dbc.DropdownMenuItem(divider = True),
+                                        dbc.DropdownMenuItem("Торрент клиенты", header=True),
                                         dbc.DropdownMenuItem(
                                             "qBittorrent",
                                             href="http://192.168.3.33:8124/",
@@ -72,12 +66,9 @@ navbar = dbc.Navbar(
                                             "Transmission (obsolete)",
                                             href="http://192.168.3.33:12345/",
                                         ),
-                                        dbc.DropdownMenuItem(
-                                            "Wiki-ресурсы", header=True
-                                        ),
-                                        dbc.DropdownMenuItem(
-                                            "Kiwix", href="http://192.168.3.33:789/"
-                                        ),
+                                        dbc.DropdownMenuItem(divider = True),
+                                        dbc.DropdownMenuItem("Wiki-ресурсы", header=True),
+                                        dbc.DropdownMenuItem("Kiwix", href="http://192.168.3.33:789/"),
                                     ],
                                     nav=True,
                                     in_navbar=True,

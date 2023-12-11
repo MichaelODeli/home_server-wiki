@@ -18,6 +18,7 @@ import dash_mantine_components as dmc
 import sqlite3
 from dash_iconify import DashIconify
 import time
+import dash_bootstrap_components as dbc
 
 register_page(__name__, path="/search", icon="fa-solid:home")
 
@@ -78,56 +79,37 @@ def layout(query="", from_video_view="False", **other_unknown_query_strings):
                                                 value=str(query),
                                                 id="search_query",
                                             ),
-                                            dmc.RadioGroup(
-                                                label="Категории для поиска",
-                                                orientation="horizontal",
-                                                offset="md",
-                                                mb=10,
-                                                id="search_in_type",
-                                                children=[
-                                                    dmc.Radio(
-                                                        label="YouTube",
-                                                        value="youtube",
+                                            html.Div(
+                                                [
+                                                    dbc.Label("Категории для поиска"),
+                                                    dbc.RadioItems(
+                                                        options=[
+                                                            {"label": "YouTube", "value": 'youtube'},
+                                                            {"label": "Фильмы", "value": 'films'},
+                                                            {"label": "Программы", "value": 'apps'},
+                                                        ],
+                                                        value='youtube',
+                                                        id="search_in_type",
+                                                        inline=True,
                                                     ),
-                                                    # dmc.Radio(
-                                                    #     label="Сериалы",
-                                                    #     value="category_serials",
-                                                    #     # disabled=True,
-                                                    # ),
-                                                    dmc.Radio(
-                                                        label="Фильмы",
-                                                        value="films",
-                                                        # disabled=True,
-                                                    ),
-                                                    dmc.Radio(
-                                                        label="Программы",
-                                                        value="apps",
-                                                        # disabled=True,
-                                                    ),
-                                                ],
-                                                value="youtube",
+                                                ]
                                             ),
-                                            # dmc.Space(h=3),
-                                            dmc.RadioGroup(
-                                                label="Поиск по...",
-                                                orientation="horizontal",
-                                                offset="md",
-                                                mb=10,
-                                                id="search_by",
-                                                children=[
-                                                    dmc.Radio(
-                                                        label="Названию",
-                                                        value="search_by_name",
+                                            html.Div(
+                                                [
+                                                    dbc.Label("Поиск по..."),
+                                                    dbc.RadioItems(
+                                                        options=[
+                                                            {"label": "Названию", "value": 'search_by_name'},
+                                                            {"label": "Каналу / Категории", "value": 'search_by_category'},
+                                                        ],
+                                                        value=value_for_radio,
+                                                        id="search_by",
+                                                        inline=True,
                                                     ),
-                                                    dmc.Radio(
-                                                        label="Каналу / Категории",
-                                                        value="search_by_category",
-                                                    ),
-                                                ],
-                                                value=value_for_radio,
+                                                ]
                                             ),
                                             dmc.Space(h=3),
-                                            dmc.Button("Поиск", id="search_button"),
+                                            dbc.Button("Поиск", id="search_button"),
                                         ]
                                     ),
                                 ],

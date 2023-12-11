@@ -103,8 +103,8 @@ def layout(v=None, v_type='youtube', **other_unknown_query_strings):
                                                     disabled=True,
                                                 ),
                                                 dmc.Button(
-                                                    # "Сообщить",
-                                                    leftIcon=DashIconify(
+                                                    "Пожаловаться",
+                                                    rightIcon=DashIconify(
                                                         icon="material-symbols:flag-outline-rounded",
                                                         width=20,
                                                     ),
