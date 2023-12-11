@@ -78,37 +78,34 @@ def layout(v=None, v_type='youtube', **other_unknown_query_strings):
                                     dmc.Col(
                                         dmc.Group(
                                             children=[
-                                                dmc.Button(
-                                                    "Скачать",
-                                                    rightIcon=DashIconify(
+                                                dmc.ActionIcon(
+                                                    DashIconify(
                                                         icon="material-symbols:download-for-offline-outline-rounded",
                                                         width=20,
                                                     ),
-                                                    compact=True,
+                                                    # compact=True,
                                                     variant="subtle",
                                                     color="black",
                                                     id='player_download',
                                                     disabled=True,
                                                 ),
-                                                dmc.Button(
-                                                    "Добавить в плейлист",
-                                                    rightIcon=DashIconify(
+                                                dmc.ActionIcon(
+                                                    DashIconify(
                                                         icon="material-symbols:playlist-add-rounded",
                                                         width=20,
                                                     ),
-                                                    compact=True,
+                                                    # compact=True,
                                                     variant="subtle",
                                                     color="black",
                                                     id='player_addToPlaylist',
                                                     disabled=True,
                                                 ),
-                                                dmc.Button(
-                                                    "Пожаловаться",
-                                                    rightIcon=DashIconify(
+                                                dmc.ActionIcon(
+                                                    DashIconify(
                                                         icon="material-symbols:flag-outline-rounded",
                                                         width=20,
                                                     ),
-                                                    compact=True,
+                                                    # compact=True,
                                                     variant="subtle",
                                                     color="black",
                                                     id='player_report',
@@ -127,7 +124,31 @@ def layout(v=None, v_type='youtube', **other_unknown_query_strings):
                         className="block-background mrrow",
                         width="auto",
                     ),
-                    dbc.Col("А тут плейлист, и рекомендации следующих видео с автовоспроизведением (?)", className="block-background mrrow"),
+                    dbc.Col(children=[
+                        dmc.Card(
+                            children=[
+                                dmc.CardSection(
+                                    dmc.Image(
+                                        src="/assets/image-not-found.jpg",
+                                        height=160,
+                                    )
+                                ),
+                                dmc.Group(
+                                    [
+                                        dmc.Text("Sample Video Title", weight=500),
+                                        dbc.Badge("00:50", text_color="primary", className="border me-1", color='white'),
+                                    ],
+                                    position="apart",
+                                    mt="md",
+                                    mb="xs",
+                                ),
+                            ],
+                            withBorder=True,
+                            shadow="sm",
+                            radius="md",
+                            style={"width": 'auto'}, # prev: 350px
+                        )
+                    ], className="block-background mrrow"),
                 ],
                 className="gx-3",
             ),

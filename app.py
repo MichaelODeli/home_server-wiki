@@ -28,9 +28,9 @@ search_bar = Purify(
     """
         <form action="/search" method="GET" class="">
         <div class="g-0 ms-auto flex-nowrap mt-3 mt-md-0 align-items-center row">
-            <div class="col"><input class="form-control" id="query" name="query" placeholder="Search"
+            <div class="col"><input class="form-control" id="query" name="query" placeholder="Введите запрос"
                     step="any"></div>
-            <div class="col-auto"><button class="ms-2 btn btn-primary">Search</button></div>
+            <div class="col-auto"><button class="ms-2 btn btn-primary">Поиск</button></div>
         </div>
     </form>"""
 )
@@ -79,17 +79,10 @@ navbar = dbc.Navbar(
                                 dbc.DropdownMenu(
                                     children=[
                                         dbc.DropdownMenuItem("Плееры", header=True),
-                                        # dbc.DropdownMenuItem(
-                                        #     "Аудио", href="/players/audioplayer"
-                                        # ),
                                         dbc.DropdownMenuItem(
                                             "Видео с сервера",
                                             href="/players/videoplayer",
                                         ),
-                                        # dbc.DropdownMenuItem(
-                                        #     "Видео из ТикТока",
-                                        #     href="/players/tiktokplayer",
-                                        # ),
                                     ],
                                     nav=True,
                                     in_navbar=True,
