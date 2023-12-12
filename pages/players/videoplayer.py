@@ -20,6 +20,31 @@ register_page(__name__, path="/players/videoplayer", icon="fa-solid:home")
 
 link = ''
 
+def get_video_card(video_title, video_length, video_link):
+    return html.A([dmc.Card(
+            children=[
+                dmc.CardSection(
+                    dmc.Image(
+                        src="/assets/image-not-found.jpg",
+                        height=120,
+                    )
+                ),
+                dmc.Group(
+                    [
+                        dmc.Text(str(video_title), weight=500),
+                        dbc.Badge(str(video_length), text_color="primary", className="border me-1", color='white'),
+                    ],
+                    position="apart",
+                    mt="md",
+                    mb="xs",
+                ),
+            ],
+            withBorder=True,
+            shadow="sm",
+            radius="md",
+            style={"width": 'auto'}, # prev: 350px
+        )], href=video_link)
+
 def layout(v=None, v_type='youtube', **other_unknown_query_strings):
     global link
     if v!=None:
@@ -121,34 +146,25 @@ def layout(v=None, v_type='youtube', **other_unknown_query_strings):
                                 style={"width": "100%"},
                             ),
                         ],
-                        className="block-background mrrow",
+                        className="block-background mrrow video-column",
                         width="auto",
                     ),
                     dbc.Col(children=[
-                        dmc.Card(
-                            children=[
-                                dmc.CardSection(
-                                    dmc.Image(
-                                        src="/assets/image-not-found.jpg",
-                                        height=160,
-                                    )
-                                ),
-                                dmc.Group(
-                                    [
-                                        dmc.Text("Sample Video Title", weight=500),
-                                        dbc.Badge("00:50", text_color="primary", className="border me-1", color='white'),
-                                    ],
-                                    position="apart",
-                                    mt="md",
-                                    mb="xs",
-                                ),
-                            ],
-                            withBorder=True,
-                            shadow="sm",
-                            radius="md",
-                            style={"width": 'auto'}, # prev: 350px
-                        )
-                    ], className="block-background mrrow"),
+                        html.H5('Смотрите также:'),
+                        dbc.ButtonGroup(
+                            [dbc.Button("Рекомендации", disabled=True, outline=True), dbc.Button(f'Канал: {channel}'), dbc.Button("Похожие", disabled=True, outline=True)],
+                        style={'width': '100%'}),
+                        dmc.Space(h=7),
+                        get_video_card('Sample video 1', '00:50', 'https://example.com'),
+                        dmc.Space(h=7),
+                        get_video_card('Sample video 2', '01:50', 'https://example.com'),
+                        dmc.Space(h=7),
+                        get_video_card('Sample video 3', '02:50', 'https://example.com'),
+                        dmc.Space(h=7),
+                        get_video_card('Sample video 4', '03:50', 'https://example.com'),
+                        dmc.Space(h=7),
+                        get_video_card('Sample video 5', '1:04:50', 'https://example.com'),
+                    ], className="block-background mrrow overflow-column"),
                 ],
                 className="gx-3",
             ),

@@ -28,6 +28,13 @@ body {
     margin-top: 10px;
 }
 
+@media (max-width: 768px) {
+    .mrrow {
+      height: 100%;
+      overflow: hidden;
+    }
+}
+
 .mrrow:last-child {
     margin-right: 0px;
 }
@@ -37,4 +44,12 @@ video,
 .video_container {
     max-width: 100% !important;
     height: auto !important;
+}
+
+.overflow-column {
+    min-height: 100% !important;
+}
+
+.video-column {
+    height: 100%;
 }
