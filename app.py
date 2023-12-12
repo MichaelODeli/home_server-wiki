@@ -8,8 +8,8 @@ from dash_extensions import Purify
 import logging
 
 logging.basicConfig(filename='logs/main_log.log', encoding='utf-8', level=logging.DEBUG)
-# app = dash.Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.BOOTSTRAP])
-app = dash.Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.FLATLY])
+icons_link = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css'
+app = dash.Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.FLATLY, icons_link])
 
 server = app.server
 app.config.suppress_callback_exceptions = True

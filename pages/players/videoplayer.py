@@ -15,6 +15,7 @@ import dash_mantine_components as dmc
 import dash_player as dp
 import dash_bootstrap_components as dbc
 from dash_iconify import DashIconify
+from dash_extensions import Purify
 
 register_page(__name__, path="/players/videoplayer", icon="fa-solid:home")
 
@@ -59,13 +60,12 @@ def layout(v=None, v_type='youtube', **other_unknown_query_strings):
         c.close()
         conn.close()
     else:
-        channel = 'Sample'
+        channel = 'Blender'
         name = 'Big buck bunny'
-        link = 'https://www.w3schools.com/html/mov_bbb.mp4'
+        link = 'https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4'
 
     return dmc.Container(
         children=[
-            dmc.Space(h=10),
             dbc.Row(
                 children=[
                     dbc.Col(
@@ -78,64 +78,24 @@ def layout(v=None, v_type='youtube', **other_unknown_query_strings):
                                 className="video_container",
                                 volume=0.4
                             ),
-                            dmc.Space(h=5),
+                            dmc.Space(h=10),
                             html.H4(name, style={"width": "100%"}, id='player_videoname'),
                             dmc.Space(h=10),
                             dmc.Grid(
                                 children=[
                                     dmc.Col(
-                                        dmc.Center(
-                                            dmc.Button(
-                                                html.A(
-                                                    channel,
-                                                    href=f"/search?from_video_view=True&query={channel}",
-                                                    style={"textDecoration": "none"},
-                                                    id='player_channelLink'
-                                                ),
-                                                compact=True,
-                                                variant="subtle",
-                                                color="black",
-                                            )
-                                        ),
+                                        dmc.Center([
+                                            Purify(f'<a href="/search?from_video_view=True&query={channel}" class="btn btn-outline-primary btn-sm" role="button">{channel}</a>')
+                                        ]),
                                         span="content",
                                     ),
                                     dmc.Col(span="auto"),
                                     dmc.Col(
                                         dmc.Group(
                                             children=[
-                                                dmc.ActionIcon(
-                                                    DashIconify(
-                                                        icon="material-symbols:download-for-offline-outline-rounded",
-                                                        width=20,
-                                                    ),
-                                                    # compact=True,
-                                                    variant="subtle",
-                                                    color="black",
-                                                    id='player_download',
-                                                    disabled=True,
-                                                ),
-                                                dmc.ActionIcon(
-                                                    DashIconify(
-                                                        icon="material-symbols:playlist-add-rounded",
-                                                        width=20,
-                                                    ),
-                                                    # compact=True,
-                                                    variant="subtle",
-                                                    color="black",
-                                                    id='player_addToPlaylist',
-                                                    disabled=True,
-                                                ),
-                                                dmc.ActionIcon(
-                                                    DashIconify(
-                                                        icon="material-symbols:flag-outline-rounded",
-                                                        width=20,
-                                                    ),
-                                                    # compact=True,
-                                                    variant="subtle",
-                                                    color="black",
-                                                    id='player_report',
-                                                    disabled=True,
-                                                ),
+                                                dbc.Button(Purify('<i class="bi bi-download"></i>'), size='sm', id='player_download', disabled=True, outline=True),
+                                                dbc.Button(Purify('<i class="bi bi-collection-play"></i>'), size='sm', id='player_addtoplaylist', disabled=True, outline=True),
+                                                dbc.Button(Purify('<i class="bi bi-flag"></i>'), size='sm', id='player_report', disabled=True, outline=True),
                                             ],
                                             spacing='xs'
                                         ),
