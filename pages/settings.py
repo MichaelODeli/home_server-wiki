@@ -25,19 +25,25 @@ checker_layout = dmc.Stepper(
                     label="Интернет",
                     description="ping: ...",
                     loading=True,
-                    color='red'
+                    color='var(--bs-danger)'
                 ),
                 dmc.StepperStep(
                     label="VPN",
-                    description="Результат: ..."
+                    description="Результат: ...",
+                    loading=True,
+                    color='var(--bs-primary)'
                 ),
                 dmc.StepperStep(
                     label="Температура системы",
-                    description="Результат: ..."
+                    description="Результат: ...",
+                    loading=True,
+                    color='var(--bs-primary)'
                 ),
                 dmc.StepperStep(
                     label="Работа приложений",
-                    description="Результат: ..."
+                    description="Результат: ...",
+                    loading=True,
+                    color='var(--bs-primary)'
                 ),
             ],
         )
@@ -61,7 +67,7 @@ def layout():
                         dmc.Space(h=5),
                         dmc.Stack(
                             children=[
-                                dmc.TextInput(label="Какое-то поле ввода"),
+                                # dmc.TextInput(label="Какое-то поле ввода"),
                             ],
                         )
                     ], value="main"),
