@@ -126,15 +126,8 @@ def layout(query="", from_video_view="False", **other_unknown_query_strings):
                                 className="block-background",
                                 style={"width": "100%"},
                             ),
-                            # dmc.Space(h=15),
-                            # html.Div(
-                            #     children=[],
-                            #     className="block-background",
-                            # ),
                         ],
-                        # span=3,
                     ),
-                    # dmc.Col(span="auto"),
                 ]
             ),
         ],
