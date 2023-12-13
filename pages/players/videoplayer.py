@@ -51,7 +51,7 @@ def get_video_card(video_title, video_length, video_link):
 def layout(v=None, v_type='youtube', **other_unknown_query_strings):
     global link
     # server_link = '192.168.3.33'
-    server_link = request.base_url.split('/')[2]
+    server_link = request.base_url.replace(':81', '').split('/')[2]
     if v!=None:
         conn = sqlite3.connect('bases/nstorage.sqlite3')
         c = conn.cursor()

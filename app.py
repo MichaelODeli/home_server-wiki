@@ -3,12 +3,10 @@ from dash import dcc, html, Output, Input, State
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 import dash_bootstrap_components as dbc
-from dash_bootstrap_components._components.Container import Container
 from dash_extensions import Purify
-import logging
-from flask import request
+# import logging
 
-logging.basicConfig(filename='logs/main_log.log', encoding='utf-8', level=logging.DEBUG)
+# logging.basicConfig(filename='logs/main_log.log', encoding='utf-8', level=logging.DEBUG)
 icons_link = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css'
 app = dash.Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.FLATLY, icons_link])
 
@@ -122,4 +120,4 @@ def toggle_navbar_collapse(n, is_open):
     return is_open
 
 if __name__ == "__main__":
-    app.run_server(debug=True, host="0.0.0.0", port=80)
+    app.run_server(debug=True, host="0.0.0.0", port=81)

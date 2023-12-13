@@ -23,5 +23,5 @@ def layout():
         style={"paddingTop": 20},
     )
     now = datetime.now().strftime("%H:%M:%S")
-    print(f'{now} | client {request.remote_addr} | homepage')
+    print(f'{now} | client {request.remote_addr} | homepage {request.base_url}')
     return lay

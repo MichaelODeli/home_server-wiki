@@ -154,7 +154,7 @@ def layout(query="", from_video_view="False", **other_unknown_query_strings):
 )
 def table_results(search_by, search_query, search_in_filetype, n_clicks):
     # server_link = '192.168.3.33'
-    server_link = request.base_url.split('/')[2]
+    server_link = request.base_url.replace(':81', '').split('/')[2]
     if search_query == "":
         return "Введен пустой поисковый запрос", None
     else:
