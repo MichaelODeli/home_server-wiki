@@ -12,6 +12,7 @@ from dash import (
 )
 import dash_mantine_components as dmc
 from flask import request
+from datetime import datetime 
 
 register_page(__name__, path="/", icon="fa-solid:home")
 
@@ -21,6 +22,6 @@ def layout():
         pt=20,
         style={"paddingTop": 20},
     )
-    print('client ip', request.remote_addr)
-    print('server link', request.base_url)
+    now = datetime.now().strftime("%H:%M:%S")
+    print(f'{now} | client {request.remote_addr} | homepage')
     return lay

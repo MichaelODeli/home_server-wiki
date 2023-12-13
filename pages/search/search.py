@@ -19,6 +19,8 @@ import sqlite3
 from dash_iconify import DashIconify
 import time
 import dash_bootstrap_components as dbc
+from flask import request
+from datetime import datetime 
 
 register_page(__name__, path="/search", icon="fa-solid:home")
 
@@ -36,7 +38,7 @@ def str_hider(name, limiter=30):
     else:
         return name[0:limiter] + "..."
 
-def link_builder(name, hash, filetype, category, filename):
+def link_builder(server_link, name, hash, filetype, category, filename):
     return (
         html.A(
             str_hider(name),
@@ -45,7 +47,7 @@ def link_builder(name, hash, filetype, category, filename):
         if filetype in ["films", "youtube"]
         else html.A(
             str_hider(name),
-            href=f"http://192.168.3.33/storage/{filetype}/{category}/{filename}",
+            href=f"http://{server_link}/storage/{filetype}/{category}/{filename}",
         )
     )
 
@@ -58,6 +60,7 @@ def layout(query="", from_video_view="False", **other_unknown_query_strings):
     # print(query)
     if other_unknown_query_strings != {}:
         print(other_unknown_query_strings)
+     
     return dmc.Container(
         children=[
             html.Div(id="notifications-container"),
@@ -150,6 +153,8 @@ def layout(query="", from_video_view="False", **other_unknown_query_strings):
     prevent_initial_call=False,
 )
 def table_results(search_by, search_query, search_in_filetype, n_clicks):
+    # server_link = '192.168.3.33'
+    server_link = request.base_url.split('/')[2]
     if search_query == "":
         return "Введен пустой поисковый запрос", None
     else:
@@ -157,7 +162,10 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
             column = "type"
         else:
             column = "filename"
-
+        
+        now = datetime.now().strftime("%H:%M:%S")
+        print(f'{now} | client {request.remote_addr} | search | {search_by} | category "{search_in_filetype}" | query "{search_query}"')
+        
         start_time = time.time()
         conn = sqlite3.connect("bases/nstorage.sqlite3")
         c = conn.cursor()
@@ -186,7 +194,7 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
                     [
                         html.Td(search_in_filetype),
                         html.Td(str_hider(category)),
-                        html.Td(link_builder(name, result_line[0], search_in_filetype, category, filename)),
+                        html.Td(link_builder(server_link, name, result_line[0], search_in_filetype, category, filename)),
                     ]
                 )
             ]

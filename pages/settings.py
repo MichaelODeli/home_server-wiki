@@ -13,6 +13,8 @@ from dash import (
 import dash_mantine_components as dmc
 import dash_bootstrap_components as dbc
 from dash_extensions import Purify
+from flask import request
+from datetime import datetime 
 
 register_page(__name__, path="/settings", icon="fa-solid:home")
 
@@ -49,6 +51,8 @@ checker_layout = dmc.Stepper(
         )
 
 def layout(): 
+    now = datetime.now().strftime("%H:%M:%S")
+    print(f'{now} | client {request.remote_addr} | settings page')
     global checker_layout
     return dmc.Container(
         children=[

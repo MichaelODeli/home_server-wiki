@@ -16,6 +16,8 @@ import dash_player as dp
 import dash_bootstrap_components as dbc
 from dash_iconify import DashIconify
 from dash_extensions import Purify
+from flask import request
+from datetime import datetime 
 
 register_page(__name__, path="/players/videoplayer", icon="fa-solid:home")
 
@@ -48,6 +50,8 @@ def get_video_card(video_title, video_length, video_link):
 
 def layout(v=None, v_type='youtube', **other_unknown_query_strings):
     global link
+    # server_link = '192.168.3.33'
+    server_link = request.base_url.split('/')[2]
     if v!=None:
         conn = sqlite3.connect('bases/nstorage.sqlite3')
         c = conn.cursor()
@@ -56,14 +60,17 @@ def layout(v=None, v_type='youtube', **other_unknown_query_strings):
         channel = one_result[1]
         filename = one_result[2]
         name = '.'.join(filename.split('.')[:-1])
-        link = f'http://192.168.3.33/storage/{v_type}/{channel}/{filename}'
+        link = f'http://{server_link}/storage/{v_type}/{channel}/{filename}'
         c.close()
         conn.close()
     else:
+        v = 'default_video'
         channel = 'Blender'
         name = 'Big buck bunny'
         link = 'https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4'
-
+    
+    now = datetime.now().strftime("%H:%M:%S")
+    print(f'{now} | client {request.remote_addr} | videoview | v_id "{v}" | v_type "{v_type}"')
     return dmc.Container(
         children=[
             dbc.Row(

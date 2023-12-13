@@ -6,6 +6,7 @@ import dash_bootstrap_components as dbc
 from dash_bootstrap_components._components.Container import Container
 from dash_extensions import Purify
 import logging
+from flask import request
 
 logging.basicConfig(filename='logs/main_log.log', encoding='utf-8', level=logging.DEBUG)
 icons_link = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css'
