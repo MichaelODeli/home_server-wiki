@@ -48,7 +48,9 @@ def get_video_card(video_title, video_length, video_link):
             style={"width": 'auto'}, # prev: 350px
         )], href=video_link)
 
-def layout(v=None, v_type='youtube', **other_unknown_query_strings):
+def layout(l = 'n', v=None, v_type='youtube', **other_unknown_query_strings):
+    if l == 'n':
+        return dmc.Container()
     global link
     # server_link = '192.168.3.33'
     server_link = request.base_url.replace(':81', '').split('/')[2]
@@ -92,7 +94,7 @@ def layout(v=None, v_type='youtube', **other_unknown_query_strings):
                                 children=[
                                     dmc.Col(
                                         dmc.Center([
-                                            Purify(f'<a href="/search?from_video_view=True&query={channel}" class="btn btn-outline-primary btn-sm" role="button">{channel}</a>')
+                                            Purify(f'<a href="/search?l=y&from_video_view=True&query={channel}" class="btn btn-outline-primary btn-sm" role="button">{channel}</a>')
                                         ]),
                                         span="content",
                                     ),

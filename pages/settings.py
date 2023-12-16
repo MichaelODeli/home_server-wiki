@@ -50,7 +50,9 @@ checker_layout = dmc.Stepper(
             ],
         )
 
-def layout(): 
+def layout(l = 'n', **kwargs): 
+    if l == 'n':
+        return dmc.Container()
     now = datetime.now().strftime("%H:%M:%S")
     print(f'{now} | client {request.remote_addr} | settings page')
     global checker_layout

@@ -51,7 +51,9 @@ def link_builder(server_link, name, hash, filetype, category, filename):
         )
     )
 
-def layout(query="", from_video_view="False", **other_unknown_query_strings):
+def layout(l = 'n', query="", from_video_view="False", **other_unknown_query_strings):
+    if l == 'n':
+        return dmc.Container()
     if from_video_view == "False":
         value_for_radio = "search_by_name"
     else:

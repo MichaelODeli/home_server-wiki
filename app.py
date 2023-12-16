@@ -29,6 +29,7 @@ search_bar = Purify(
         <div class="g-0 ms-auto flex-nowrap mt-3 mt-md-0 align-items-center row">
             <div class="col"><input class="form-control" id="query" name="query" placeholder="Введите запрос"
                     step="any"></div>
+            <input type="hidden" value="y" name="l" />
             <div class="col-auto"><button class="ms-2 btn btn-primary">Поиск</button></div>
         </div>
     </form>"""
@@ -54,7 +55,7 @@ navbar = dbc.Navbar(
                                     children=[
                                         dbc.DropdownMenuItem("Настройка сервера", header=True),
                                         dbc.DropdownMenuItem("Webmin", href="https://192.168.3.33:10000/"),
-                                        dbc.DropdownMenuItem("Параметры ПО", href="/settings"),
+                                        dbc.DropdownMenuItem("Параметры ПО", href="/settings?l=y"),
                                         dbc.DropdownMenuItem(divider = True),
                                         dbc.DropdownMenuItem("Торрент клиенты", header=True),
                                         dbc.DropdownMenuItem(
@@ -80,7 +81,7 @@ navbar = dbc.Navbar(
                                         dbc.DropdownMenuItem("Плееры", header=True),
                                         dbc.DropdownMenuItem(
                                             "Видео с сервера",
-                                            href="/players/videoplayer",
+                                            href="/players/videoplayer?l=y",
                                         ),
                                     ],
                                     nav=True,
