@@ -4,17 +4,20 @@ import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 import dash_bootstrap_components as dbc
 from dash_extensions import Purify
-# import logging
 
-# logging.basicConfig(filename='logs/main_log.log', encoding='utf-8', level=logging.DEBUG)
+# css styles
 icons_link = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css'
 app = dash.Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.FLATLY, icons_link])
 
 server = app.server
 app.config.suppress_callback_exceptions = True
 
-
+# function for generating Dash Iconify content
 def get_icon(icon):
+    """
+    param:  \n
+    `icon`: icon name
+    """
     return dmc.ThemeIcon(
         DashIconify(icon=icon, width=18),
         size=30,
@@ -22,7 +25,7 @@ def get_icon(icon):
         variant="subtle",
     )
 
-
+# search bar HTML code
 search_bar = Purify(
     """
         <form action="/search" method="GET" class="">
@@ -35,6 +38,7 @@ search_bar = Purify(
     </form>"""
 )
 
+# navbar with buttons
 navbar = dbc.Navbar(
     dbc.Container(
         [
@@ -52,10 +56,17 @@ navbar = dbc.Navbar(
                         [
                             dbc.Col(
                                 dbc.DropdownMenu(
+                                    label="Серверные утилиты",
                                     children=[
                                         dbc.DropdownMenuItem("Настройка сервера", header=True),
-                                        dbc.DropdownMenuItem("Webmin", href="https://192.168.3.33:10000/"),
-                                        dbc.DropdownMenuItem("Параметры ПО", href="/settings?l=y"),
+                                        dbc.DropdownMenuItem(
+                                            "Webmin", 
+                                            href="https://192.168.3.33:10000/"
+                                        ),
+                                        dbc.DropdownMenuItem(
+                                            "Параметры ПО", 
+                                            href="/settings?l=y"
+                                        ),
                                         dbc.DropdownMenuItem(divider = True),
                                         dbc.DropdownMenuItem("Торрент клиенты", header=True),
                                         dbc.DropdownMenuItem(
@@ -68,15 +79,18 @@ navbar = dbc.Navbar(
                                         ),
                                         dbc.DropdownMenuItem(divider = True),
                                         dbc.DropdownMenuItem("Wiki-ресурсы", header=True),
-                                        dbc.DropdownMenuItem("Kiwix", href="http://192.168.3.33:789/"),
+                                        dbc.DropdownMenuItem(
+                                            "Kiwix", 
+                                            href="http://192.168.3.33:789/"
+                                        ),
                                     ],
                                     nav=True,
                                     in_navbar=True,
-                                    label="Серверные утилиты",
                                 ),
                             ),
                             dbc.Col(
                                 dbc.DropdownMenu(
+                                    label="Медиа",
                                     children=[
                                         dbc.DropdownMenuItem("Плееры", header=True),
                                         dbc.DropdownMenuItem(
@@ -86,10 +100,9 @@ navbar = dbc.Navbar(
                                     ],
                                     nav=True,
                                     in_navbar=True,
-                                    label="Медиа",
                                 ),
                             ),
-                            dbc.Col(width="auto"),
+                            dbc.Col(width="auto"), # column for filling empty space
                         ]
                     ),
                     search_bar,
@@ -99,9 +112,7 @@ navbar = dbc.Navbar(
                 navbar=True,
             ),
         ]
-    ),
-    color="light",
-    # dark=True,
+    )
 )
 
 
