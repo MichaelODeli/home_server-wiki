@@ -13,7 +13,8 @@ body {
     padding: 16px
 }
 
-.block-background {
+.block-background,
+.block-background-audio {
     background-color: white;
     border-radius: 5px;
     /* margin-right: 5px; */
@@ -22,6 +23,15 @@ body {
     -moz-box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
     box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
 }
+
+@media (max-width: 768px) {
+    .block-background-audio {
+    -webkit-box-shadow: unset;
+    -moz-box-shadow: unset;
+    box-shadow: unset;
+    }
+}
+
 
 .mrrow {
     margin-right: 10px;
@@ -53,3 +63,21 @@ video,
 .video-column {
     height: 100%;
 }
+
+@media (max-width: 768px) {
+    .phone-col {
+      /* height: 100%; */
+      width: 100%;
+    }
+}
+
+
+.table-wrapper {
+    max-height: 40vh;
+    width: auto;
+    overflow: auto;
+    display:inline-block;
+  }
+  .table-earnings {
+    background: #F3F5F6;
+  }
