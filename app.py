@@ -94,8 +94,13 @@ navbar = dbc.Navbar(
                                     children=[
                                         dbc.DropdownMenuItem("Плееры", header=True),
                                         dbc.DropdownMenuItem(
-                                            "Видео с сервера",
+                                            "Видеоплеер",
                                             href="/players/videoplayer?l=y",
+                                        ),
+                                        dbc.DropdownMenuItem(
+                                            "Аудиоплеер",
+                                            # href="/players/audioplayer?l=y",
+                                            href="/players/audioplayer",
                                         ),
                                     ],
                                     nav=True,

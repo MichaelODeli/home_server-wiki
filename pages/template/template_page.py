@@ -27,7 +27,9 @@ def layout(l = 'n', **kwargs):
         print(f'{now} | client {request.remote_addr} | template page')
         # all workers must be here!
         return dmc.Container(
-        children=[],
-        pt=20,
-        style={"paddingTop": 20},
-    )
+            children=[
+                
+            ],
+            pt=20,
+            style={"paddingTop": 20},
+        )
