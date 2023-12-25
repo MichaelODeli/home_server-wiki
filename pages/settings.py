@@ -81,13 +81,24 @@ def layout(l = 'n', **kwargs):
                         dmc.Space(h=5),
                         dmc.Stack([
                             html.H5('Проверка показателей сервера'),
-                            dbc.Button('Запустить проверку'),
+                            dbc.Button('Запустить проверку', id='settings-server_check'),
                             checker_layout,
                             dmc.Divider(variant="solid"),
                             html.H5('Кнопки управления сервером'),
-                            dmc.TextInput(label="Кодовая фраза", style={"width": 250},),
+                            dmc.TextInput(
+                                label="Кодовая фраза", 
+                                style={"width": 250},
+                                id='settings-server_buttons-code_phrase'),
                             dbc.ButtonGroup(
-                                [dbc.Button("Перезагрузка сервера"), dbc.Button("Перезагрузка приложения"), dbc.Button("Выключение сервера")]
+                                [dbc.Button(
+                                    "Перезагрузка сервера",
+                                    id='settings-server_buttons-reboot'), 
+                                dbc.Button(
+                                    "Перезагрузка приложения",
+                                    id='settings-server_buttons-reload_app'), 
+                                dbc.Button(
+                                    "Выключение сервера",
+                                    id='settings-server_buttons-poweroff')]
                             )
                         ])
                     ], value="server"),
@@ -96,7 +107,10 @@ def layout(l = 'n', **kwargs):
                         dmc.Stack(
                             children=[
                                 html.H5('Каталоги'),
-                                dmc.TextInput(label="Родительский каталог с файлами", style={"width": 250},),
+                                dmc.TextInput(
+                                    label="Родительский каталог с файлами", 
+                                    style={"width": 250}, 
+                                    id='settings-catalog-main_folder'),
                                 dmc.Divider(variant="solid"),
                                 html.H5('Обновление библиотеки'),
                                 dmc.NumberInput(
@@ -105,6 +119,7 @@ def layout(l = 'n', **kwargs):
                                     value=1,
                                     min=1,
                                     style={"width": 250},
+                                    id='settings-catalog-update_interval'
                                 ),
                                 dmc.Divider(variant="solid"),
                                 html.H5('Категории'),
@@ -114,16 +129,17 @@ def layout(l = 'n', **kwargs):
                                     value=["youtube", "films"],
                                     data=['history', 'cartoon_serials', 'en_serials', 'data_science', 'apps', 'books', 'tv_shows', 'youtube', 'films', 'wiki'],
                                     style={"width": 400, "marginBottom": 10},
+                                    id='settings-catalog-selected_categories'
                                 ),
-                                dbc.Button('Обновить библиотеку по выбранным категориям'),
-                                dbc.Button('Сбросить индексацию и обновить библиотеку'),
+                                dbc.Button('Обновить библиотеку по выбранным категориям', id='settings-catalog-update_by_categories'),
+                                dbc.Button('Сбросить категоризацию и обновить библиотеку', id='settings-catalog-update_reset_categories'),
                                 dmc.Divider(variant="solid"),
                                 html.H5('Кнопки управления'),
-                                dbc.Button('Принудительно обновить библиотеку файлов'),
-                                dbc.Button('Отключить файлового менеджера'),
+                                dbc.Button('Принудительно обновить библиотеку файлов', id='settings-catalog-manual_update'),
+                                dbc.Button('Отключить файлового менеджера', id='settings-catalog-disable_update'),
                                 dmc.Divider(variant="solid"),
                                 html.H5('Лог обновления базы'),
-                                dbc.Button('Получить лог'),
+                                dbc.Button('Получить лог', id='settings-catalog-get_log'),
                             ],
                         )
                     ], value="files"),
