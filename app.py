@@ -99,8 +99,8 @@ navbar = dbc.Navbar(
                                         ),
                                         dbc.DropdownMenuItem(
                                             "Аудиоплеер",
-                                            # href="/players/audioplayer?l=y",
-                                            href="/players/audioplayer",
+                                            href="/players/audioplayer?l=y",
+                                            # href="/players/audioplayer",
                                         ),
                                     ],
                                     nav=True,

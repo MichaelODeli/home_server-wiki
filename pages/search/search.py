@@ -42,7 +42,7 @@ def link_builder(server_link, name, hash, filetype, category, filename):
     return (
         html.A(
             str_hider(name),
-            href=f"/players/videoplayer?v={hash}&v_type={filetype}",
+            href=f"/players/videoplayer?v={hash}&v_type={filetype}&l=y",
         )
         if filetype in ["films", "youtube"]
         else html.A(
