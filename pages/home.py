@@ -55,7 +55,7 @@ def get_drive_size(partition):
         used = 1
         valid = False
 
-    return get_ring(partition, int(total), int(used), f'ring-{partition}', valid=valid)
+    return get_ring(partition, int(used), int(total), f'ring-{partition}', valid=valid)
 
 def layout():
     lay = dmc.Container(
