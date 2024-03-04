@@ -74,5 +74,6 @@ def layout():
         style={"paddingTop": 20},
     )
     now = datetime.now().strftime("%d/%b/%Y %H:%M:%S") 
-    print(f'{request.remote_addr} - - [{now}] | homepage {request.base_url}')
+    # print(f'{request.remote_addr} - - [{now}] | homepage {request.base_url}')
+    print(f'{request.remote_addr} - - [{now}] | homepage')
     return lay
