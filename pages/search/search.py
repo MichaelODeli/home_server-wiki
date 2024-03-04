@@ -21,6 +21,7 @@ import time
 import dash_bootstrap_components as dbc
 from flask import request
 from datetime import datetime 
+import sql_traceback_generator
 
 register_page(__name__, path="/search", icon="fa-solid:home")
 
@@ -169,10 +170,17 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
         print(f'{now} | client {request.remote_addr} | search | {search_by} | category "{search_in_filetype}" | query "{search_query}"')
         
         start_time = time.time()
-        conn = sqlite3.connect("bases/nstorage.sqlite3")
-        c = conn.cursor()
-        c.execute(f"SELECT * FROM {search_in_filetype} WHERE {column} LIKE '%{search_query}%'")
-        results = c.fetchall()
+        try:
+            conn = sqlite3.connect("bases/nstorage.sqlite3")
+            c = conn.cursor()
+            # c.execute(f"SELECT * FROM {search_in_filetype} WHERE {column} LIKE '%{search_query}%'")
+            c.execute(f"SELECT * FROM {search_in_filetype} WHERE {column} LIKE '%{search_query}%'")
+            results = c.fetchall()
+            c.close()
+            conn.close()
+        except sqlite3.Error as er:
+            err_cont = sql_traceback_generator.gen(er, from_search=True)
+            return err_cont, None
 
         table_header = [
             html.Thead(
@@ -202,9 +210,6 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
             ]
 
         table_content = [html.Tbody(table_content)]
-
-        c.close()
-        conn.close()
 
         return (
             [dmc.Table(table_header + table_content)]

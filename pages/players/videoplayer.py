@@ -18,8 +18,7 @@ from dash_iconify import DashIconify
 from dash_extensions import Purify
 from flask import request
 from datetime import datetime
-import traceback
-import sys
+import sql_traceback_generator
 
 register_page(__name__, path="/players/videoplayer", icon="fa-solid:home")
 
@@ -81,23 +80,7 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
             c.close()
             conn.close()
         except sqlite3.Error as er:
-            err_cont = dmc.Alert(
-                dmc.Stack(
-                    [
-                        dmc.Text("SQLite error: %s" % (" ".join(er.args)), style={'margin-bottom': '0 !important'}),
-                        dmc.Text(f"Exception class is: {er.__class__}", style={'margin': '5px !important'}),
-                        dmc.Space(h=10),
-                        dmc.Text("SQLite traceback:", style={'margin': '5px !important'}),
-                    ]
-                    + [
-                        dmc.Text(f"{line}", style={'margin': '5px !important'})
-                        for line in traceback.format_exception(er)
-                    ],
-                    spacing=0,
-                    justify="center",
-                    
-                ), w='70%', title='SQL Error', color='red', radius='md', className='alert-pos'
-            )
+            err_cont = sql_traceback_generator.gen(er)
             return err_cont
     else:
         v = "default_video"
