@@ -88,9 +88,9 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
         name = "Big buck bunny"
         link = "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4"
 
-    now = datetime.now().strftime("%H:%M:%S")
+    now = datetime.now().strftime("%d/%b/%Y %H:%M:%S") 
     print(
-        f'{now} | client {request.remote_addr} | videoview | v_id "{v}" | v_type "{v_type}"'
+        f'{request.remote_addr} - - [{now}] | videoview | v_id "{v}" | v_type "{v_type}"'
     )
     return dmc.Container(
         children=[

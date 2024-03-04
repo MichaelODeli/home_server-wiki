@@ -166,8 +166,8 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
         else:
             column = "filename"
         
-        now = datetime.now().strftime("%H:%M:%S")
-        print(f'{now} | client {request.remote_addr} | search | {search_by} | category "{search_in_filetype}" | query "{search_query}"')
+        now = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
+        print(f'{request.remote_addr} - - [{now}] | search | {search_by} | category "{search_in_filetype}" | query "{search_query}"')
         
         start_time = time.time()
         try:

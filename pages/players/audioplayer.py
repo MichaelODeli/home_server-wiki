@@ -34,8 +34,8 @@ def layout(l = 'n', **kwargs):
     if l == 'n':
         return dmc.Container()
     else:
-        now = datetime.now().strftime("%H:%M:%S")
-        print(f'{now} | client {request.remote_addr} | audioplayer')
+        now = datetime.now().strftime("%d/%b/%Y %H:%M:%S") 
+        print(f'{request.remote_addr} - - [{now}] | audioplayer')
         df = pd.read_csv('https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv')
 
     return dmc.Container(
