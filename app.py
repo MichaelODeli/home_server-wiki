@@ -56,7 +56,7 @@ navbar = dbc.Navbar(
                         [
                             dbc.Col(
                                 dbc.DropdownMenu(
-                                    label="Серверные утилиты",
+                                    label="Внешние утилиты",
                                     children=[
                                         dbc.DropdownMenuItem("Настройка сервера", header=True),
                                         dbc.DropdownMenuItem(

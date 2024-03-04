@@ -180,7 +180,15 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
             conn.close()
         except sqlite3.Error as er:
             err_cont = sql_traceback_generator.gen(er, from_search=True)
-            return err_cont, None
+            notif = dmc.Notification(
+                title="Ошибка выполнения запроса",
+                id="my-notif",
+                action="show",
+                message="Подробности на экране",
+                icon=DashIconify(icon="ep:warning-filled"),
+                color='red'
+            )
+            return err_cont, notif
 
         table_header = [
             html.Thead(

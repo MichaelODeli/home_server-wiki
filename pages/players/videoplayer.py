@@ -116,9 +116,17 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                     dmc.Col(
                                         dmc.Center(
                                             [
-                                                Purify(
-                                                    f'<a href="/search?l=y&from_video_view=True&query={channel}" class="btn btn-outline-primary btn-sm" role="button">{channel}</a>'
-                                                )
+                                                dmc.Tooltip(
+                                                    label=f'Перейти на канал "{channel}"',
+                                                    position="bottom",
+                                                    offset=3,
+                                                    withArrow=True,
+                                                    children=[
+                                                        Purify(
+                                                            f'<a href="/search?l=y&from_video_view=True&query={channel}" class="btn btn-outline-primary btn-sm" role="button">{channel}</a>'
+                                                        )
+                                                    ]
+                                                ),
                                             ]
                                         ),
                                         span="content",
@@ -127,33 +135,59 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                     dmc.Col(
                                         dmc.Group(
                                             children=[
-                                                dbc.Button(
-                                                    Purify(
-                                                        '<i class="bi bi-download"></i>'
-                                                    ),
-                                                    size="sm",
-                                                    id="player_download",
-                                                    disabled=True,
-                                                    outline=True,
+                                                dmc.Tooltip(
+                                                    label="Скачать видео",
+                                                    position="bottom",
+                                                    offset=3,
+                                                    withArrow=True,
+                                                    children=[
+                                                        dbc.Button(
+                                                            Purify(
+                                                                '<i class="bi bi-download"></i>'
+                                                            ),
+                                                            size="sm",
+                                                            id="player_download",
+                                                            disabled=True,
+                                                            outline=True,
+                                                        ),
+                                                    ]
                                                 ),
-                                                dbc.Button(
-                                                    Purify(
-                                                        '<i class="bi bi-collection-play"></i>'
-                                                    ),
-                                                    size="sm",
-                                                    id="player_addtoplaylist",
-                                                    disabled=True,
-                                                    outline=True,
+                                                dmc.Tooltip(
+                                                    label="Добавить в плейлист",
+                                                    position="bottom",
+                                                    offset=3,
+                                                    withArrow=True,
+                                                    children=[
+                                                        dbc.Button(
+                                                            Purify(
+                                                                '<i class="bi bi-collection-play"></i>'
+                                                            ),
+                                                            size="sm",
+                                                            id="player_addtoplaylist",
+                                                            disabled=True,
+                                                            outline=True,
+                                                        ),
+                                                    ]
                                                 ),
-                                                dbc.Button(
-                                                    Purify(
-                                                        '<i class="bi bi-flag"></i>'
-                                                    ),
-                                                    size="sm",
-                                                    id="player_report",
-                                                    disabled=True,
-                                                    outline=True,
+                                                dmc.Tooltip(
+                                                    label="Пожаловаться",
+                                                    position="bottom",
+                                                    offset=3,
+                                                    withArrow=True,
+                                                    children=[
+                                                        dbc.Button(
+                                                            Purify(
+                                                                '<i class="bi bi-flag"></i>'
+                                                            ),
+                                                            size="sm",
+                                                            id="player_report",
+                                                            disabled=True,
+                                                            outline=True,
+                                                        ),
+                                                    ]
                                                 ),
+                                                
+                                                
                                             ],
                                             spacing="xs",
                                         ),
