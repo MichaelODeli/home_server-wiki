@@ -1,0 +1,17 @@
+@media (max-width: 768px) {
+    .block-background-audio {
+    -webkit-box-shadow: unset;
+    -moz-box-shadow: unset;
+    box-shadow: unset;
+    }
+}
+
+.table-wrapper {
+    max-height: 40vh;
+    width: auto;
+    overflow: auto;
+    display:inline-block;
+  }
+  .table-earnings {
+    background: #F3F5F6;
+  }
