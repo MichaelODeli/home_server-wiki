@@ -54,14 +54,14 @@ def link_builder(server_link, name, hash, filetype, category, filename):
         )
     )
 
-def search_link(category):
+def search_link(filetype, category):
     return html.A(
             str_hider(category),
             href=f"/search?query={category}&from_video_view=True&l=y",
             className='link-primary'
-        )
+        ) if filetype in ["films", "youtube"] else dmc.Text(category)
 
-def layout(l = 'n', query="", from_video_view="False", **other_unknown_query_strings):
+def layout(l = 'n', query="", from_video_view="False", search_category=None, **other_unknown_query_strings):
     if l == 'n':
         return dmc.Container()
     if from_video_view == "False":
@@ -223,7 +223,7 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
                 html.Tr(
                     [
                         html.Td(search_in_filetype),
-                        html.Td(search_link(category)),
+                        html.Td(search_link(search_in_filetype, category)),
                         html.Td(link_builder(server_link, name, result_line[0], search_in_filetype, category, filename)),
                     ]
                 )
