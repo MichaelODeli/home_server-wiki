@@ -6,8 +6,6 @@ from dash import (
     callback,
     register_page,
     State,
-    Input,
-    Output,
     no_update,
 )
 import sqlite3
@@ -19,6 +17,7 @@ from dash_extensions import Purify
 from flask import request
 from datetime import datetime
 from utils import sql_traceback_generator
+import sys
 
 register_page(__name__, path="/players/videoplayer", icon="fa-solid:home")
 
@@ -92,8 +91,10 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
     print(
         f'{request.remote_addr} - - [{now}] | videoview | v_id "{v}" | v_type "{v_type}"'
     )
-    return dmc.Container(
+    return dmc.NotificationsProvider(
+        dmc.Container(
         children=[
+            html.Div(id="notifications-container1"),
             dbc.Row(
                 children=[
                     dbc.Col(
@@ -117,7 +118,7 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                         dmc.Center(
                                             [
                                                 dmc.Tooltip(
-                                                    label=f'Перейти на канал "{channel}"',
+                                                    label=f'Показать все видео с канала "{channel}"',
                                                     position="bottom",
                                                     offset=3,
                                                     withArrow=True,
@@ -147,8 +148,9 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                                             ),
                                                             size="sm",
                                                             id="player_download",
-                                                            disabled=True,
+                                                            # disabled=True,
                                                             outline=True,
+                                                            className="btn btn-outline-primary"
                                                         ),
                                                     ]
                                                 ),
@@ -166,6 +168,8 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                                             id="player_addtoplaylist",
                                                             disabled=True,
                                                             outline=True,
+                                                            className="btn btn-outline-primary"
+                                                            
                                                         ),
                                                     ]
                                                 ),
@@ -183,6 +187,7 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                                             id="player_report",
                                                             disabled=True,
                                                             outline=True,
+                                                            className="btn btn-outline-primary"
                                                         ),
                                                     ]
                                                 ),
@@ -240,8 +245,50 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                 ],
                 className="gx-3",
             ),
-        ],
+        dcc.Download(id="download-video")],
         pt=20,
         style={"paddingTop": 20},
         size="98%",
+    ))
+
+@callback(
+    [
+        Output("download-video", "data"),
+        Output("notifications-container1", "children"),
+    ],
+    Input("player_download", "n_clicks"),
+    prevent_initial_call=True,
+)
+def func(n_clicks):
+    global link
+    notif_bad = dmc.Notification(
+        title="Ошибка при загрузке файла",
+        id="simple-notify",
+        action="show",
+        message="Попробуйте попытку позже. ",
+        color='red',
+        icon=DashIconify(icon="ic:outline-error"),
     )
+    notif_cool = dmc.Notification(
+        title="Начинаю загрузку...",
+        id="simple-notify",
+        action="show",
+        message="Подождите немного, начинаю скачивание видео.",
+        color='green',
+        icon=DashIconify(icon="ep:success-filled"),
+    )
+
+    if sys.platform == "linux" or sys.platform == "linux2":
+        # link_l = link.replace('http://localhost', '/home/michael/server-side') 
+        return None, notif_bad
+    elif sys.platform == "win32":
+        link_l = link.replace('http://localhost/storage', 'Z:') 
+    else:
+        raise OSError('Unsupported OS')
+
+    try:
+        return dcc.send_file(
+            link_l
+        ), notif_cool
+    except OSError:
+        return None, notif_bad
