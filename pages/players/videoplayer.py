@@ -18,7 +18,7 @@ from dash_iconify import DashIconify
 from dash_extensions import Purify
 from flask import request
 from datetime import datetime
-import sql_traceback_generator
+from utils import sql_traceback_generator
 
 register_page(__name__, path="/players/videoplayer", icon="fa-solid:home")
 

@@ -21,13 +21,13 @@ import time
 import dash_bootstrap_components as dbc
 from flask import request
 from datetime import datetime 
-import sql_traceback_generator
+from utils import sql_traceback_generator
 
 register_page(__name__, path="/search", icon="fa-solid:home")
 
 def str_hider(name, limiter=30):
     """
-    Сокращение имени файла до 30 символов, если не задано иное
+    Сокращение строки до 30 символов, если не задано иное
 
     Параметры:
     ----------
@@ -44,13 +44,22 @@ def link_builder(server_link, name, hash, filetype, category, filename):
         html.A(
             str_hider(name),
             href=f"/players/videoplayer?v={hash}&v_type={filetype}&l=y",
+            className='link-primary'
         )
         if filetype in ["films", "youtube"]
         else html.A(
             str_hider(name),
             href=f"http://{server_link}/storage/{filetype}/{category}/{filename}",
+            className='link-primary'
         )
     )
+
+def search_link(category):
+    return html.A(
+            str_hider(category),
+            href=f"/search?query={category}&from_video_view=True&l=y",
+            className='link-primary'
+        )
 
 def layout(l = 'n', query="", from_video_view="False", **other_unknown_query_strings):
     if l == 'n':
@@ -79,12 +88,15 @@ def layout(l = 'n', query="", from_video_view="False", **other_unknown_query_str
                                     dmc.Space(h=10),
                                     dmc.Stack(
                                         children=[
-                                            dmc.TextInput(
-                                                label="Поисковый запрос",
-                                                style={"width": "100%"},
-                                                value=str(query),
-                                                id="search_query",
-                                            ),
+                                            html.Div([
+                                                dbc.Label('Поисковый запрос'),
+                                                dbc.Input(
+                                                    id="search_query",
+                                                    type="text",
+                                                    value=str(query),
+                                                    style={"width": "100%"}
+                                                ),
+                                            ]),
                                             html.Div(
                                                 [
                                                     dbc.Label("Категории для поиска"),
@@ -211,7 +223,7 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
                 html.Tr(
                     [
                         html.Td(search_in_filetype),
-                        html.Td(str_hider(category)),
+                        html.Td(search_link(category)),
                         html.Td(link_builder(server_link, name, result_line[0], search_in_filetype, category, filename)),
                     ]
                 )
