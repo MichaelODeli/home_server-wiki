@@ -236,15 +236,15 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
 
         table_content = []
         for result_line in results:
-            category = result_line[1]
-            filename = result_line[2]
+            category = result_line[2]
+            filename = result_line[3]
             name = ".".join(filename.split(".")[:-1])
             table_content += [
                 html.Tr(
                     [
                         html.Td(search_in_filetype),
                         html.Td(search_link(search_in_filetype, category)),
-                        html.Td(link_builder(server_link, name, result_line[0], search_in_filetype, category, filename)),
+                        html.Td(link_builder(server_link, name, result_line[1], search_in_filetype, category, filename)),
                     ]
                 )
             ]

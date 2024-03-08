@@ -72,8 +72,8 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
             c = conn.cursor()
             c.execute(f"SELECT * FROM {v_type} WHERE {v_type}_filehash = '{v}'")
             one_result = c.fetchone()
-            channel = one_result[1]
-            filename = one_result[2]
+            channel = one_result[2]
+            filename = one_result[3]
             name = ".".join(filename.split(".")[:-1])
             link = f"http://{server_link}/storage/{v_type}/{channel}/{filename}"
             c.close()
