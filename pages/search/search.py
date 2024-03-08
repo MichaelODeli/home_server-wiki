@@ -24,6 +24,7 @@ from datetime import datetime
 from utils import sql_traceback_generator
 
 register_page(__name__, path="/search", icon="fa-solid:home")
+videos_categories = ['cartoon_serials', 'en_serials', 'tv_shows', 'youtube', 'films', 'ru_serials']
 
 def str_hider(name, limiter=30):
     """
@@ -58,7 +59,7 @@ def link_builder(server_link, name, hash, filetype, category, filename):
             href=f"/players/videoplayer?v={hash}&v_type={filetype}&l=y",
             className='link-primary'
         )
-        if filetype in ["films", "youtube"]
+        if filetype in videos_categories
         else html.A(
             str_hider(name),
             href=f"http://{server_link}/storage/{filetype}/{category}/{filename}",
@@ -78,8 +79,17 @@ def search_link(filetype, category):
             str_hider(category),
             href=f"/search?query={category}&from_video_view=True&l=y",
             className='link-primary'
-        ) if filetype in ["films", "youtube"] else dmc.Text(category)
+        ) if filetype in videos_categories else dmc.Text(str_hider(category))
 
+def get_duration(seconds_data):
+    return time.strftime('%H:%M:%S', time.gmtime(float(seconds_data)))
+
+def get_size_str(size):
+    size = float(size)
+    if size <= 512:
+        return str(size)+' MB'
+    else:
+        return str(round(size/1024, 2))+' GB'
 
 def layout(l = 'n', query="", from_video_view="False", search_category=None, **other_unknown_query_strings):
     if l == 'n':
@@ -155,14 +165,18 @@ def layout(l = 'n', query="", from_video_view="False", search_category=None, **o
                                 style={"width": "100%"},
                             ),
                             dmc.Space(h=15),
-                            html.Div(
-                                children=[
-                                    html.H3("Результаты поиска"),
-                                    dmc.Space(h=10),
-                                    html.Div(id="table_search"),
-                                ],
-                                className="block-background",
-                                style={"width": "100%"},
+                            dmc.LoadingOverlay(
+                                html.Div(
+                                    children=[
+                                        html.H3("Результаты поиска"),
+                                        dmc.Space(h=10),
+                                        html.Div(id="table_search"),
+                                    ],
+                                    id='results_loader',
+                                    className="block-background",
+                                    style={"width": "100%", 'min-height': '100px'},
+                                ),
+                                loaderProps={"variant": "bars", "color": "#2c3e50", "size": "xl"},
                             ),
                         ],
                     ),
@@ -178,6 +192,7 @@ def layout(l = 'n', query="", from_video_view="False", search_category=None, **o
     [
         Output("table_search", "children"),
         Output("notifications-container", "children"),
+        Output("results_loader", 'children')
     ],
     [
         State("search_by", "value"),
@@ -229,6 +244,8 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
                         html.Th("Источник"),
                         html.Th("Канал / Категория"),
                         html.Th("Название"),
+                        html.Th('Вес'),
+                        html.Th('Длительность') if search_in_filetype in videos_categories else None
                     ]
                 )
             )
@@ -245,6 +262,8 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
                         html.Td(search_in_filetype),
                         html.Td(search_link(search_in_filetype, category)),
                         html.Td(link_builder(server_link, name, result_line[1], search_in_filetype, category, filename)),
+                        html.Td(get_size_str(result_line[5])),
+                        html.Td(get_duration(result_line[6])) if search_in_filetype in videos_categories else None
                     ]
                 )
             ]
@@ -261,5 +280,6 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
                 action="show",
                 message="Результаты получены за %s секунд" % round(time.time() - start_time, 3),
                 icon=DashIconify(icon="ep:success-filled"),
-            )
+            ),
+            no_update
         )
