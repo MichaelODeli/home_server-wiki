@@ -2,6 +2,9 @@
 # logging.basicConfig(filename = "homeserver_worker.log", format = "%(asctime)s - %(levelname)s - %(message)s", level='INFO')
 
 import glob
+with open('fileManager.log', 'a', encoding='UTF-8') as file:
+    file.write('\n----------\n\n')
+
 import configparser
 import os
 import sqlite3
@@ -17,10 +20,11 @@ def log_printer(task, data):
     """
     Вывод строки с датой и необходимой информацией
     """
-    now = datetime.now().strftime("%d/%b/%Y %H:%M:%S.%f")[:-3]
-    print(
-        f'fileManager - - [{now}] | {task} | {data}'
-    )
+    with open('fileManager.log', 'a', encoding='UTF-8') as file:
+        now = datetime.now().strftime("%d/%b/%Y %H:%M:%S.%f")[:-3]
+        string = f'fileManager - - [{now}] | {task} | {data}'
+        print(string, file = file) # output to file
+        print(string)
 
 log_printer('main', 'app started')
 
@@ -153,12 +157,15 @@ for category in getCategoriesList(baseway):
     # conn.commit()
 
     # добавление в базу новых файлов
-    for fileListing in getDataInCategory(baseway, category, data = 'files', addCategory=False):
+    k=0
+    data = getDataInCategory(baseway, category, data = 'files', addCategory=False)
+    for fileListing in data:
+        k+=1
         # получение типа и имени файла из его пути, а также формирование полного пути к файлу
         fileType = fileListing[0]
         fileName = fileListing[1]
         fullway = baseway+category+'/'+fileType+'/'+fileName
-        log_printer('db_worker', f'type: "{fileType}", name "{fileName}"')
+        log_printer('db_worker', f'{k}/{len(data)} | "{category}/{fileType}/{fileName}"')
 
         # получение хэша 
         calculated_hash = hashlib.sha1(bytes(fileName, encoding='UTF-8')).hexdigest()
