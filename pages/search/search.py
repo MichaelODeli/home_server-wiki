@@ -40,6 +40,18 @@ def str_hider(name, limiter=30):
         return name[0:limiter] + "..."
 
 def link_builder(server_link, name, hash, filetype, category, filename):
+    """
+    Генерация ссылок в файловом хранилище сервера
+
+    Параметры:
+    ----------
+    - server_link - текущий адрес сервера
+    - name - текст ссылки
+    - hash - хэш файла на сервере
+    - filetype - тип контента
+    - category - категория контента
+    - filename - название файла
+    """
     return (
         html.A(
             str_hider(name),
@@ -55,11 +67,19 @@ def link_builder(server_link, name, hash, filetype, category, filename):
     )
 
 def search_link(filetype, category):
+    """
+    Получение ссылки на формирование поискового запроса
+
+    Параметры:
+    - filetype - тип файла
+    - category - категория
+    """
     return html.A(
             str_hider(category),
             href=f"/search?query={category}&from_video_view=True&l=y",
             className='link-primary'
         ) if filetype in ["films", "youtube"] else dmc.Text(category)
+
 
 def layout(l = 'n', query="", from_video_view="False", search_category=None, **other_unknown_query_strings):
     if l == 'n':
