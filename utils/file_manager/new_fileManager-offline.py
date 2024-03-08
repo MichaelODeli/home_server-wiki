@@ -6,18 +6,23 @@ import configparser
 import os
 import sqlite3
 import sys
-from datetime import datetime
-from datetime import date
-from moviepy.editor import VideoFileClip
+from datetime import datetime, date
+import cv2 as cv
+import traceback
+import hashlib
+
+videos_categories = ['cartoon_serials', 'en_serials', 'tv_shows', 'youtube', 'films', 'ru_serials']
 
 def log_printer(task, data):
     """
     Вывод строки с датой и необходимой информацией
     """
-    now = datetime.now().strftime("%d/%b/%Y %H:%M:%S") 
+    now = datetime.now().strftime("%d/%b/%Y %H:%M:%S.%f")[:-3]
     print(
         f'fileManager - - [{now}] | {task} | {data}'
     )
+
+log_printer('main', 'app started')
 
 def getCategoriesList(baseway: str):
     """
@@ -75,6 +80,24 @@ def filesRenamer(baseway):
             os.rename(element, fileSplit)
     log_printer('filesRenamer', f'renamed files: {k}')
 
+def duration_with_opencv(filename):
+    """
+    Получение длительности видео с помощью OpenCV.
+
+    -1 при невалидном видеофайле
+    -2 при нулевом размере файла
+    -3 при прочей ошибке
+    """
+    video = cv.VideoCapture(filename)
+    if not video.isOpened(): 
+        # need to catch errors
+        duration = -1
+    else:
+        fps = video.get(cv.CAP_PROP_FPS)
+        frame_count = int(video.get(cv.CAP_PROP_FRAME_COUNT))
+        duration = int(frame_count/fps)
+    return duration
+
 # получение текущей даты для БД
 today = date.today()
 
@@ -85,7 +108,7 @@ try:
         cfg.read_file(fp)
 except FileNotFoundError:
     raise FileNotFoundError("You didn't created config file (soon it will be automatic)")
-
+log_printer('main', 'config read')
 # конфиг
 if sys.platform == "linux" or sys.platform == "linux2":
     baseway = cfg.get('settings', 'LinWay')
@@ -100,22 +123,25 @@ filesRenamer(baseway)
 conn = sqlite3.connect(baseName)
 c = conn.cursor()
 for category in getCategoriesList(baseway):
+    if '-' in category and category[0]=='_': continue
     log_printer('main_loop', f'work with category "{category}"')
     basescript = f"""
                 BEGIN TRANSACTION;
                 DROP TABLE IF EXISTS "{category}";
                 CREATE TABLE IF NOT EXISTS "{category}" (
-                    '{category}' INTEGER PRIMARY KEY AUTOINCREMENT,
+                    '{category}_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+                    '{category}_filehash' TEXT NOT NULL,
                     'type' TEXT NOT NULL,
                     'filename' TEXT UNIQUE NOT NULL,
                     'added' TEXT NOT NULL,
                     'size' INTEGER NOT NULL DEFAULT 0"""
-    if category == 'youtube' or category == 'films':
+    if category in videos_categories:
         basescript+=""",
                     'duration' INTEGER NOT NULL DEFAULT 0);"""
     else: basescript+=');'
     c.executescript(basescript) 
     conn.commit()
+    log_printer('main_loop', 'table created')
 
     # # очистка базы от несуществующих файлов
     # c.execute(f'SELECT * FROM {category};')
@@ -128,25 +154,33 @@ for category in getCategoriesList(baseway):
 
     # добавление в базу новых файлов
     for fileListing in getDataInCategory(baseway, category, data = 'files', addCategory=False):
+        # получение типа и имени файла из его пути, а также формирование полного пути к файлу
         fileType = fileListing[0]
         fileName = fileListing[1]
         fullway = baseway+category+'/'+fileType+'/'+fileName
-        fileSize = os.path.getsize(fullway)
+        log_printer('db_worker', f'type: "{fileType}", name "{fileName}"')
+
+        # получение хэша 
+        calculated_hash = hashlib.sha1(bytes(fileName, encoding='UTF-8')).hexdigest()
+        
+        # получение размера файла
+        fileSize = round(os.path.getsize(fullway)/1048576, 2)
         try:
-            fileSize = round(os.path.getsize(fullway)/1048576, 2)
-            if category == 'youtube' or category == 'films': 
+            if category in videos_categories: 
                 try:
-                    fileDuration = VideoFileClip(fullway).duration
-                except OSError:
-                    fileDuration = -1
-                c.execute(f'INSERT INTO {category} (type, filename, added, size, duration) VALUES ("{fileType}", "{fileName}", "{today}", "{fileSize}", "{fileDuration}");')
+                    fileDuration = duration_with_opencv(fullway) if fileSize > 0 else -2
+                except Exception as e:
+                    print(traceback.format_exc())
+                    print(e)
+                    fileDuration = -3
+                c.execute(f'INSERT INTO {category} ({category}_filehash, type, filename, added, size, duration) VALUES ("{calculated_hash}", "{fileType}", "{fileName}", "{today}", "{fileSize}", "{fileDuration}");')
             else:
-                c.execute(f'INSERT INTO {category} (type, filename, added, size) VALUES ("{fileType}", "{fileName}", "{today}", "{fileSize}");')
+                c.execute(f'INSERT INTO {category} ({category}_filehash, type, filename, added, size) VALUES ("{calculated_hash}", "{fileType}", "{fileName}", "{today}", "{fileSize}");')
         except sqlite3.IntegrityError:
             pass
     
     # сброс последних значений id в таблице sqlite_sequence
-    c.execute(f'UPDATE sqlite_sequence SET seq = (SELECT MAX({category}) FROM {category}) WHERE name="{category}"')
+    c.execute(f'UPDATE sqlite_sequence SET seq = (SELECT MAX({category}_id) FROM {category}) WHERE name="{category}"')
     conn.commit()
 c.close()
 conn.close()
