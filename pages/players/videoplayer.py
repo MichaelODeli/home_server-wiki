@@ -91,6 +91,7 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
     print(
         f'{request.remote_addr} - - [{now}] | videoview | v_id "{v}" | v_type "{v_type}"'
     )
+    text_label = 'канала' if v_type=='youtube' else 'категории'
     return dmc.NotificationsProvider(
         dmc.Container(
         children=[
@@ -118,13 +119,13 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                         dmc.Center(
                                             [
                                                 dmc.Tooltip(
-                                                    label=f'Показать все видео с канала "{channel}"',
+                                                    label=f'Показать все видео с {text_label} "{channel}"',
                                                     position="bottom",
                                                     offset=3,
                                                     withArrow=True,
                                                     children=[
                                                         Purify(
-                                                            f'<a href="/search?l=y&from_video_view=True&query={channel}" class="btn btn-outline-primary btn-sm" role="button">{channel}</a>'
+                                                            f'<a href="/search?l=y&from_video_view=True&query={channel}&search_category={v_type}" class="btn btn-outline-primary btn-sm" role="button">{channel}</a>'
                                                         )
                                                     ]
                                                 ),

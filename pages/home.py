@@ -23,8 +23,8 @@ def get_ring(drive, current_value, max_value, id: str, valid):
         return dmc.Stack([
             dmc.RingProgress(
                             id=id,
-                            sections=[{"value": percent, "color": "#2c3e50"}],
-                            label=dmc.Center(dmc.Text(f"{str(percent)}%", color="#2c3e50", size=20)),
+                            sections=[{"value": percent, "color": "--bs-primary"}],
+                            label=dmc.Center(dmc.Text(f"{str(percent)}%", color="--bs-primary", size=20)),
                             roundCaps=True,
                             size=130
             ),
@@ -35,7 +35,7 @@ def get_ring(drive, current_value, max_value, id: str, valid):
             dmc.RingProgress(
                             id=id,
                             sections=[{"value": 100, "color": "red"}],
-                            label=dmc.Center(dmc.Text("NaN", color="#2c3e50", size=20)),
+                            label=dmc.Center(dmc.Text("NaN", color="--bs-primary", size=20)),
                             roundCaps=True,
                             size=130
             ),
