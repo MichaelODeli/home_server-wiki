@@ -20,25 +20,38 @@ from dash_iconify import DashIconify
 import time
 import dash_bootstrap_components as dbc
 from flask import request
-from datetime import datetime 
+from datetime import datetime
 from utils import sql_traceback_generator
 
 register_page(__name__, path="/search", icon="fa-solid:home")
-videos_categories = ['cartoon_serials', 'en_serials', 'tv_shows', 'youtube', 'films', 'ru_serials']
+videos_categories = [
+    "cartoon_serials",
+    "en_serials",
+    "tv_shows",
+    "youtube",
+    "films",
+    "ru_serials",
+]
 
-def get_icon(icon, size=18, background=True, icon_color='white'):
+
+def get_icon(icon, size=18, background=True, icon_color="white"):
     """
     param:  \n
     `icon`: icon name
     """
-    return dmc.ThemeIcon(
-        DashIconify(icon=icon, width=size, color=icon_color),
-        size=size,
-        radius=size+7,
-        # variant="subtle",
-        color='#000000',
-        m='5px'
-    ) if background == True else DashIconify(icon=icon, width=size, color=icon_color)
+    return (
+        dmc.ThemeIcon(
+            DashIconify(icon=icon, width=size, color=icon_color),
+            size=size,
+            radius=size + 7,
+            # variant="subtle",
+            color="#000000",
+            m="5px",
+        )
+        if background == True
+        else DashIconify(icon=icon, width=size, color=icon_color)
+    )
+
 
 def str_hider(name, limiter=25):
     """
@@ -54,6 +67,7 @@ def str_hider(name, limiter=25):
     else:
         return name[0:limiter] + "..."
 
+
 def link_builder(server_link, name, hash, filetype, category, filename):
     """
     Генерация ссылок в файловом хранилище сервера
@@ -67,33 +81,34 @@ def link_builder(server_link, name, hash, filetype, category, filename):
     - category - категория контента
     - filename - название файла
     """
-    dbc.Button(
-            children=[get_icon('mdi:youtube') if filetype=='youtube' else None, str_hider(category)],
-            style={'text-align': 'center', 'display': 'flex', 'align-items': 'center'},
-            outline=True,
-            size='sm',
-            href=f"/search?query={category}&from_video_view=True&l=y&search_category={filetype}",
-            className='btn btn-outline-primary'
-        )
     return (
         dbc.Button(
-            children=[get_icon('mdi:youtube') if filetype=='youtube' else get_icon('ic:movie'), str_hider(name)],
-            style={'text-align': 'center', 'display': 'flex', 'align-items': 'center'},
+            children=[
+                (
+                    get_icon("mdi:youtube")
+                    if filetype == "youtube"
+                    else get_icon("ic:movie")
+                ),
+                str_hider(name),
+            ],
+            style={"text-align": "center", "display": "flex", "align-items": "center"},
             outline=True,
-            size='sm',
+            size="sm",
             href=f"/players/videoplayer?v={hash}&v_type={filetype}&l=y",
-            className='link-primary'
+            className="link-primary",
         )
-        if filetype in videos_categories and '.mp4' in filename
+        if filetype in videos_categories and ".mp4" in filename
         else dbc.Button(
-            children=[get_icon('ic:baseline-download'), str_hider(name)],
-            style={'text-align': 'center', 'display': 'flex', 'align-items': 'center'},
+            children=[get_icon("ic:baseline-download"), str_hider(name)],
+            style={"text-align": "center", "display": "flex", "align-items": "center"},
             outline=True,
-            size='sm',
+            size="sm",
             href=f"http://{server_link}/storage/{filetype}/{category}/{filename}",
-            className='link-primary'
+            download=filename,
+            className="link-primary",
         )
     )
+
 
 def search_link(filetype, category):
     """
@@ -104,26 +119,38 @@ def search_link(filetype, category):
     - category - категория
     """
     return dbc.Button(
-        children=[get_icon('mdi:youtube') if filetype=='youtube' else None, str_hider(category)],
-        style={'text-align': 'center', 'display': 'flex', 'align-items': 'center'},
+        children=[
+            get_icon("mdi:youtube") if filetype == "youtube" else None,
+            str_hider(category),
+        ],
+        style={"text-align": "center", "display": "flex", "align-items": "center"},
         outline=True,
-        size='sm',
+        size="sm",
         href=f"/search?query={category}&from_video_view=True&l=y&search_category={filetype}",
-        className='link-primary'
+        className="link-primary",
     )
 
+
 def get_duration(seconds_data):
-    return time.strftime('%H:%M:%S', time.gmtime(float(seconds_data)))
+    return time.strftime("%H:%M:%S", time.gmtime(float(seconds_data)))
+
 
 def get_size_str(size):
     size = float(size)
     if size <= 512:
-        return str(size)+' MB'
+        return str(size) + " MB"
     else:
-        return str(round(size/1024, 2))+' GB'
+        return str(round(size / 1024, 2)) + " GB"
 
-def layout(l = 'n', query="", from_video_view="False", search_category='youtube', **other_unknown_query_strings):
-    if l == 'n':
+
+def layout(
+    l="n",
+    query="",
+    from_video_view="False",
+    search_category="youtube",
+    **other_unknown_query_strings,
+):
+    if l == "n":
         return dmc.Container()
     if from_video_view == "False":
         value_for_radio = "search_by_name"
@@ -133,7 +160,7 @@ def layout(l = 'n', query="", from_video_view="False", search_category='youtube'
     # print(query)
     if other_unknown_query_strings != {}:
         print(other_unknown_query_strings)
-     
+
     return dmc.Container(
         children=[
             html.Div(id="notifications-container"),
@@ -149,26 +176,46 @@ def layout(l = 'n', query="", from_video_view="False", search_category='youtube'
                                     dmc.Space(h=10),
                                     dmc.Stack(
                                         children=[
-                                            html.Div([
-                                                dbc.Label('Поисковый запрос'),
-                                                dbc.Input(
-                                                    id="search_query",
-                                                    type="text",
-                                                    value=str(query),
-                                                    style={"width": "100%"}
-                                                ),
-                                            ]),
+                                            html.Div(
+                                                [
+                                                    dbc.Label("Поисковый запрос"),
+                                                    dbc.Input(
+                                                        id="search_query",
+                                                        type="text",
+                                                        value=str(query),
+                                                        style={"width": "100%"},
+                                                    ),
+                                                ]
+                                            ),
                                             html.Div(
                                                 [
                                                     dbc.Label("Категории для поиска"),
                                                     dbc.RadioItems(
                                                         options=[
-                                                            {"label": "YouTube", "value": 'youtube'},
-                                                            {"label": "Фильмы", "value": 'films'},
-                                                            {"label": "Мультсериалы", "value": 'cartoon_serials'},
-                                                            {"label": "ТВ Шоу", "value": 'tv_shows'},
-                                                            {"label": "Русские сериалы", "value": 'ru_serials'},
-                                                            {"label": "Программы", "value": 'apps'},
+                                                            {
+                                                                "label": "YouTube",
+                                                                "value": "youtube",
+                                                            },
+                                                            {
+                                                                "label": "Фильмы",
+                                                                "value": "films",
+                                                            },
+                                                            {
+                                                                "label": "Мультсериалы",
+                                                                "value": "cartoon_serials",
+                                                            },
+                                                            {
+                                                                "label": "ТВ Шоу",
+                                                                "value": "tv_shows",
+                                                            },
+                                                            {
+                                                                "label": "Русские сериалы",
+                                                                "value": "ru_serials",
+                                                            },
+                                                            {
+                                                                "label": "Программы",
+                                                                "value": "apps",
+                                                            },
                                                         ],
                                                         value=search_category,
                                                         id="search_in_type",
@@ -181,8 +228,14 @@ def layout(l = 'n', query="", from_video_view="False", search_category='youtube'
                                                     dbc.Label("Поиск по..."),
                                                     dbc.RadioItems(
                                                         options=[
-                                                            {"label": "Названию", "value": 'search_by_name'},
-                                                            {"label": "Каналу / Категории", "value": 'search_by_category'},
+                                                            {
+                                                                "label": "Названию",
+                                                                "value": "search_by_name",
+                                                            },
+                                                            {
+                                                                "label": "Каналу / Категории",
+                                                                "value": "search_by_category",
+                                                            },
                                                         ],
                                                         value=value_for_radio,
                                                         id="search_by",
@@ -202,28 +255,52 @@ def layout(l = 'n', query="", from_video_view="False", search_category='youtube'
                             dmc.LoadingOverlay(
                                 html.Div(
                                     children=[
-                                        dmc.Group(
+                                        dmc.Grid(
                                             [
-                                                html.H3("Результаты поиска", style={'margin-bottom': '0'}),
-                                                # html.Div(style={'width': '100%'}),
-                                                dmc.Tooltip(
-                                                    label='Количество результатов поиска ограничено - 500.',
-                                                    position="bottom",
-                                                    offset=3,
-                                                    withArrow=True,
-                                                    children=[get_icon('material-symbols:info', size=25, icon_color='black', background=False)]
+                                                dmc.Col(
+                                                    [
+                                                        html.H3(
+                                                            "Результаты поиска",
+                                                            style={
+                                                                "margin-bottom": "0"
+                                                            },
+                                                        )
+                                                    ],
+                                                    span="content",
+                                                ),
+                                                dmc.Col(span="auto"),
+                                                dmc.Col(
+                                                    dmc.Tooltip(
+                                                        label="Количество результатов поиска ограничено - 500.",
+                                                        position="bottom",
+                                                        offset=3,
+                                                        withArrow=True,
+                                                        children=[
+                                                            get_icon(
+                                                                "material-symbols:info",
+                                                                size=25,
+                                                                icon_color="black",
+                                                                background=False,
+                                                            )
+                                                        ],
+                                                    ),
+                                                    span="content",
                                                 ),
                                             ],
-                                            align='center',
+                                            align="center",
                                         ),
                                         dmc.Space(h=10),
                                         html.Div(id="table_search"),
                                     ],
-                                    id='results_loader',
+                                    id="results_loader",
                                     className="block-background",
-                                    style={"width": "100%", 'min-height': '100px'},
+                                    style={"width": "100%", "min-height": "100px"},
                                 ),
-                                loaderProps={"variant": "bars", "color": "--bs-primary", "size": "xl"},
+                                loaderProps={
+                                    "variant": "bars",
+                                    "color": "--bs-primary",
+                                    "size": "xl",
+                                },
                             ),
                         ],
                     ),
@@ -239,7 +316,7 @@ def layout(l = 'n', query="", from_video_view="False", search_category='youtube'
     [
         Output("table_search", "children"),
         Output("notifications-container", "children"),
-        Output("results_loader", 'children')
+        Output("results_loader", "children"),
     ],
     [
         State("search_by", "value"),
@@ -250,8 +327,7 @@ def layout(l = 'n', query="", from_video_view="False", search_category='youtube'
     prevent_initial_call=False,
 )
 def table_results(search_by, search_query, search_in_filetype, n_clicks):
-    # server_link = '192.168.3.33'
-    server_link = request.base_url.replace(':81', '').split('/')[2]
+    server_link = request.base_url.replace(":81", "").split("/")[2]
     if search_query == "":
         return "Введен пустой поисковый запрос", None
     else:
@@ -259,7 +335,7 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
             column = "type"
         else:
             column = "filename"
-        
+
         now = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
 
         start_time = time.time()
@@ -267,7 +343,9 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
             conn = sqlite3.connect("bases/nstorage.sqlite3")
             c = conn.cursor()
             # c.execute(f"SELECT * FROM {search_in_filetype} WHERE {column} LIKE '%{search_query}%'")
-            c.execute(f"SELECT * FROM {search_in_filetype} WHERE {column} LIKE '%{search_query}%'")
+            c.execute(
+                f"SELECT * FROM {search_in_filetype} WHERE {column} LIKE '%{search_query}%'"
+            )
             results = c.fetchall()
             c.close()
             conn.close()
@@ -279,7 +357,7 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
                 action="show",
                 message="Подробности на экране",
                 icon=DashIconify(icon="ep:warning-filled"),
-                color='red'
+                color="red",
             )
             return err_cont, notif
 
@@ -290,8 +368,12 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
                         html.Th("Источник"),
                         html.Th("Канал / Категория"),
                         html.Th("Название"),
-                        html.Th('Размер'),
-                        html.Th('Длительность') if search_in_filetype in videos_categories else None
+                        html.Th("Размер"),
+                        (
+                            html.Th("Длительность")
+                            if search_in_filetype in videos_categories
+                            else None
+                        ),
                     ]
                 )
             )
@@ -301,7 +383,7 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
         limiter = 0
         for result_line in results:
             limiter += 1
-            if limiter > 500: 
+            if limiter > 500:
                 break
             category = result_line[2]
             filename = result_line[3]
@@ -311,21 +393,38 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
                     [
                         html.Td(search_in_filetype),
                         html.Td(search_link(search_in_filetype, category)),
-                        html.Td(link_builder(server_link, name, result_line[1], search_in_filetype, category, filename)),
+                        html.Td(
+                            link_builder(
+                                server_link,
+                                name,
+                                result_line[1],
+                                search_in_filetype,
+                                category,
+                                filename,
+                            )
+                        ),
                         html.Td(get_size_str(result_line[5])),
-                        html.Td(get_duration(result_line[6])) if search_in_filetype in videos_categories else None
+                        (
+                            html.Td(get_duration(result_line[6]))
+                            if search_in_filetype in videos_categories
+                            else None
+                        ),
                     ]
                 )
             ]
 
         table_content = [html.Tbody(table_content)]
 
-        print(f'{request.remote_addr} - - [{now}] | search | {search_by} | category "{search_in_filetype}" | query "{search_query}" | results {len(results)} | time {round(time.time() - start_time, 3)}')
+        print(
+            f'{request.remote_addr} - - [{now}] | search | {search_by} | category "{search_in_filetype}" | query "{search_query}" | results {len(results)} | time {round(time.time() - start_time, 3)}'
+        )
 
         return (
-            [dmc.Table(table_header + table_content)]
-            if len(results) > 0
-            else [dmc.Center([html.H5("По Вашему запросу нет результатов.")])],
+            (
+                [dmc.Table(table_header + table_content)]
+                if len(results) > 0
+                else [dmc.Center([html.H5("По Вашему запросу нет результатов.")])]
+            ),
             dmc.Notification(
                 title="Запрос выполнен",
                 id="my-notif",
@@ -333,5 +432,5 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
                 message=f"Результаты получены за {round(time.time() - start_time, 3)} секунд. Результатов {len(results)}",
                 icon=DashIconify(icon="ep:success-filled"),
             ),
-            no_update
+            no_update,
         )

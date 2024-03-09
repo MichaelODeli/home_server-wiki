@@ -87,170 +87,172 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
         name = "Big buck bunny"
         link = "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4"
 
-    now = datetime.now().strftime("%d/%b/%Y %H:%M:%S") 
+    now = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
     print(
         f'{request.remote_addr} - - [{now}] | videoview | v_id "{v}" | v_type "{v_type}"'
     )
-    text_label = 'канала' if v_type=='youtube' else 'категории'
+    text_label = "канала" if v_type == "youtube" else "категории"
     return dmc.NotificationsProvider(
         dmc.Container(
-        children=[
-            html.Div(id="notifications-container1"),
-            dbc.Row(
-                children=[
-                    dbc.Col(
-                        children=[
-                            dp.DashPlayer(
-                                id="player",
-                                url=link,
-                                controls=True,
-                                width="1200px",
-                                className="video_container",
-                                volume=0.4,
-                            ),
-                            dmc.Space(h=10),
-                            html.H4(
-                                name, style={"width": "100%"}, id="player_videoname"
-                            ),
-                            dmc.Space(h=10),
-                            dmc.Grid(
-                                children=[
-                                    dmc.Col(
-                                        dmc.Center(
-                                            [
-                                                dmc.Tooltip(
-                                                    label=f'Показать все видео с {text_label} "{channel}"',
-                                                    position="bottom",
-                                                    offset=3,
-                                                    withArrow=True,
-                                                    children=[
-                                                        Purify(
-                                                            f'<a href="/search?l=y&from_video_view=True&query={channel}&search_category={v_type}" class="btn btn-outline-primary btn-sm" role="button">{channel}</a>'
-                                                        )
-                                                    ]
-                                                ),
-                                            ]
+            children=[
+                html.Div(id="notifications-container1"),
+                dbc.Row(
+                    children=[
+                        dbc.Col(
+                            children=[
+                                dp.DashPlayer(
+                                    id="player",
+                                    url=link,
+                                    controls=True,
+                                    width="1200px",
+                                    className="video_container",
+                                    volume=0.4,
+                                ),
+                                dmc.Space(h=10),
+                                html.H4(
+                                    name, style={"width": "100%"}, id="player_videoname"
+                                ),
+                                dmc.Space(h=10),
+                                dmc.Grid(
+                                    children=[
+                                        dmc.Col(
+                                            dmc.Center(
+                                                [
+                                                    dmc.Tooltip(
+                                                        label=f'Показать все видео с {text_label} "{channel}"',
+                                                        position="bottom",
+                                                        offset=3,
+                                                        withArrow=True,
+                                                        children=[
+                                                            Purify(
+                                                                f'<a href="/search?l=y&from_video_view=True&query={channel}&search_category={v_type}" class="btn btn-outline-primary btn-sm" role="button">{channel}</a>'
+                                                            )
+                                                        ],
+                                                    ),
+                                                ]
+                                            ),
+                                            span="content",
                                         ),
-                                        span="content",
-                                    ),
-                                    dmc.Col(span="auto"),
-                                    dmc.Col(
-                                        dmc.Group(
-                                            children=[
-                                                dmc.Tooltip(
-                                                    label="Скачать видео",
-                                                    position="bottom",
-                                                    offset=3,
-                                                    withArrow=True,
-                                                    children=[
-                                                        dbc.Button(
-                                                            Purify(
-                                                                '<i class="bi bi-download"></i>'
+                                        dmc.Col(span="auto"),
+                                        dmc.Col(
+                                            dmc.Group(
+                                                children=[
+                                                    dmc.Tooltip(
+                                                        label="Скачать видео",
+                                                        position="bottom",
+                                                        offset=3,
+                                                        withArrow=True,
+                                                        children=[
+                                                            dbc.Button(
+                                                                Purify(
+                                                                    '<i class="bi bi-download"></i>'
+                                                                ),
+                                                                size="sm",
+                                                                id="player_download",
+                                                                # disabled=True,
+                                                                outline=True,
+                                                                className="btn btn-outline-primary",
                                                             ),
-                                                            size="sm",
-                                                            id="player_download",
-                                                            # disabled=True,
-                                                            outline=True,
-                                                            className="btn btn-outline-primary"
-                                                        ),
-                                                    ]
-                                                ),
-                                                dmc.Tooltip(
-                                                    label="Добавить в плейлист",
-                                                    position="bottom",
-                                                    offset=3,
-                                                    withArrow=True,
-                                                    children=[
-                                                        dbc.Button(
-                                                            Purify(
-                                                                '<i class="bi bi-collection-play"></i>'
+                                                        ],
+                                                    ),
+                                                    dmc.Tooltip(
+                                                        label="Добавить в плейлист",
+                                                        position="bottom",
+                                                        offset=3,
+                                                        withArrow=True,
+                                                        children=[
+                                                            dbc.Button(
+                                                                Purify(
+                                                                    '<i class="bi bi-collection-play"></i>'
+                                                                ),
+                                                                size="sm",
+                                                                id="player_addtoplaylist",
+                                                                disabled=True,
+                                                                outline=True,
+                                                                className="btn btn-outline-primary",
                                                             ),
-                                                            size="sm",
-                                                            id="player_addtoplaylist",
-                                                            disabled=True,
-                                                            outline=True,
-                                                            className="btn btn-outline-primary"
-                                                            
-                                                        ),
-                                                    ]
-                                                ),
-                                                dmc.Tooltip(
-                                                    label="Пожаловаться",
-                                                    position="bottom",
-                                                    offset=3,
-                                                    withArrow=True,
-                                                    children=[
-                                                        dbc.Button(
-                                                            Purify(
-                                                                '<i class="bi bi-flag"></i>'
+                                                        ],
+                                                    ),
+                                                    dmc.Tooltip(
+                                                        label="Пожаловаться",
+                                                        position="bottom",
+                                                        offset=3,
+                                                        withArrow=True,
+                                                        children=[
+                                                            dbc.Button(
+                                                                Purify(
+                                                                    '<i class="bi bi-flag"></i>'
+                                                                ),
+                                                                size="sm",
+                                                                id="player_report",
+                                                                disabled=True,
+                                                                outline=True,
+                                                                className="btn btn-outline-primary",
                                                             ),
-                                                            size="sm",
-                                                            id="player_report",
-                                                            disabled=True,
-                                                            outline=True,
-                                                            className="btn btn-outline-primary"
-                                                        ),
-                                                    ]
-                                                ),
-                                                
-                                                
-                                            ],
-                                            spacing="xs",
+                                                        ],
+                                                    ),
+                                                ],
+                                                spacing="xs",
+                                            ),
+                                            span="content",
                                         ),
-                                        span="content",
-                                    ),
-                                ],
-                                align="center",
-                                style={"width": "100%"},
-                            ),
-                        ],
-                        className="block-background columns-margin video-column",
-                        width="auto",
-                    ),
-                    dbc.Col(
-                        children=[
-                            html.H5("Смотрите также:"),
-                            dbc.ButtonGroup(
-                                [
-                                    dbc.Button(
-                                        "Рекомендации", disabled=True, outline=True
-                                    ),
-                                    dbc.Button(f"Канал: {channel}"),
-                                    dbc.Button("Похожие", disabled=True, outline=True),
-                                ],
-                                style={"width": "100%"},
-                            ),
-                            dmc.Space(h=7),
-                            get_video_card(
-                                "Sample video 1", "00:50", "https://example.com"
-                            ),
-                            dmc.Space(h=7),
-                            get_video_card(
-                                "Sample video 2", "01:50", "https://example.com"
-                            ),
-                            dmc.Space(h=7),
-                            get_video_card(
-                                "Sample video 3", "02:50", "https://example.com"
-                            ),
-                            dmc.Space(h=7),
-                            get_video_card(
-                                "Sample video 4", "03:50", "https://example.com"
-                            ),
-                            dmc.Space(h=7),
-                            get_video_card(
-                                "Sample video 5", "1:04:50", "https://example.com"
-                            ),
-                        ],
-                        className="block-background columns-margin overflow-column",
-                    ),
-                ],
-                className="gx-3",
-            ),
-        dcc.Download(id="download-video")],
-        pt=20,
-        style={"paddingTop": 20},
-        size="98%",
-    ))
+                                    ],
+                                    align="center",
+                                    style={"width": "100%"},
+                                ),
+                            ],
+                            className="block-background columns-margin video-column",
+                            width="auto",
+                        ),
+                        dbc.Col(
+                            children=[
+                                html.H5("Смотрите также:"),
+                                dbc.ButtonGroup(
+                                    [
+                                        dbc.Button(
+                                            "Рекомендации", disabled=True, outline=True
+                                        ),
+                                        dbc.Button(f"Канал: {channel}"),
+                                        dbc.Button(
+                                            "Похожие", disabled=True, outline=True
+                                        ),
+                                    ],
+                                    style={"width": "100%"},
+                                ),
+                                dmc.Space(h=7),
+                                get_video_card(
+                                    "Sample video 1", "00:50", "https://example.com"
+                                ),
+                                dmc.Space(h=7),
+                                get_video_card(
+                                    "Sample video 2", "01:50", "https://example.com"
+                                ),
+                                dmc.Space(h=7),
+                                get_video_card(
+                                    "Sample video 3", "02:50", "https://example.com"
+                                ),
+                                dmc.Space(h=7),
+                                get_video_card(
+                                    "Sample video 4", "03:50", "https://example.com"
+                                ),
+                                dmc.Space(h=7),
+                                get_video_card(
+                                    "Sample video 5", "1:04:50", "https://example.com"
+                                ),
+                            ],
+                            className="block-background columns-margin overflow-column",
+                        ),
+                    ],
+                    className="gx-3",
+                ),
+                dcc.Download(id="download-video"),
+            ],
+            pt=20,
+            style={"paddingTop": 20},
+            size="98%",
+        )
+    )
+
 
 @callback(
     [
@@ -267,7 +269,7 @@ def func(n_clicks):
         id="simple-notify",
         action="show",
         message="Попробуйте попытку позже. ",
-        color='red',
+        color="red",
         icon=DashIconify(icon="ic:outline-error"),
     )
     notif_cool = dmc.Notification(
@@ -275,21 +277,19 @@ def func(n_clicks):
         id="simple-notify",
         action="show",
         message="Подождите немного, начинаю скачивание видео.",
-        color='green',
+        color="green",
         icon=DashIconify(icon="ep:success-filled"),
     )
 
     if sys.platform == "linux" or sys.platform == "linux2":
-        # link_l = link.replace('http://localhost', '/home/michael/server-side') 
+        # link_l = link.replace('http://localhost', '/home/michael/server-side')
         return None, notif_bad
     elif sys.platform == "win32":
-        link_l = link.replace('http://localhost/storage', 'Z:') 
+        link_l = link.replace("http://localhost/storage", "Z:")
     else:
-        raise OSError('Unsupported OS')
+        raise OSError("Unsupported OS")
 
     try:
-        return dcc.send_file(
-            link_l
-        ), notif_cool
+        return dcc.send_file(link_l), notif_cool
     except OSError:
         return None, notif_bad

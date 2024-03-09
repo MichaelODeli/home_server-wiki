@@ -6,11 +6,16 @@ import dash_bootstrap_components as dbc
 from dash_extensions import Purify
 
 # css styles
-icons_link = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css'
-app = dash.Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.FLATLY, icons_link])
+icons_link = (
+    "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css"
+)
+app = dash.Dash(
+    __name__, use_pages=True, external_stylesheets=[dbc.themes.FLATLY, icons_link]
+)
 
 server = app.server
 app.config.suppress_callback_exceptions = True
+
 
 # function for generating Dash Iconify content
 def get_icon(icon):
@@ -24,6 +29,7 @@ def get_icon(icon):
         radius=30,
         variant="subtle",
     )
+
 
 # search bar HTML code
 search_bar = Purify(
@@ -47,7 +53,11 @@ navbar = dbc.Navbar(
                 "Home server",
                 href="/",
                 className="h3 me-5",
-                style={"textDecoration": "none", "color": "black", "margin-bottom": '0px !important'},
+                style={
+                    "textDecoration": "none",
+                    "color": "black",
+                    "margin-bottom": "0px !important",
+                },
             ),
             dbc.NavbarToggler(id="navbar-toggler", n_clicks=0),
             dbc.Collapse(
@@ -58,17 +68,19 @@ navbar = dbc.Navbar(
                                 dbc.DropdownMenu(
                                     label="Внешние утилиты",
                                     children=[
-                                        dbc.DropdownMenuItem("Настройка сервера", header=True),
                                         dbc.DropdownMenuItem(
-                                            "Webmin", 
-                                            href="https://192.168.3.33:10000/"
+                                            "Настройка сервера", header=True
                                         ),
                                         dbc.DropdownMenuItem(
-                                            "Параметры ПО", 
-                                            href="/settings?l=y"
+                                            "Webmin", href="https://192.168.3.33:10000/"
                                         ),
-                                        dbc.DropdownMenuItem(divider = True),
-                                        dbc.DropdownMenuItem("Торрент клиенты", header=True),
+                                        dbc.DropdownMenuItem(
+                                            "Параметры ПО", href="/settings?l=y"
+                                        ),
+                                        dbc.DropdownMenuItem(divider=True),
+                                        dbc.DropdownMenuItem(
+                                            "Торрент клиенты", header=True
+                                        ),
                                         dbc.DropdownMenuItem(
                                             "qBittorrent",
                                             href="http://192.168.3.33:8124/",
@@ -77,11 +89,12 @@ navbar = dbc.Navbar(
                                             "Transmission (obsolete)",
                                             href="http://192.168.3.33:12345/",
                                         ),
-                                        dbc.DropdownMenuItem(divider = True),
-                                        dbc.DropdownMenuItem("Wiki-ресурсы", header=True),
+                                        dbc.DropdownMenuItem(divider=True),
                                         dbc.DropdownMenuItem(
-                                            "Kiwix", 
-                                            href="http://192.168.3.33:789/"
+                                            "Wiki-ресурсы", header=True
+                                        ),
+                                        dbc.DropdownMenuItem(
+                                            "Kiwix", href="http://192.168.3.33:789/"
                                         ),
                                     ],
                                     nav=True,
@@ -107,7 +120,7 @@ navbar = dbc.Navbar(
                                     in_navbar=True,
                                 ),
                             ),
-                            dbc.Col(width="auto"), # column for filling empty space
+                            dbc.Col(width="auto"),  # column for filling empty space
                         ]
                     ),
                     search_bar,
@@ -135,6 +148,7 @@ def toggle_navbar_collapse(n, is_open):
     if n:
         return not is_open
     return is_open
+
 
 if __name__ == "__main__":
     app.run_server(debug=True, host="0.0.0.0", port=81)
