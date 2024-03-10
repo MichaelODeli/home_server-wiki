@@ -30,3 +30,8 @@ body {
       width: 100%;
     }
 }
+
+.dropdown-item,
+.dropdown-header {
+    color: var(--bs-blue);
+}

@@ -290,7 +290,7 @@ def layout(
                                             align="center",
                                         ),
                                         dmc.Space(h=10),
-                                        html.Div(id="table_search"),
+                                        html.Div(id="table_search", style={'overflow-x': 'auto'}),
                                     ],
                                     id="results_loader",
                                     className="block-background",
@@ -344,7 +344,7 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
             c = conn.cursor()
             # c.execute(f"SELECT * FROM {search_in_filetype} WHERE {column} LIKE '%{search_query}%'")
             c.execute(
-                f"SELECT * FROM {search_in_filetype} WHERE {column} LIKE '%{search_query}%'"
+                f"SELECT * FROM {search_in_filetype} WHERE {column} LIKE '%{search_query}%' LIMIT 500"
             )
             results = c.fetchall()
             c.close()
@@ -365,7 +365,7 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
             html.Thead(
                 html.Tr(
                     [
-                        html.Th("Источник"),
+                        # html.Th("Источник"),
                         html.Th("Канал / Категория"),
                         html.Th("Название"),
                         html.Th("Размер"),
@@ -380,18 +380,14 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
         ]
 
         table_content = []
-        limiter = 0
         for result_line in results:
-            limiter += 1
-            if limiter > 500:
-                break
             category = result_line[2]
             filename = result_line[3]
             name = ".".join(filename.split(".")[:-1])
             table_content += [
                 html.Tr(
                     [
-                        html.Td(search_in_filetype),
+                        # html.Td(search_in_filetype),
                         html.Td(search_link(search_in_filetype, category)),
                         html.Td(
                             link_builder(

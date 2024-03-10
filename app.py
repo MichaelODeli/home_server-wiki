@@ -36,10 +36,10 @@ search_bar = Purify(
     """
         <form action="/search" method="GET" class="">
         <div class="g-0 ms-auto flex-nowrap mt-3 mt-md-0 align-items-center row">
-            <div class="col"><input class="form-control" id="query" name="query" placeholder="Введите запрос"
+            <div class="col"><input class="form-control" id="query" name="query" placeholder="Поиск по хранилищу"
                     step="any"></div>
             <input type="hidden" value="y" name="l" />
-            <div class="col-auto"><button class="ms-2 btn btn-primary">Поиск</button></div>
+            <div class="col-auto"><button class="ms-2 btn btn-primary">Найти</button></div>
         </div>
     </form>"""
 )
@@ -113,7 +113,6 @@ navbar = dbc.Navbar(
                                         dbc.DropdownMenuItem(
                                             "Аудиоплеер",
                                             href="/players/audioplayer?l=y",
-                                            # href="/players/audioplayer",
                                         ),
                                     ],
                                     nav=True,
