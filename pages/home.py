@@ -14,20 +14,20 @@ import dash_mantine_components as dmc
 from flask import request
 from datetime import datetime
 from blocks import bl_homepage as bl_h
-
-import locale
-locale.setlocale(locale.LC_ALL, 'ru_RU')
+from controllers import cont_homepage
 
 register_page(__name__, path="/", icon="fa-solid:home")
+qbittorrent_url = 'http://192.168.3.33:8124'
 
 def layout():
+    global qbittorrent_url
     lay = dmc.Container(
         children=[
             dmc.Grid([
                 # dmc.Col(span='auto'),
-                dmc.Col([bl_h.block_disk_size()], span='content', className='mobile-block'),
+                dmc.Col([bl_h.block_disk_size()], span='content', className='mobile-block', id='t'),
                 dmc.Col([bl_h.block_weather()], span='content', className='mobile-block'),
-                dmc.Col([bl_h.block_weather()], span='content', className='mobile-block'),
+                dmc.Col([bl_h.block_torrents(qbittorrent_url)], span='content', className='mobile-block'),
                 # dmc.Col(span='auto')
             ],
             align='stretch',
@@ -42,3 +42,16 @@ def layout():
     # print(f'{request.remote_addr} - - [{now}] | homepage {request.base_url}')
     print(f"{request.remote_addr} - - [{now}] | homepage")
     return lay
+
+
+@callback(
+    [
+        Output("home-torrents-active", "children"),
+        Output("home-torrents-download", "children"),
+        Output("home-torrents-upload", "children"),
+    ],
+    [Input("t", "children")],
+)
+def toggle_navbar_collapse(_):
+    global qbittorrent_url
+    return cont_homepage.get_torrent_status(qbittorrent_url)
