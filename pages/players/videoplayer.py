@@ -18,46 +18,11 @@ from flask import request
 from datetime import datetime
 from utils import sql_traceback_generator
 import sys
+from blocks import bl_videoplayer as bl_v
 
 register_page(__name__, path="/players/videoplayer", icon="fa-solid:home")
 
 link = ""
-
-
-def get_video_card(video_title, video_length, video_link):
-    return html.A(
-        [
-            dmc.Card(
-                children=[
-                    dmc.CardSection(
-                        dmc.Image(
-                            src="/assets/image-not-found.jpg",
-                            height=120,
-                        )
-                    ),
-                    dmc.Group(
-                        [
-                            dmc.Text(str(video_title), weight=500),
-                            dbc.Badge(
-                                str(video_length),
-                                text_color="primary",
-                                className="border me-1",
-                                color="white",
-                            ),
-                        ],
-                        position="apart",
-                        mt="md",
-                        mb="xs",
-                    ),
-                ],
-                withBorder=True,
-                shadow="sm",
-                radius="md",
-                style={"width": "auto"},  # prev: 350px
-            )
-        ],
-        href=video_link,
-    )
 
 
 def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
@@ -220,23 +185,23 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                     style={"width": "100%"},
                                 ),
                                 dmc.Space(h=7),
-                                get_video_card(
+                                bl_v.get_video_card(
                                     "Sample video 1", "00:50", "https://example.com"
                                 ),
                                 dmc.Space(h=7),
-                                get_video_card(
+                                bl_v.get_video_card(
                                     "Sample video 2", "01:50", "https://example.com"
                                 ),
                                 dmc.Space(h=7),
-                                get_video_card(
+                                bl_v.get_video_card(
                                     "Sample video 3", "02:50", "https://example.com"
                                 ),
                                 dmc.Space(h=7),
-                                get_video_card(
+                                bl_v.get_video_card(
                                     "Sample video 4", "03:50", "https://example.com"
                                 ),
                                 dmc.Space(h=7),
-                                get_video_card(
+                                bl_v.get_video_card(
                                     "Sample video 5", "1:04:50", "https://example.com"
                                 ),
                             ],
@@ -248,7 +213,8 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                 dcc.Download(id="download-video"),
             ],
             pt=20,
-            style={"paddingTop": 20},
+            # style={"paddingTop": 20},
+            className='dmc-container',
             size="98%",
         )
     )

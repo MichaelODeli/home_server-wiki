@@ -1,0 +1,19 @@
+.home-container {
+    max-width: 90%;
+}
+
+/* на телефоне увеличится ширина блока */
+@media (max-width: 768px) {
+    .home-container {
+        max-width: 95%;
+    }
+}
+
+@media (max-width: 1000px) {
+    .mobile-block {
+        width: 100%;
+    }
+    .grid-home {
+        display: block;
+      }
+}

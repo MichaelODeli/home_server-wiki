@@ -22,6 +22,7 @@ import dash_bootstrap_components as dbc
 from flask import request
 from datetime import datetime
 from utils import sql_traceback_generator
+from blocks import bl_search as bl_s
 
 register_page(__name__, path="/search", icon="fa-solid:home")
 videos_categories = [
@@ -33,114 +34,6 @@ videos_categories = [
     "ru_serials",
 ]
 
-
-def get_icon(icon, size=18, background=True, icon_color="white"):
-    """
-    param:  \n
-    `icon`: icon name
-    """
-    return (
-        dmc.ThemeIcon(
-            DashIconify(icon=icon, width=size, color=icon_color),
-            size=size,
-            radius=size + 7,
-            # variant="subtle",
-            color="#000000",
-            m="5px",
-        )
-        if background == True
-        else DashIconify(icon=icon, width=size, color=icon_color)
-    )
-
-
-def str_hider(name, limiter=25):
-    """
-    Сокращение строки до 30 символов, если не задано иное
-
-    Параметры:
-    ----------
-    - name (str): сокращаемый текст
-    - limiter (int): кол-во оставляемых символов (по умолчанию 30)
-    """
-    if len(name) <= limiter:
-        return name
-    else:
-        return name[0:limiter] + "..."
-
-
-def link_builder(server_link, name, hash, filetype, category, filename):
-    """
-    Генерация ссылок в файловом хранилище сервера
-
-    Параметры:
-    ----------
-    - server_link - текущий адрес сервера
-    - name - текст ссылки
-    - hash - хэш файла на сервере
-    - filetype - тип контента
-    - category - категория контента
-    - filename - название файла
-    """
-    return (
-        dbc.Button(
-            children=[
-                (
-                    get_icon("mdi:youtube")
-                    if filetype == "youtube"
-                    else get_icon("ic:movie")
-                ),
-                str_hider(name),
-            ],
-            style={"text-align": "center", "display": "flex", "align-items": "center"},
-            outline=True,
-            size="sm",
-            href=f"/players/videoplayer?v={hash}&v_type={filetype}&l=y",
-            className="link-primary",
-        )
-        if filetype in videos_categories and ".mp4" in filename
-        else dbc.Button(
-            children=[get_icon("ic:baseline-download"), str_hider(name)],
-            style={"text-align": "center", "display": "flex", "align-items": "center"},
-            outline=True,
-            size="sm",
-            href=f"http://{server_link}/storage/{filetype}/{category}/{filename}",
-            download=filename,
-            className="link-primary",
-        )
-    )
-
-
-def search_link(filetype, category):
-    """
-    Получение ссылки на формирование поискового запроса
-
-    Параметры:
-    - filetype - тип файла
-    - category - категория
-    """
-    return dbc.Button(
-        children=[
-            get_icon("mdi:youtube") if filetype == "youtube" else None,
-            str_hider(category),
-        ],
-        style={"text-align": "center", "display": "flex", "align-items": "center"},
-        outline=True,
-        size="sm",
-        href=f"/search?query={category}&from_video_view=True&l=y&search_category={filetype}",
-        className="link-primary",
-    )
-
-
-def get_duration(seconds_data):
-    return time.strftime("%H:%M:%S", time.gmtime(float(seconds_data)))
-
-
-def get_size_str(size):
-    size = float(size)
-    if size <= 512:
-        return str(size) + " MB"
-    else:
-        return str(round(size / 1024, 2)) + " GB"
 
 
 def layout(
@@ -276,7 +169,7 @@ def layout(
                                                         offset=3,
                                                         withArrow=True,
                                                         children=[
-                                                            get_icon(
+                                                            bl_s.get_icon(
                                                                 "material-symbols:info",
                                                                 size=25,
                                                                 icon_color="black",
@@ -308,7 +201,8 @@ def layout(
             ),
         ],
         pt=20,
-        style={"paddingTop": 20},
+        # style={"paddingTop": 20},
+        className='dmc-container',
     )
 
 
@@ -388,9 +282,9 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
                 html.Tr(
                     [
                         # html.Td(search_in_filetype),
-                        html.Td(search_link(search_in_filetype, category)),
+                        html.Td(bl_s.search_link(search_in_filetype, category)),
                         html.Td(
-                            link_builder(
+                            bl_s.link_builder(
                                 server_link,
                                 name,
                                 result_line[1],
@@ -399,9 +293,9 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
                                 filename,
                             )
                         ),
-                        html.Td(get_size_str(result_line[5])),
+                        html.Td(bl_s.get_size_str(result_line[5])),
                         (
-                            html.Td(get_duration(result_line[6]))
+                            html.Td(bl_s.get_duration(result_line[6]))
                             if search_in_filetype in videos_categories
                             else None
                         ),

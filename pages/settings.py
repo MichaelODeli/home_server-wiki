@@ -151,5 +151,7 @@ def layout(l = 'n', **kwargs):
             )
         ],
         pt=20,
-        style={"paddingTop": 20, 'width': '100%'},
+        # style={"paddingTop": 20, 'width': '100%'},
+        className='dmc-container',
+        w='100%'
     )

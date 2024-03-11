@@ -35,3 +35,7 @@ body {
 .dropdown-header {
     color: var(--bs-blue);
 }
+
+.dmc-container {
+    padding-top: 20px;
+}
