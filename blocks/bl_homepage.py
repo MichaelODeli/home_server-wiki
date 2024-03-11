@@ -3,7 +3,7 @@ from dash import (
     html,
 )
 import dash_mantine_components as dmc
-from datetime import datetime
+from datetime import datetime, timedelta
 import calendar
 import shutil
 from dash_iconify import DashIconify
@@ -140,6 +140,12 @@ def get_weather_label(selected_date: str, temperature: list, weather_type="sunny
     )
 
 
+def get_date_str(plus):
+    today = datetime.today()
+    needed_date = today + timedelta(days=plus) if plus > 0 else today
+    return needed_date.strftime('%d%m%Y')
+
+
 def block_weather(**kwargs):
     return html.Div(
         [
@@ -147,11 +153,11 @@ def block_weather(**kwargs):
             dmc.Space(h=5),
             dmc.Group(
                 [
-                    get_weather_label("12032024", ["+1", "-4"], "cloudy"),
-                    get_weather_label("13032024", ["+10", "-4"], "sunny"),
-                    get_weather_label("14032024", ["+1", "-4"], "partly-cloudy"),
-                    get_weather_label("15032024", ["+10", "-4"], "thunderstorm"),
-                    get_weather_label("16032024", ["+1", "-40"], "rain"),
+                    get_weather_label(get_date_str(0), ["+1", "-4"], "cloudy"),
+                    get_weather_label(get_date_str(1), ["+10", "-4"], "sunny"),
+                    get_weather_label(get_date_str(2), ["+1", "-4"], "partly-cloudy"),
+                    get_weather_label(get_date_str(3), ["+10", "-4"], "thunderstorm"),
+                    get_weather_label(get_date_str(4), ["+1", "-40"], "rain"),
                 ],
                 position="center",
                 spacing="xs",
