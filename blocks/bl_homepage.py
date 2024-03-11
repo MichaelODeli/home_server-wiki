@@ -150,7 +150,6 @@ def block_weather(**kwargs):
                 # style={'display': 'inline-flex', 'flex-direction': 'column'}
             ),
         ],
-    className="block-background mobile-block",
-    style={'height': '100%'}
+    className="block-background mobile-block"
     )
 

@@ -24,11 +24,14 @@ def layout():
     lay = dmc.Container(
         children=[
             dmc.Grid([
-                dmc.Col(span='auto'),
+                # dmc.Col(span='auto'),
                 dmc.Col([bl_h.block_disk_size()], span='content', className='mobile-block'),
                 dmc.Col([bl_h.block_weather()], span='content', className='mobile-block'),
-                dmc.Col(span='auto')
+                dmc.Col([bl_h.block_weather()], span='content', className='mobile-block'),
+                # dmc.Col(span='auto')
             ],
+            align='stretch',
+            justify="center",
             className='grid-home')
         ],
         pt=20,

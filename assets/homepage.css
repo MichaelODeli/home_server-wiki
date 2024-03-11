@@ -2,18 +2,22 @@
     max-width: 90%;
 }
 
+.mobile-block {
+    min-height: 100% !important;
+}
+
 /* на телефоне увеличится ширина блока */
 @media (max-width: 768px) {
     .home-container {
-        max-width: 95%;
+        max-width: 100%;
     }
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 768px) {
     .mobile-block {
         width: 100%;
     }
     .grid-home {
         display: block;
-      }
+    }
 }
