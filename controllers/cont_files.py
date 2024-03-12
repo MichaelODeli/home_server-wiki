@@ -2,35 +2,41 @@ import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 from dash import (
     dcc,
-    html,
-    Input,
-    Output,
-    callback,
-    register_page,
-    State,
-    Input,
-    Output,
-    no_update,
+    html
 )
+from random import randint as r
 
+def nested_list_to_html(lst):
+    """
+    Рекурсивно преобразует вложенный список в маркированный список HTML.
 
-def get_button_with_tooltip(
-    button_id, icon_name, tooltip_text, tooltip_position="bottom"
-):
-    return dmc.Tooltip(
-        label=tooltip_text,
-        position=tooltip_position,
-        offset=3,
-        withArrow=True,
-        children=[
-            dmc.ActionIcon(
-                DashIconify(icon=icon_name, width=20), size="lg", id=button_id
-            )
-        ],
-    )
+    Параметры:
+    lst (list): Вложенный список, который нужно преобразовать.
+
+    Вывод:
+    str: Строка, содержащая HTML-код маркированного списка.
+    """
+    html = "<ul>\n"
+    for item in lst:
+        if isinstance(item, list):
+            html += nested_list_to_html(item)
+        else:
+            html += "<li>" + str(item) + "</li>\n"
+    html += "</ul>\n"
+    return html.replace('\n', '')
 
 
 def generate_html_table(header: list, data: list):
+    """
+    Генерирует HTML-таблицу на основе переданных заголовков и данных.
+
+    Параметры:
+    header (list): Список заголовков столбцов таблицы.
+    data (list): Список списков, представляющих строки данных таблицы.
+
+    Вывод:
+    html.Div: HTML-элемент div, содержащий таблицу.
+    """
     header = [
         html.Thead(html.Tr([html.Th(header_element) for header_element in header]))
     ]
@@ -43,4 +49,116 @@ def generate_html_table(header: list, data: list):
     return html.Div(
         [dmc.Table(header + body)],
         style={"overflow-x": "auto", "white-space": "nowrap"},
+    )
+
+
+def block_files_list():
+    return html.Div(
+        [
+            dmc.Grid(
+                [
+                    dmc.Col(
+                        html.H5("Менеджер файлов", style={"margin": "0"}),
+                        span="content",
+                    ),
+                    dmc.Col(span="auto"),
+                    dmc.ButtonGroup(
+                        [
+                            dmc.Button(
+                                "Copy",
+                                variant="outline",
+                                disabled=True,
+                            ),
+                            dmc.Button(
+                                "Move",
+                                variant="outline",
+                                disabled=True,
+                            ),
+                            dmc.Button(
+                                "Remove",
+                                variant="outline",
+                                color="red",
+                                disabled=True,
+                            ),
+                        ],
+                        m="5px",
+                    ),
+                ],
+                align="stretch",
+                justify="center",
+            ),
+            dmc.Space(h=15),
+            generate_html_table(
+                ["Маркер", "Название файла", "Размер", "Дата добавления", "Действия"],
+                [
+                    [
+                        DashIconify(icon="material-symbols:folder", width=20),
+                        "Перейти в каталог выше",
+                        None,
+                    ],
+                    [
+                        dmc.Checkbox(id=f"checkbox-simple-{r(0, 100)}"),
+                        "Какой-то важный файл",
+                        "10 Мб",
+                        "12-03-2024",
+                        "e",
+                    ],
+                    [
+                        dmc.Checkbox(id=f"checkbox-simple-{r(0, 100)}"),
+                        "Какой-то важный файл",
+                        "10 Мб",
+                        "12-03-2024",
+                        "e",
+                    ],
+                    [
+                        dmc.Checkbox(id=f"checkbox-simple-{r(0, 100)}"),
+                        "Какой-то важный файл",
+                        "10 Мб",
+                        "12-03-2024",
+                        "e",
+                    ],
+                    [
+                        dmc.Checkbox(id=f"checkbox-simple-{r(0, 100)}"),
+                        "Какой-то важный файл",
+                        "10 Мб",
+                        "12-03-2024",
+                        "e",
+                    ],
+                    [
+                        dmc.Checkbox(id=f"checkbox-simple-{r(0, 100)}"),
+                        "Какой-то важный файл",
+                        "10 Мб",
+                        "12-03-2024",
+                        "e",
+                    ],
+                    [
+                        dmc.Checkbox(id=f"checkbox-simple-{r(0, 100)}"),
+                        "Какой-то важный файл",
+                        "10 Мб",
+                        "12-03-2024",
+                        "e",
+                    ],
+                ],
+            ),
+        ],
+        className="block-background",
+    )
+
+
+def tree_content(source):
+    if source == "col":
+        return "Hello! This is on column!"
+    elif source == "drawer":
+        return "Hello! This is on drawer!"
+    else:
+        raise ValueError
+
+
+def get_drawer():
+    return dmc.Drawer(
+        children=[tree_content(source="drawer")],
+        title=html.H5("Дерево папок"),
+        id="drawer-tree",
+        padding="md",
+        zIndex=10000,
     )

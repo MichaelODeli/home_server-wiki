@@ -106,9 +106,27 @@ def search_link(filetype, category):
     )
 
 def get_duration(seconds_data):
+    """
+    Преобразует количество секунд в формат времени HH:MM:SS.
+
+    Параметры:
+    seconds_data (float): Количество секунд.
+
+    Вывод:
+    str: Строка в формате HH:MM:SS, представляющая время.
+    """
     return time.strftime("%H:%M:%S", time.gmtime(float(seconds_data)))
 
 def get_size_str(size):
+    """
+    Преобразует размер файла в удобочитаемый формат (МБ или ГБ).
+
+    Параметры:
+    size (float): Размер файла в байтах.
+
+    Вывод:
+    str: Строка, представляющая размер файла в МБ или ГБ.
+    """
     size = float(size)
     if size <= 512:
         return str(size) + " MB"

@@ -152,6 +152,7 @@ def get_date_str(plus=0, pattern='%d%m%Y'):
 
 
 def widget_weather(**kwargs):
+    "Виджет с информацией о погоде"
     return html.Div(
         [
             html.H5("Погода в г. Среднеуральск", style={"text-align": "center"}),
@@ -174,6 +175,7 @@ def widget_weather(**kwargs):
 
 
 def widget_torrents(qbittorrent_url):
+    """Виджет с информацией о торрентах"""
     return html.Div(
         [
             html.H5("Информация по торрентам"),
