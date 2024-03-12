@@ -103,7 +103,7 @@ navbar = dbc.Navbar(
                             ),
                             dbc.Col(
                                 dbc.DropdownMenu(
-                                    label="Медиа",
+                                    label="Медиа и файлы",
                                     children=[
                                         dbc.DropdownMenuItem("Плееры", header=True),
                                         dbc.DropdownMenuItem(
@@ -113,6 +113,11 @@ navbar = dbc.Navbar(
                                         dbc.DropdownMenuItem(
                                             "Аудиоплеер",
                                             href="/players/audioplayer?l=y",
+                                        ),
+                                        dbc.DropdownMenuItem("Управление файлами", header=True),
+                                        dbc.DropdownMenuItem(
+                                            "Файловый менеджер",
+                                            href="/files?l=y",
                                         ),
                                     ],
                                     nav=True,

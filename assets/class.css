@@ -43,6 +43,7 @@ body {
     padding-top: 20px;
     max-width: 90%;
 }
+
 /* на телефоне увеличится ширина блока */
 @media (max-width: 768px) {
     .adaptive-container {
