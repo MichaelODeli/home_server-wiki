@@ -9,7 +9,6 @@ import shutil
 from dash_iconify import DashIconify
 
 import locale
-
 locale.setlocale(locale.LC_ALL, "ru_RU")
 
 
@@ -85,7 +84,7 @@ def get_drive_size(partition):
     return get_ring(partition, int(used), int(total), f"ring-{partition}", valid=valid)
 
 
-def block_disk_size(**kwargs):
+def widget_disk_size(**kwargs):
     return html.Div(
         [
             html.H5("Свободное место на дисках", style={"text-align": "center"}),
@@ -140,13 +139,19 @@ def get_weather_label(selected_date: str, temperature: list, weather_type="sunny
     )
 
 
-def get_date_str(plus):
+def get_date_str(plus=0, pattern='%d%m%Y'):
+    """
+    Вывод сегодняшней даты с опцией добавление определенного числа дней к числу. 
+
+    Паттерн по умолчанию - DDMMYYYY
+    
+    """
     today = datetime.today()
     needed_date = today + timedelta(days=plus) if plus > 0 else today
-    return needed_date.strftime('%d%m%Y')
+    return needed_date.strftime(pattern)
 
 
-def block_weather(**kwargs):
+def widget_weather(**kwargs):
     return html.Div(
         [
             html.H5("Погода в г. Среднеуральск", style={"text-align": "center"}),
@@ -168,7 +173,7 @@ def block_weather(**kwargs):
     )
 
 
-def block_torrents(qbittorrent_url):
+def widget_torrents(qbittorrent_url):
     return html.Div(
         [
             html.H5("Информация по торрентам"),
@@ -187,3 +192,13 @@ def block_torrents(qbittorrent_url):
         ],
         className="block-background mobile-block",
     )
+
+
+def widget_system_usage():
+    # не график, просто текущие значения
+    return None
+
+
+def widget_fileManager_log():
+    # статистика по добавленным файлам
+    return None

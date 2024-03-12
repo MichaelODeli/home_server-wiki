@@ -25,18 +25,18 @@ def layout():
         children=[
             dmc.Grid([
                 # dmc.Col(span='auto'),
-                dmc.Col([bl_h.block_disk_size()], span='content', className='mobile-block', id='t'),
-                dmc.Col([bl_h.block_weather()], span='content', className='mobile-block'),
-                dmc.Col([bl_h.block_torrents(qbittorrent_url)], span='content', className='mobile-block'),
+                dmc.Col([bl_h.widget_disk_size()], span='content', className='mobile-widget', id='t'),
+                dmc.Col([bl_h.widget_weather()], span='content', className='mobile-widget'),
+                dmc.Col([bl_h.widget_torrents(qbittorrent_url)], span='content', className='mobile-widget'),
                 # dmc.Col(span='auto')
             ],
             align='stretch',
             justify="center",
-            className='grid-home')
+            className='adaptive-grid')
         ],
         pt=20,
         # style={"paddingTop": 20},
-        className='dmc-container home-container'
+        className='dmc-container adaptive-container'
     )
     now = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
     # print(f'{request.remote_addr} - - [{now}] | homepage {request.base_url}')

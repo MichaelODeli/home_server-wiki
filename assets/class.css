@@ -2,7 +2,7 @@ body {
     background-color: rgb(226, 226, 226);
 }
 
-.navbar-collapse{
+.navbar-collapse {
     flex-grow: unset !important;
 }
 
@@ -31,11 +31,24 @@ body {
     }
 }
 
+/* dropdown items has very light color */
 .dropdown-item,
 .dropdown-header {
     color: var(--bs-blue);
 }
 
+
+/* adaptive containers and grids */
 .dmc-container {
     padding-top: 20px;
+    max-width: 90%;
+}
+/* на телефоне увеличится ширина блока */
+@media (max-width: 768px) {
+    .adaptive-container {
+        max-width: 100%;
+    }
+    .adaptive-grid {
+        display: block;
+    }
 }

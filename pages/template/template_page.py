@@ -24,7 +24,7 @@ def layout(l = 'n', **kwargs):
         return dmc.Container()
     else:
         now = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
-        print(f"{request.remote_addr} - - [{now}] | homepage")
+        print(f"{request.remote_addr} - - [{now}] | temp_page")
         # all workers must be here!
         return dmc.Container(
             children=[
