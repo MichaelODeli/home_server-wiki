@@ -1,4 +1,5 @@
 import dash_mantine_components as dmc
+import dash_bootstrap_components as dbc
 from dash_iconify import DashIconify
 from dash import (
     dcc,
@@ -68,26 +69,40 @@ def block_files_list():
                         span="content",
                     ),
                     dmc.Col(span="auto"),
-                    dmc.ButtonGroup(
+                    dbc.ButtonGroup(
                         [
-                            dmc.Button(
-                                "Copy",
-                                variant="outline",
+                            dbc.Button(
+                                DashIconify(icon="material-symbols:file-copy", width=20),
+                                outline=True, 
+                                color="primary",
+                                id='files-copy-button',
+                                className='button-center-content',
+                                title='Скопировать выбранные файлы',
                                 disabled=True,
+                                size='sm'
                             ),
-                            dmc.Button(
-                                "Move",
-                                variant="outline",
+                            dbc.Button(
+                                DashIconify(icon="material-symbols:drive-file-move", width=20),
+                                outline=True, 
+                                color="primary",
+                                id='files-move-button',
+                                className='button-center-content',
+                                title='Переместить выбранные файлы',
                                 disabled=True,
+                                size='sm'
                             ),
-                            dmc.Button(
-                                "Remove",
-                                variant="outline",
-                                color="red",
+                            dbc.Button(
+                                DashIconify(icon="material-symbols:delete", width=20),
+                                outline=True, 
+                                color="danger",
+                                id='files-delete-button',
+                                className='button-center-content',
+                                title='Удалить выбранные файлы',
                                 disabled=True,
+                                size='sm'
                             ),
                         ],
-                        m="5px",
+                        style={"margin": "5px"}, 
                     ),
                 ],
                 align="stretch",

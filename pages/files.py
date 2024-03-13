@@ -58,7 +58,7 @@ def layout(l="n", **kwargs):
                             width=35,
                             color="var(--bs-primary)",
                         ),
-                        size="xl",
+                        size="50px",
                         radius="xl",
                         variant="default",
                         id="open-drawer",
