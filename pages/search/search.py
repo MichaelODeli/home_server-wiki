@@ -2,6 +2,19 @@
 # category - название канала/жанра фильмов/общей категории приложений
 # filename - название файла
 
+# params
+setting_min_search_len = 3
+setting_search_output_limit = 500
+videos_categories = [
+    "cartoon_serials",
+    "en_serials",
+    "tv_shows",
+    "youtube",
+    "films",
+    "ru_serials",
+]
+
+
 from dash import (
     dcc,
     html,
@@ -25,15 +38,6 @@ from utils import sql_traceback_generator
 from blocks import bl_search as bl_s
 
 register_page(__name__, path="/search", icon="fa-solid:home")
-videos_categories = [
-    "cartoon_serials",
-    "en_serials",
-    "tv_shows",
-    "youtube",
-    "films",
-    "ru_serials",
-]
-
 
 
 def layout(
@@ -221,9 +225,14 @@ def layout(
     prevent_initial_call=False,
 )
 def table_results(search_by, search_query, search_in_filetype, n_clicks):
+    global setting_min_search_len
+    global setting_search_output_limit
+
     server_link = request.base_url.replace(":81", "").split("/")[2]
     if search_query == "":
         return "Введен пустой поисковый запрос", None
+    elif len(search_query) <= setting_min_search_len: 
+        return f"Минимальное количество символов для поиска - {str(setting_min_search_len)}", None
     else:
         if search_by == "search_by_category":
             column = "type"
@@ -238,7 +247,7 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
             c = conn.cursor()
             # c.execute(f"SELECT * FROM {search_in_filetype} WHERE {column} LIKE '%{search_query}%'")
             c.execute(
-                f"SELECT * FROM {search_in_filetype} WHERE {column} LIKE '%{search_query}%' LIMIT 500"
+                f"SELECT * FROM {search_in_filetype} WHERE {column} LIKE '%{search_query}%' LIMIT {str(setting_search_output_limit)}"
             )
             results = c.fetchall()
             c.close()

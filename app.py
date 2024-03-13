@@ -44,6 +44,36 @@ search_bar = Purify(
     </form>"""
 )
 
+# ---- FORM NOT SUBMITTING ---
+# search_bar2 = dbc.Form(
+#     children=[
+#         html.Div(
+#             [
+#                 html.Div(
+#                     [
+#                         dbc.Input(
+#                             id="query",
+#                             name="query",
+#                             placeholder="Поиск по хранилищу",
+#                             step="any",
+#                         )
+#                     ],
+#                     className="col",
+#                 ),
+#                 dbc.Input(type="hidden", value="y", name="l"),
+#                 html.Div(
+#                     [dbc.Button("Найти", className="ms-2")],
+#                     className="col-auto",
+#                 ),
+#             ],
+#             className="g-0 ms-auto flex-nowrap mt-3 mt-md-0 align-items-center row",
+#         )
+#     ],
+#     className="",
+#     method="GET",
+#     action="/search",
+# )
+
 # navbar with buttons
 navbar = dbc.Navbar(
     dbc.Container(
@@ -114,7 +144,9 @@ navbar = dbc.Navbar(
                                             "Аудиоплеер",
                                             href="/players/audioplayer?l=y",
                                         ),
-                                        dbc.DropdownMenuItem("Управление файлами", header=True),
+                                        dbc.DropdownMenuItem(
+                                            "Управление файлами", header=True
+                                        ),
                                         dbc.DropdownMenuItem(
                                             "Файловый менеджер",
                                             href="/files?l=y",
@@ -132,7 +164,7 @@ navbar = dbc.Navbar(
                 id="navbar-collapse",
                 is_open=False,
                 navbar=True,
-            ),
+            )
         ]
     )
 )
