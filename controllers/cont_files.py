@@ -5,6 +5,7 @@ from dash import (
     html
 )
 from random import randint as r
+from dash_extensions import Purify
 
 def nested_list_to_html(lst):
     """
@@ -15,13 +16,18 @@ def nested_list_to_html(lst):
 
     Вывод:
     str: Строка, содержащая HTML-код маркированного списка.
+
+    Для выделения текста жирным шрифтом, оберните текст в звездочки: *text*.
     """
     html = "<ul>\n"
     for item in lst:
         if isinstance(item, list):
             html += nested_list_to_html(item)
         else:
-            html += "<li>" + str(item) + "</li>\n"
+            if str(item)[0] == '*' and str(item)[-1] == '*':
+                html += "<li><b>" + str(item)[1:-1] + "</b></li>\n"
+            else:
+                html += "<li>" + str(item) + "</li>\n"
     html += "</ul>\n"
     return html.replace('\n', '')
 
@@ -147,11 +153,16 @@ def block_files_list():
 
 def tree_content(source):
     if source == "col":
-        return "Hello! This is on column!"
+        label = "Hello! This is on column!"
     elif source == "drawer":
-        return "Hello! This is on drawer!"
+        label = "Hello! This is on drawer!"
     else:
         raise ValueError
+    
+    return dmc.Stack([
+        # label,
+        Purify(nested_list_to_html(['C:/', ['Windows', ['System32', '*SysWOW64*'], 'Program Files', 'Program Files (x86)']]))
+    ])
 
 
 def get_drawer():

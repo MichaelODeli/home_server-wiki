@@ -27,7 +27,6 @@ def layout(l="n", **kwargs):
     else:
         now = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
         print(f"{request.remote_addr} - - [{now}] | files page")
-        # all workers must be here!
         return dmc.Container(
             children=[
                 dbc.Row(
@@ -43,7 +42,7 @@ def layout(l="n", **kwargs):
                                 )
                             ],
                             className="hided_column",
-                            width=3
+                            width=3,
                         ),
                         dbc.Col(
                             [
