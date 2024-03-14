@@ -151,6 +151,10 @@ navbar = dbc.Navbar(
                                             "Файловый менеджер",
                                             href="/files?l=y",
                                         ),
+                                        dbc.DropdownMenuItem(
+                                            "Торрентокачалка",
+                                            href="/torrents?l=y",
+                                        ),
                                     ],
                                     nav=True,
                                     in_navbar=True,
