@@ -148,7 +148,7 @@ def float_player():
                                 min=0,
                                 max=100,
                                 id="volume-slider",
-                                value=33,
+                                value=50,
                                 w='120px',
                                 color="gray.7",
                                 thumbLabel='Громкость'
@@ -156,6 +156,7 @@ def float_player():
                         ],
                         span="content",
                         style={"align-items": "center", "display": "flex"},
+                        className='hided_element'
                     ),
                 ]
             )

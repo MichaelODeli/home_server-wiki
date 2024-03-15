@@ -5,9 +5,10 @@
 /* на телефоне блок скроется */
 @media (max-width: 1100px) {
     .hided_column {
-        display: none;
+        display: none !important;
     }
 }
+
 
 /* на телефоне аффикс отобразится */
 @media (min-width: 1101px) {
