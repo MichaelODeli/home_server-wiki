@@ -10,7 +10,7 @@
 }
 
 /* на телефоне аффикс отобразится */
-@media (min-width: 1100px) {
+@media (min-width: 1101px) {
     .shown_affix {
         display: none;
     }

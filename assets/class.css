@@ -53,3 +53,11 @@ body {
         display: block;
     }
 }
+
+h4, h5 {
+    margin-bottom: 0px !important;
+}
+
+.dash-debug-menu, .dash-debug-menu__outer--closed {
+    display: none;
+} 
