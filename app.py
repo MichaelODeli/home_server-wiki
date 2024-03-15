@@ -82,7 +82,7 @@ navbar = dbc.Navbar(
                 # Use row and col to control vertical alignment of logo / brand
                 "Home server",
                 href="/",
-                className="h3 me-5",
+                className="h3 header-text me-2",
                 style={
                     "textDecoration": "none",
                     "color": "black",
@@ -161,7 +161,8 @@ navbar = dbc.Navbar(
                                 ),
                             ),
                             dbc.Col(width="auto"),  # column for filling empty space
-                        ]
+                        ],
+                        className='custom-flex'
                     ),
                     search_bar,
                 ],

@@ -96,6 +96,7 @@ def get_drawer():
         id="drawer-albums",
         padding="md",
         zIndex=10000,
+        style={'overflow-y': 'auto'}
     )
 
 
@@ -112,7 +113,7 @@ def float_player():
                                     width=35,
                                     color="var(--bs-primary)",
                                 ),
-                                size="50px",
+                                size="40px",
                                 radius="md",
                                 variant="default",
                                 id="open-drawer-albums",
@@ -141,7 +142,93 @@ def float_player():
                         ),
                         span="content",
                     ),
-                    dmc.Col(span="auto"),
+                    dmc.Col(
+                        [
+                            dmc.Stack(
+                                [
+                                    dmc.Group(
+                                        [
+                                            # html.P('Buttons'),
+                                            dmc.ActionIcon(
+                                                DashIconify(
+                                                    icon="material-symbols:shuffle",
+                                                    width=40,
+                                                    color="var(--bs-primary)",
+                                                ),
+                                                size="35px",
+                                                variant="default",
+                                                id="control-shuffle",
+                                                className='hided_element'
+                                            ),
+                                            dmc.ActionIcon(
+                                                DashIconify(
+                                                    icon="material-symbols:skip-previous",
+                                                    width=40,
+                                                    color="var(--bs-primary)",
+                                                ),
+                                                size="35px",
+                                                variant="default",
+                                                id="control-prev",
+                                            ),
+                                            dmc.ActionIcon(
+                                                DashIconify(
+                                                    icon="material-symbols:play-pause",
+                                                    width=45,
+                                                    color="var(--bs-primary)",
+                                                ),
+                                                size="40px",
+                                                variant="default",
+                                                id="control-playpause",
+                                            ),
+                                            dmc.ActionIcon(
+                                                DashIconify(
+                                                    icon="material-symbols:skip-next",
+                                                    width=40,
+                                                    color="var(--bs-primary)",
+                                                ),
+                                                size="35px",
+                                                variant="default",
+                                                id="control-next",
+                                            ),
+                                            dmc.ActionIcon(
+                                                DashIconify(
+                                                    icon="material-symbols:repeat",
+                                                    width=40,
+                                                    color="var(--bs-primary)",
+                                                ),
+                                                size="35px",
+                                                variant="default",
+                                                id="control-repeat",
+                                                className='hided_element'
+                                            ),
+                                        ],
+                                        align='center',
+                                        style={"justify-content": "center"},
+                                        spacing='xs'
+                                    ),
+                                    dmc.Group(
+                                        [
+                                            html.P("00:00", id="audio-current-time"),
+                                            dmc.Slider(
+                                                min=0,
+                                                max=100,
+                                                id="progress-slider",
+                                                value=0,
+                                                w="70%",
+                                                color="gray.7",
+                                                showLabelOnHover=False,
+                                            ),
+                                            html.P("99:99", id="audio-full-time", className='hided_element'),
+                                        ],
+                                        spacing="sm",
+                                        align='center',
+                                        style={"justify-content": "center"},
+                                    )
+                                ]
+                            ),
+                        ],
+                        span="auto",
+                    ),
                     dmc.Col(
                         [
                             dmc.Slider(
@@ -149,20 +236,22 @@ def float_player():
                                 max=100,
                                 id="volume-slider",
                                 value=50,
-                                w='120px',
+                                w="120px",
                                 color="gray.7",
-                                thumbLabel='Громкость'
+                                thumbLabel="Громкость",
                             ),
                         ],
                         span="content",
                         style={"align-items": "center", "display": "flex"},
-                        className='hided_element'
+                        className="hided_element",
                     ),
-                ]
+                ],
+                align="center",
+                justify='center'
             )
         ],
         style={
             "min-height": "70px",
         },
-        className="block-background",
+        className="block-background-float",
     )

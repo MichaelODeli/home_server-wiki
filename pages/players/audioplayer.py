@@ -42,7 +42,7 @@ def layout(l="n", selected_playlist_name='Любимые треки', **kwargs):
                                     [
                                         cont_a.audio_leftcollumn(source="col"),
                                     ],
-                                    className="block-background",
+                                    className="block-background", 
                                 )
                             ],
                             className="hided_column",
