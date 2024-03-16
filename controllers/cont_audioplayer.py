@@ -159,7 +159,8 @@ def float_player():
                                                 size="35px",
                                                 variant="default",
                                                 id="control-shuffle",
-                                                className='hided_element'
+                                                className='hided_element',
+                                                disabled=True
                                             ),
                                             dmc.ActionIcon(
                                                 DashIconify(
@@ -170,12 +171,14 @@ def float_player():
                                                 size="35px",
                                                 variant="default",
                                                 id="control-prev",
+                                                disabled=True
                                             ),
                                             dmc.ActionIcon(
                                                 DashIconify(
                                                     icon="material-symbols:play-pause",
                                                     width=45,
                                                     color="var(--bs-primary)",
+                                                    id='playpause-icon'
                                                 ),
                                                 size="40px",
                                                 variant="default",
@@ -190,12 +193,14 @@ def float_player():
                                                 size="35px",
                                                 variant="default",
                                                 id="control-next",
+                                                disabled=True
                                             ),
                                             dmc.ActionIcon(
                                                 DashIconify(
                                                     icon="material-symbols:repeat",
                                                     width=40,
                                                     color="var(--bs-primary)",
+                                                    id='loop-icon'
                                                 ),
                                                 size="35px",
                                                 variant="default",
@@ -218,8 +223,9 @@ def float_player():
                                                 w="70%",
                                                 color="gray.7",
                                                 showLabelOnHover=False,
+                                                # disabled=True
                                             ),
-                                            html.P("99:99", id="audio-full-time", className='hided_element'),
+                                            html.P("59:59", id="audio-full-time", className='hided_element'),
                                         ],
                                         spacing="sm",
                                         align='center',
@@ -236,10 +242,11 @@ def float_player():
                                 min=0,
                                 max=100,
                                 id="volume-slider",
-                                value=50,
+                                value=20,
                                 w="120px",
                                 color="gray.7",
                                 thumbLabel="Громкость",
+                                updatemode='drag'
                             ),
                         ],
                         span="content",

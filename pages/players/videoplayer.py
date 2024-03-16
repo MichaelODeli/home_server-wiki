@@ -27,7 +27,7 @@ link = ""
 
 
 def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
-    service.log_printer(request.remote_addr, 'videoplayer', 'page opened')
+    service.log_printer(request.remote_addr, "videoplayer", "page opened")
     if l == "n":
         return dmc.Container()
     global link
@@ -54,8 +54,9 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
         name = "Big buck bunny"
         link = "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4"
 
-
-    service.log_printer(request.remote_addr, 'videoplayer', f'v_id "{v}" | v_type "{v_type}"')
+    service.log_printer(
+        request.remote_addr, "videoplayer", f'v_id "{v}" | v_type "{v_type}"'
+    )
     text_label = "канала" if v_type == "youtube" else "категории"
     return dmc.NotificationsProvider(
         dmc.Container(
@@ -172,37 +173,70 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                         dbc.Col(
                             children=[
                                 html.H5("Смотрите также:"),
+                                dmc.Stack(h=5),
                                 dbc.ButtonGroup(
                                     [
                                         dbc.Button(
-                                            "Рекомендации", disabled=True, outline=True
+                                            "Рекомендации",
+                                            # disabled=True,
+                                            outline=True,
+                                            color="primary",
+                                            id="video-button-recommended",
+                                            n_clicks=0,
                                         ),
-                                        dbc.Button(f"Канал: {channel}"),
                                         dbc.Button(
-                                            "Похожие", disabled=True, outline=True
+                                            f"Канал: {channel}",
+                                            active=True,
+                                            outline=True,
+                                            color="primary",
+                                            id="video-button-channel",
+                                            n_clicks=0,
+                                        ),
+                                        dbc.Button(
+                                            "Похожие",
+                                            # disabled=True,
+                                            outline=True,
+                                            color="primary",
+                                            id="video-button-same",
+                                            n_clicks=0,
                                         ),
                                     ],
                                     style={"width": "100%"},
                                 ),
                                 dmc.Space(h=7),
-                                bl_v.get_video_card(
-                                    "Sample video 1", "00:50", "https://example.com"
-                                ),
-                                dmc.Space(h=7),
-                                bl_v.get_video_card(
-                                    "Sample video 2", "01:50", "https://example.com"
-                                ),
-                                dmc.Space(h=7),
-                                bl_v.get_video_card(
-                                    "Sample video 3", "02:50", "https://example.com"
-                                ),
-                                dmc.Space(h=7),
-                                bl_v.get_video_card(
-                                    "Sample video 4", "03:50", "https://example.com"
-                                ),
-                                dmc.Space(h=7),
-                                bl_v.get_video_card(
-                                    "Sample video 5", "1:04:50", "https://example.com"
+                                html.Div(
+                                    [
+                                        bl_v.get_video_card(
+                                            "Sample video 1",
+                                            "00:50",
+                                            "https://example.com",
+                                        ),
+                                        dmc.Space(h=7),
+                                        bl_v.get_video_card(
+                                            "Sample video 2",
+                                            "01:50",
+                                            "https://example.com",
+                                        ),
+                                        dmc.Space(h=7),
+                                        bl_v.get_video_card(
+                                            "Sample video 3",
+                                            "02:50",
+                                            "https://example.com",
+                                        ),
+                                        dmc.Space(h=7),
+                                        bl_v.get_video_card(
+                                            "Sample video 4",
+                                            "03:50",
+                                            "https://example.com",
+                                        ),
+                                        dmc.Space(h=7),
+                                        bl_v.get_video_card(
+                                            "Sample video 5",
+                                            "1:04:50",
+                                            "https://example.com",
+                                        ),
+                                    ],
+                                    id="recommended-videos-tab",
                                 ),
                             ],
                             className="block-background columns-margin overflow-column",
@@ -214,7 +248,7 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
             ],
             pt=20,
             # style={"paddingTop": 20},
-            className='dmc-container',
+            className="dmc-container",
             size="98%",
         )
     )
@@ -230,7 +264,9 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
 )
 def func(n_clicks):
     global link
-    service.log_printer(request.remote_addr, 'videoplayer', f'download triggered | {link}')
+    service.log_printer(
+        request.remote_addr, "videoplayer", f"download triggered | {link}"
+    )
     notif_bad = dmc.Notification(
         title="Ошибка при загрузке файла",
         id="simple-notify",
@@ -260,3 +296,36 @@ def func(n_clicks):
         return dcc.send_file(link_l), notif_cool
     except OSError:
         return None, notif_bad
+
+
+@callback(
+    [
+        Output("video-button-recommended", "active"),
+        Output("video-button-channel", "active"),
+        Output("video-button-same", "active"),
+        Output("video-button-recommended", "n_clicks"),
+        Output("video-button-channel", "n_clicks"),
+        Output("video-button-same", "n_clicks"),
+        # Output('recommended-videos-tab', 'children')
+    ],
+    [
+        Input("video-button-recommended", "n_clicks"),
+        Input("video-button-channel", "n_clicks"),
+        Input("video-button-same", "n_clicks"),
+    ],
+    prevent_initial_call=True,
+)
+def videos_tab_recommended(rec_c, chan_c, same_c):
+    # if clicked - current n_clicks value will be bigger than previous
+    if rec_c != 0:
+        content = html.Div()
+    elif chan_c != 0:
+        content = html.Div()
+    elif same_c != 0:
+        content = html.Div()
+    else:
+        raise ValueError
+
+    vars_list = [rec_c, chan_c, same_c]
+
+    return [False if element == 0 else True for element in vars_list]+[0]*3

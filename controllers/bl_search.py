@@ -115,7 +115,9 @@ def get_duration(seconds_data):
     Вывод:
     str: Строка в формате HH:MM:SS, представляющая время.
     """
-    return time.strftime("%H:%M:%S", time.gmtime(float(seconds_data)))
+    if seconds_data < 3600: time_format = "%M:%S"
+    else: time_format = "%H:%M:%S"
+    return time.strftime(time_format, time.gmtime(float(seconds_data)))
 
 def get_size_str(size):
     """
