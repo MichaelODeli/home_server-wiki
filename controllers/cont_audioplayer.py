@@ -238,6 +238,17 @@ def float_player():
                     ),
                     dmc.Col(
                         [
+                            dmc.ActionIcon(
+                                DashIconify(
+                                    icon="material-symbols:volume-up",
+                                    width=40,
+                                    color="var(--bs-primary)",
+                                    id='muted-icon'
+                                ),
+                                size="35px",
+                                variant="subtle",
+                                id="volume-muted",
+                            ),
                             dmc.Slider(
                                 min=0,
                                 max=100,

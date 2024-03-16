@@ -143,6 +143,23 @@ def player_loop(n_clicks, loop):
 
 
 @callback(
+    [
+        Output("player", "muted"),
+        Output("muted-icon", 'icon')
+    ],
+    Input("volume-muted", "n_clicks"),
+    State("player", "muted"),
+    prevent_initial_call=True,
+)
+def player_disable_sound(n_clicks, muted):
+    if not muted == True:
+        icon = 'material-symbols:volume-off'
+    else:
+        icon = 'material-symbols:volume-up'
+    return not muted, icon
+
+
+@callback(
     Output("player", "volume"),
     Input("volume-slider", "value"),
     State("player", "volume"),
