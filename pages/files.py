@@ -16,6 +16,7 @@ from flask import request
 from datetime import datetime
 from dash_iconify import DashIconify
 from controllers import cont_files as cont_f
+from controllers import service_controller as service
 
 register_page(__name__, path="/files", icon="fa-solid:home")
 
@@ -25,8 +26,7 @@ def layout(l="n", **kwargs):
     if l == "n":
         return dmc.Container()
     else:
-        now = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
-        print(f"{request.remote_addr} - - [{now}] | files page")
+        service.log_printer(request.remote_addr, 'files', 'page opened')
         return dmc.Container(
             children=[
                 dbc.Row(

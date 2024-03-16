@@ -7,6 +7,7 @@ from dash import (
 )
 from random import randint as r
 from dash_extensions import Purify
+from controllers import service_controller as service
 
 def nested_list_to_html(lst):
     """

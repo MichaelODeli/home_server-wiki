@@ -35,7 +35,8 @@ import dash_bootstrap_components as dbc
 from flask import request
 from datetime import datetime
 from utils import sql_traceback_generator
-from blocks import bl_search as bl_s
+from controllers import bl_search as bl_s
+from controllers import service_controller as service
 
 register_page(__name__, path="/search", icon="fa-solid:home")
 
@@ -57,6 +58,8 @@ def layout(
     # print(query)
     if other_unknown_query_strings != {}:
         print(other_unknown_query_strings)
+
+    service.log_printer(request.remote_addr, 'search', 'page opened')
 
     return dmc.Container(
         children=[
@@ -222,7 +225,6 @@ def layout(
         State("search_in_type", "value"),
     ],
     [Input("search_button", "n_clicks")],
-    prevent_initial_call=False,
 )
 def table_results(search_by, search_query, search_in_filetype, n_clicks):
     global setting_min_search_len
@@ -238,8 +240,6 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
             column = "type"
         else:
             column = "filename"
-
-        now = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
 
         start_time = time.time()
         try:
@@ -314,10 +314,8 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
 
         table_content = [html.Tbody(table_content)]
 
-        print(
-            f'{request.remote_addr} - - [{now}] | search | {search_by} | category "{search_in_filetype}" | query "{search_query}" | results {len(results)} | time {round(time.time() - start_time, 3)}'
-        )
 
+        service.log_printer(request.remote_addr, 'search', f'{search_by} | category "{search_in_filetype}" | query "{search_query}" | results {len(results)} | time {round(time.time() - start_time, 3)}')
         return (
             (
                 [dmc.Table(table_header + table_content)]

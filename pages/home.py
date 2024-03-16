@@ -13,8 +13,9 @@ from dash import (
 import dash_mantine_components as dmc
 from flask import request
 from datetime import datetime
-from blocks import bl_homepage as bl_h
+from controllers import bl_homepage as bl_h
 from controllers import cont_homepage
+from controllers import service_controller as service
 
 register_page(__name__, path="/", icon="fa-solid:home")
 qbittorrent_url = 'http://192.168.3.33:8124'
@@ -38,9 +39,9 @@ def layout():
         # style={"paddingTop": 20},
         className='dmc-container adaptive-container'
     )
-    now = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
+
     # print(f'{request.remote_addr} - - [{now}] | homepage {request.base_url}')
-    print(f"{request.remote_addr} - - [{now}] | homepage")
+    service.log_printer(request.remote_addr, 'homepage', 'page opened')
     return lay
 
 

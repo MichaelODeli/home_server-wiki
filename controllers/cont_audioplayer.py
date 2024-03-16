@@ -2,6 +2,7 @@ import dash_mantine_components as dmc
 import dash_bootstrap_components as dbc
 from dash_iconify import DashIconify
 from dash import dcc, html
+import pandas as pd
 
 
 def create_table(df):

@@ -15,6 +15,7 @@ import dash_bootstrap_components as dbc
 from dash_extensions import Purify
 from flask import request
 from datetime import datetime 
+from controllers import service_controller as service
 
 register_page(__name__, path="/settings", icon="fa-solid:home")
 
@@ -53,8 +54,7 @@ checker_layout = dmc.Stepper(
 def layout(l = 'n', **kwargs): 
     if l == 'n':
         return dmc.Container()
-    now = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
-    print(f'{request.remote_addr} - - [{now}] | settings page')
+    service.log_printer(request.remote_addr, 'settings', 'page opened')
     global checker_layout
     return dmc.Container(
         children=[

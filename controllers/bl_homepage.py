@@ -8,6 +8,7 @@ import calendar
 import shutil
 from dash_iconify import DashIconify
 
+
 import locale
 locale.setlocale(locale.LC_ALL, "ru_RU")
 
@@ -80,7 +81,7 @@ def get_drive_size(partition):
         total = 1
         used = 1
         valid = False
-
+    
     return get_ring(partition, int(used), int(total), f"ring-{partition}", valid=valid)
 
 

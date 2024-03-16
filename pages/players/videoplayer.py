@@ -18,7 +18,8 @@ from flask import request
 from datetime import datetime
 from utils import sql_traceback_generator
 import sys
-from blocks import bl_videoplayer as bl_v
+from controllers import bl_videoplayer as bl_v
+from controllers import service_controller as service
 
 register_page(__name__, path="/players/videoplayer", icon="fa-solid:home")
 
@@ -26,6 +27,7 @@ link = ""
 
 
 def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
+    service.log_printer(request.remote_addr, 'videoplayer', 'page opened')
     if l == "n":
         return dmc.Container()
     global link
@@ -52,10 +54,8 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
         name = "Big buck bunny"
         link = "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4"
 
-    now = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
-    print(
-        f'{request.remote_addr} - - [{now}] | videoview | v_id "{v}" | v_type "{v_type}"'
-    )
+
+    service.log_printer(request.remote_addr, 'videoplayer', f'v_id "{v}" | v_type "{v_type}"')
     text_label = "канала" if v_type == "youtube" else "категории"
     return dmc.NotificationsProvider(
         dmc.Container(
@@ -230,6 +230,7 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
 )
 def func(n_clicks):
     global link
+    service.log_printer(request.remote_addr, 'videoplayer', f'download triggered | {link}')
     notif_bad = dmc.Notification(
         title="Ошибка при загрузке файла",
         id="simple-notify",

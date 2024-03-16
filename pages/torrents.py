@@ -15,6 +15,7 @@ import dash_bootstrap_components as dbc
 from dash_extensions import Purify
 from flask import request
 from datetime import datetime 
+from controllers import service_controller as service
 
 register_page(__name__, path="/torrents", icon="fa-solid:home")
 
@@ -23,8 +24,7 @@ def layout(l = 'n', **kwargs):
     if l == 'n':
         return dmc.Container()
     else:
-        now = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
-        print(f"{request.remote_addr} - - [{now}] | torrents page")
+        service.log_printer(request.remote_addr, 'torrents', 'page opened')
         # all workers must be here!
         return dmc.Container(
             children=[

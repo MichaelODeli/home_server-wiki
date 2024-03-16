@@ -18,6 +18,7 @@ from flask import request
 from datetime import datetime
 import pandas as pd
 from controllers import cont_audioplayer as cont_a
+from controllers import service_controller as service
 
 register_page(__name__, path="/players/audioplayer", icon="fa-solid:home")
 
@@ -27,8 +28,9 @@ def layout(l="n", selected_playlist_name='Любимые треки', **kwargs):
     if l == "n":
         return dmc.Container()
     else:
-        now = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
-        print(f"{request.remote_addr} - - [{now}] | audioplayer page")
+        # now = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
+        # print(f"{request.remote_addr} - - [{now}] | audioplayer page")
+        service.log_printer(request.remote_addr, 'audioplayer', 'page opened')
         df = pd.read_csv(
             "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv"
         )
