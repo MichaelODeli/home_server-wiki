@@ -1,13 +1,11 @@
 import dash_mantine_components as dmc
 import dash_bootstrap_components as dbc
 from dash_iconify import DashIconify
-from dash import (
-    dcc,
-    html
-)
+from dash import dcc, html
 from random import randint as r
 from dash_extensions import Purify
 from controllers import service_controller as service
+
 
 def nested_list_to_html(lst):
     """
@@ -26,15 +24,22 @@ def nested_list_to_html(lst):
         if isinstance(item, list):
             html += nested_list_to_html(item)
         else:
-            if str(item)[0] == '*' and str(item)[-1] == '*':
+            if str(item)[0] == "*" and str(item)[-1] == "*":
                 html += "<li><b>" + str(item)[1:-1] + "</b></li>\n"
             else:
                 html += "<li>" + str(item) + "</li>\n"
     html += "</ul>\n"
-    return html.replace('\n', '')
+    return html.replace("\n", "")
 
 
-def generate_html_table(header: list, data: list, align='right', variant='full', striped=False, highlightOnHover=False):
+def generate_html_table(
+    header: list,
+    data: list,
+    align="right",
+    variant="full",
+    striped=False,
+    highlightOnHover=False,
+):
     """
     Генерирует HTML-таблицу на основе переданных заголовков и данных.
 
@@ -48,17 +53,47 @@ def generate_html_table(header: list, data: list, align='right', variant='full',
     html.Div: HTML-элемент div, содержащий таблицу.
     """
     header = [
-        html.Thead(html.Tr([html.Th(header_element, style={'text-align': align}) for header_element in header]))
+        html.Thead(
+            html.Tr(
+                [
+                    html.Th(
+                        header_element,
+                        style={
+                            "text-align": align
+                        },
+                    )
+                    for header_element in header
+                ]
+            )
+        )
     ]
     body = [
         html.Tbody(
-            [html.Tr([html.Td(value, style={'text-align': align}) for value in row_data]) for row_data in data]
+            [
+                html.Tr(
+                    [
+                        html.Td(
+                            value,
+                            style={
+                                "text-align": align,
+                                "padding": "0 5px 0 5px" if variant == "compact" else "unset",
+                            }, 
+                        )
+                        for value in row_data
+                    ]
+                )
+                for row_data in data
+            ]
         )
     ]
 
     return html.Div(
         [dmc.Table(header + body, striped=striped, highlightOnHover=highlightOnHover)],
-        style={"overflow-x": "auto", "white-space": "nowrap", "padding": "0" if variant == 'compact' else 'unset'},
+        style={
+            "overflow-x": "auto",
+            "white-space": "nowrap",
+            # "padding": "0" if variant == "compact" else "unset",
+        },
     )
 
 
@@ -75,37 +110,41 @@ def block_files_list():
                     dbc.ButtonGroup(
                         [
                             dbc.Button(
-                                DashIconify(icon="material-symbols:file-copy", width=20),
-                                outline=True, 
+                                DashIconify(
+                                    icon="material-symbols:file-copy", width=20
+                                ),
+                                outline=True,
                                 color="primary",
-                                id='files-copy-button',
-                                className='button-center-content',
-                                title='Скопировать выбранные файлы',
+                                id="files-copy-button",
+                                className="button-center-content",
+                                title="Скопировать выбранные файлы",
                                 disabled=True,
-                                size='sm'
+                                size="sm",
                             ),
                             dbc.Button(
-                                DashIconify(icon="material-symbols:drive-file-move", width=20),
-                                outline=True, 
+                                DashIconify(
+                                    icon="material-symbols:drive-file-move", width=20
+                                ),
+                                outline=True,
                                 color="primary",
-                                id='files-move-button',
-                                className='button-center-content',
-                                title='Переместить выбранные файлы',
+                                id="files-move-button",
+                                className="button-center-content",
+                                title="Переместить выбранные файлы",
                                 disabled=True,
-                                size='sm'
+                                size="sm",
                             ),
                             dbc.Button(
                                 DashIconify(icon="material-symbols:delete", width=20),
-                                outline=True, 
+                                outline=True,
                                 color="danger",
-                                id='files-delete-button',
-                                className='button-center-content',
-                                title='Удалить выбранные файлы',
+                                id="files-delete-button",
+                                className="button-center-content",
+                                title="Удалить выбранные файлы",
                                 disabled=True,
-                                size='sm'
+                                size="sm",
                             ),
                         ],
-                        style={"margin": "5px"}, 
+                        style={"margin": "5px"},
                     ),
                 ],
                 align="stretch",
@@ -176,11 +215,25 @@ def tree_content(source):
         label = "Hello! This is on drawer!"
     else:
         raise ValueError
-    
-    return dmc.Stack([
-        # label,
-        Purify(nested_list_to_html(['C:/', ['Windows', ['System32', '*SysWOW64*'], 'Program Files', 'Program Files (x86)']]))
-    ])
+
+    return dmc.Stack(
+        [
+            # label,
+            Purify(
+                nested_list_to_html(
+                    [
+                        "C:/",
+                        [
+                            "Windows",
+                            ["System32", "*SysWOW64*"],
+                            "Program Files",
+                            "Program Files (x86)",
+                        ],
+                    ]
+                )
+            )
+        ]
+    )
 
 
 def get_drawer():
