@@ -34,29 +34,31 @@ def nested_list_to_html(lst):
     return html.replace('\n', '')
 
 
-def generate_html_table(header: list, data: list):
+def generate_html_table(header: list, data: list, align='right', variant='full', striped=False, highlightOnHover=False):
     """
     Генерирует HTML-таблицу на основе переданных заголовков и данных.
 
     Параметры:
     header (list): Список заголовков столбцов таблицы.
     data (list): Список списков, представляющих строки данных таблицы.
+    align (str): Выравнивание элементов таблицы
+    variant (str): full/compact
 
     Вывод:
     html.Div: HTML-элемент div, содержащий таблицу.
     """
     header = [
-        html.Thead(html.Tr([html.Th(header_element) for header_element in header]))
+        html.Thead(html.Tr([html.Th(header_element, style={'text-align': align}) for header_element in header]))
     ]
     body = [
         html.Tbody(
-            [html.Tr([html.Td(value) for value in row_data]) for row_data in data]
+            [html.Tr([html.Td(value, style={'text-align': align}) for value in row_data]) for row_data in data]
         )
     ]
 
     return html.Div(
-        [dmc.Table(header + body)],
-        style={"overflow-x": "auto", "white-space": "nowrap"},
+        [dmc.Table(header + body, striped=striped, highlightOnHover=highlightOnHover)],
+        style={"overflow-x": "auto", "white-space": "nowrap", "padding": "0" if variant == 'compact' else 'unset'},
     )
 
 
