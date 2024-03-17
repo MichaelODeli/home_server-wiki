@@ -27,8 +27,8 @@ def layout():
             dmc.Grid([
                 # dmc.Col(span='auto'),
                 dmc.Col([bl_h.widget_disk_size()], span='content', className='mobile-widget', id='t'),
-                dmc.Col([bl_h.widget_weather()], span='content', className='mobile-widget'),
-                dmc.Col([bl_h.widget_torrents(qbittorrent_url)], span='content', className='mobile-widget'),
+                dmc.Col([bl_h.widget_weather()], span='content', className='mobile-widget', id='widget-weather'),
+                dmc.Col([bl_h.widget_torrents(qbittorrent_url)], span='content', className='mobile-widget', id='widget_torrents'),
                 # dmc.Col(span='auto')
             ],
             align='stretch',
