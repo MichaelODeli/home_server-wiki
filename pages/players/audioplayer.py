@@ -30,8 +30,6 @@ def layout(l="n", selected_playlist_name="Любимые треки", **kwargs):
     if l == "n":
         return dmc.Container()
     else:
-        # now = datetime.now().strftime("%d/%b/%Y %H:%M:%S")
-        # print(f"{request.remote_addr} - - [{now}] | audioplayer page")
         service.log_printer(request.remote_addr, "audioplayer", "page opened")
         df = pd.read_csv(
             "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv"
@@ -77,7 +75,7 @@ def layout(l="n", selected_playlist_name="Любимые треки", **kwargs):
                                                 ),
                                                 dmc.Divider(color="--bs-blue"),
                                                 html.Div(
-                                                    dmc.Table(cont_a.create_table(df)),
+                                                    html.Table(cont_a.create_table(df), style={"width": "100%"},),
                                                     className="table-wrapper",
                                                 ),
                                             ]

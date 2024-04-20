@@ -51,9 +51,10 @@ def get_buttongroup_with_icons(lst):
             dbc.Button(
                 children=[icon, button_text],
                 outline=True,
-                color="primary",
+                color="secondary",
                 style={"display": "flex", "align-items": "start"},
                 id=button_id,
+                class_name='border white-primary-outline-button'
             )
         )
     return dbc.ButtonGroup(buttons_list, vertical=True)
@@ -102,7 +103,7 @@ def get_drawer():
 
 
 def float_player():
-    return html.Div(
+    return dbc.Card(
         [
             dmc.Grid(
                 [
@@ -128,13 +129,13 @@ def float_player():
                             [
                                 html.P(
                                     "Название песни",
-                                    className="text-primary",
-                                    style={"margin-bottom": 0},
+                                    className="text-default",
+                                    style={"margin-bottom": 0, 'font-weight': 'bold'},
                                     id="song-name",
                                 ),
                                 html.P(
                                     "Исполнитель",
-                                    className="text-secondary",
+                                    className="text-default",
                                     style={"margin-bottom": 0},
                                     id="song-artist",
                                 ),
@@ -150,62 +151,62 @@ def float_player():
                                     dmc.Group(
                                         [
                                             # html.P('Buttons'),
-                                            dmc.ActionIcon(
+                                            dbc.Button(
                                                 DashIconify(
                                                     icon="material-symbols:shuffle",
-                                                    width=40,
-                                                    color="var(--bs-primary)",
+                                                    width=30,
                                                 ),
-                                                size="35px",
-                                                variant="default",
+                                                size="20px",
+                                                color="secondary",
+                                                outline=True,
                                                 id="control-shuffle",
-                                                className='hided_element',
-                                                disabled=True
+                                                className='hided_element control-button',
                                             ),
-                                            dmc.ActionIcon(
+                                            dbc.Button(
                                                 DashIconify(
                                                     icon="material-symbols:skip-previous",
-                                                    width=40,
-                                                    color="var(--bs-primary)",
+                                                    width=30,
                                                 ),
-                                                size="35px",
-                                                variant="default",
+                                                size="20px",
+                                                color="secondary",
+                                                outline=True,
                                                 id="control-prev",
-                                                disabled=True
+                                                className='control-button',
                                             ),
-                                            dmc.ActionIcon(
+                                            dbc.Button(
                                                 DashIconify(
                                                     icon="material-symbols:play-pause",
-                                                    width=45,
-                                                    color="var(--bs-primary)",
+                                                    width=40,
                                                     id='playpause-icon'
                                                 ),
-                                                size="40px",
-                                                variant="default",
+                                                size="20px",
+                                                color="secondary",
+                                                outline=True,
                                                 id="control-playpause",
+                                                className='control-button',
                                             ),
-                                            dmc.ActionIcon(
+                                            dbc.Button(
                                                 DashIconify(
                                                     icon="material-symbols:skip-next",
-                                                    width=40,
-                                                    color="var(--bs-primary)",
+                                                    width=30,
                                                 ),
-                                                size="35px",
-                                                variant="default",
+                                                size="20px",
+                                                color="secondary",
+                                                outline=True,
                                                 id="control-next",
-                                                disabled=True
+                                                className='control-button',
                                             ),
-                                            dmc.ActionIcon(
+                                            dbc.Button(
                                                 DashIconify(
                                                     icon="material-symbols:repeat",
-                                                    width=40,
-                                                    color="var(--bs-primary)",
+                                                    width=30,
                                                     id='loop-icon'
                                                 ),
-                                                size="35px",
-                                                variant="default",
+                                                size="20px",
+                                                color="secondary",
+                                                outline=True,
                                                 id="control-repeat",
-                                                className='hided_element'
+                                                className='hided_element control-button'
                                             ),
                                         ],
                                         align='center',
@@ -238,16 +239,17 @@ def float_player():
                     ),
                     dmc.Col(
                         [
-                            dmc.ActionIcon(
+                            dbc.Button(
                                 DashIconify(
                                     icon="material-symbols:volume-up",
-                                    width=40,
-                                    color="var(--bs-primary)",
+                                    width=30,
                                     id='muted-icon'
                                 ),
-                                size="35px",
-                                variant="subtle",
+                                size="20px",
+                                color="secondary",
+                                outline=True,
                                 id="volume-muted",
+                                class_name='control-button border border-0'
                             ),
                             dmc.Slider(
                                 min=0,

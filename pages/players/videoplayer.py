@@ -167,13 +167,13 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                     style={"width": "100%"},
                                 ),
                             ],
-                            className="block-background columns-margin video-column",
+                            className="block-background columns-margin video-column border",
                             width="auto",
                         ),
                         dbc.Col(
                             children=[
                                 html.H5("Смотрите также:"),
-                                dmc.Stack(h=5),
+                                dmc.Stack(h=10),
                                 dbc.ButtonGroup(
                                     [
                                         dbc.Button(
@@ -182,7 +182,8 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                             outline=True,
                                             color="primary",
                                             id="video-button-recommended",
-                                            n_clicks=0,
+                                            n_clicks=0, 
+                                            size="sm"
                                         ),
                                         dbc.Button(
                                             f"Канал: {channel}",
@@ -191,6 +192,7 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                             color="primary",
                                             id="video-button-channel",
                                             n_clicks=0,
+                                            size="sm"
                                         ),
                                         dbc.Button(
                                             "Похожие",
@@ -199,11 +201,12 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                             color="primary",
                                             id="video-button-same",
                                             n_clicks=0,
+                                            size="sm"
                                         ),
                                     ],
                                     style={"width": "100%"},
                                 ),
-                                dmc.Space(h=7),
+                                dmc.Space(h=10),
                                 html.Div(
                                     [
                                         bl_v.get_video_card(

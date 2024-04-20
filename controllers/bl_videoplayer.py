@@ -19,13 +19,9 @@ def get_video_card(video_title, video_length, video_link):
     """
     return html.A(
         [
-            dmc.Card(
+            dbc.Card(
                 children=[
-                    dmc.CardSection(
-                        dmc.Image(
-                            src="/assets/image-not-found.jpg",
-                            height=120,
-                        )
+                    dbc.CardImg(src="/assets/image-not-found.jpg", style={'height': '120px', 'object-fit': 'none', 'object-position': 'center'}
                     ),
                     dmc.Group(
                         [
@@ -40,13 +36,15 @@ def get_video_card(video_title, video_length, video_link):
                         position="apart",
                         mt="md",
                         mb="xs",
+                        style={"padding": "0 10px 0 10px"}
                     ),
                 ],
-                withBorder=True,
-                shadow="sm",
-                radius="md",
+                # withBorder=True,
+                # shadow="sm",
+                # radius="md",
                 style={"width": "auto"},  # prev: 350px
             )
         ],
         href=video_link,
+        style={"text-decoration": "unset"},
     )

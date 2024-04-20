@@ -1,5 +1,5 @@
 import dash
-from dash import dcc, html, Output, Input, State
+from dash import dcc, html, Output, Input, State, clientside_callback
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 import dash_bootstrap_components as dbc
@@ -10,7 +10,7 @@ icons_link = (
     "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css"
 )
 app = dash.Dash(
-    __name__, use_pages=True, external_stylesheets=[dbc.themes.FLATLY, icons_link]
+    __name__, use_pages=True, external_stylesheets=[dbc.themes.ZEPHYR, icons_link, dbc.icons.FONT_AWESOME]
 )
 
 server = app.server
@@ -79,27 +79,21 @@ navbar = dbc.Navbar(
     dbc.Container(
         [
             html.A(
-                # Use row and col to control vertical alignment of logo / brand
-                "Home server",
+                dbc.NavbarBrand("Home server", className="ms-2 h2"),
                 href="/",
-                className="h3 header-text me-2",
-                style={
-                    "textDecoration": "none",
-                    "color": "black",
-                    "margin-bottom": "0px !important",
-                },
+                style={"text-decoration": "unset"},
             ),
             dbc.NavbarToggler(id="navbar-toggler", n_clicks=0),
             dbc.Collapse(
                 children=[
-                    dbc.Row(
+                    dmc.Grid(
                         [
-                            dbc.Col(
+                            dmc.Col(
                                 dbc.DropdownMenu(
                                     label="Внешние утилиты",
                                     children=[
                                         dbc.DropdownMenuItem(
-                                            "Настройка сервера", header=True
+                                            "Настройка сервера", header=True, class_name='h6', style={"text-decoration": "unset"},
                                         ),
                                         dbc.DropdownMenuItem(
                                             "Webmin", href="https://192.168.3.33:10000/"
@@ -130,8 +124,9 @@ navbar = dbc.Navbar(
                                     nav=True,
                                     in_navbar=True,
                                 ),
+                                span="content"
                             ),
-                            dbc.Col(
+                            dmc.Col(
                                 dbc.DropdownMenu(
                                     label="Медиа и файлы",
                                     children=[
@@ -159,19 +154,35 @@ navbar = dbc.Navbar(
                                     nav=True,
                                     in_navbar=True,
                                 ),
+                                span="content"
                             ),
-                            dbc.Col(width="auto"),  # column for filling empty space
+                            dmc.Col(
+                                [
+                                    html.Span(
+                                        [
+                                            dbc.Label(className="fa fa-moon", html_for="color-mode-switch", color='primary'),
+                                            dbc.Switch( id="color-mode-switch", value=True, className="d-inline-block ms-1", persistence=True),
+                                            dbc.Label(className="fa fa-sun", html_for="color-mode-switch", color='primary'), 
+                                        ]
+                                    )
+                                ],
+                                span="content"
+                            ),
+                            # dmc.Col(span="auto"),  # column for filling empty space
                         ],
                         className='custom-flex'
                     ),
-                    search_bar,
+                    html.Div(search_bar, style={'padding': '0 10px 0 10px'}), 
                 ],
                 id="navbar-collapse",
                 is_open=False,
                 navbar=True,
             )
         ]
-    )
+    ),
+    style={'min-height': '80px'},
+    class_name='rounded border-bottom',
+    color='default',
 )
 
 
@@ -189,6 +200,17 @@ def toggle_navbar_collapse(n, is_open):
     if n:
         return not is_open
     return is_open
+
+clientside_callback(
+    """
+    (switchOn) => {
+       document.documentElement.setAttribute('data-bs-theme', switchOn ? 'light' : 'dark');  
+       return window.dash_clientside.no_update
+    }
+    """,
+    Output("color-mode-switch", "id"),
+    Input("color-mode-switch", "value"),
+)
 
 
 if __name__ == "__main__":

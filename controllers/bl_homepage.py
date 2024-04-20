@@ -3,6 +3,7 @@ from dash import (
     html,
 )
 import dash_mantine_components as dmc
+import dash_bootstrap_components as dbc
 from datetime import datetime, timedelta
 import calendar
 import shutil
@@ -86,9 +87,9 @@ def get_drive_size(partition):
 
 
 def widget_disk_size(**kwargs):
-    return html.Div(
+    return dbc.Card(
         [
-            html.H5("Свободное место на дисках", style={"text-align": "center"}),
+            html.H5("Свободное место на дисках", style={"text-align": "center"}, className="card-title"),
             dmc.Group(
                 [
                     get_drive_size("/mnt/sdb1/"),
@@ -100,6 +101,7 @@ def widget_disk_size(**kwargs):
             ),
         ],
         className="block-background mobile-block",
+        style={"min-height": "100%"}
     )
 
 
@@ -154,9 +156,9 @@ def get_date_str(plus=0, pattern='%d%m%Y'):
 
 def widget_weather(**kwargs):
     "Виджет с информацией о погоде"
-    return html.Div(
+    return dbc.Card(
         [
-            html.H5("Погода в г. Среднеуральск", style={"text-align": "center"}),
+            html.H5("Погода в г. Среднеуральск", style={"text-align": "center"}, className="card-title"),
             dmc.Space(h=5),
             dmc.Group(
                 [
@@ -172,28 +174,30 @@ def widget_weather(**kwargs):
             ),
         ],
         className="block-background mobile-block",
+        style={"min-height": "100%"}
     )
 
 
 def widget_torrents(qbittorrent_url):
     """Виджет с информацией о торрентах"""
-    return html.Div(
+    return dbc.Card(
         [
-            html.H5("Информация по торрентам"),
-            dmc.Space(h=5),
+            html.H5("Информация по торрентам", className="card-title"),
+            dmc.Space(h=10),
             dmc.Stack(
                 [
                     dmc.Text("Активных торрентов: NaN", id="home-torrents-active"),
                     dmc.Text("Скачивается: NaN", id="home-torrents-download"),
                     dmc.Text("Раздается: NaN", id="home-torrents-upload"),
                 ],
-                style={"margin": "auto"},
+                style={"text-align": "left"},
                 spacing="xs",
             ),
             dmc.Space(h=15),
             html.A("Перейти в qbittorrent", href=qbittorrent_url),
         ],
         className="block-background mobile-block",
+        style={"min-height": "100%"}
     )
 
 

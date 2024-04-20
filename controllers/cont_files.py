@@ -55,14 +55,15 @@ def generate_html_table(
     header = [
         html.Thead(
             html.Tr(
-                [
+                [html.Th(header[0], style={"max-width": "20px"})]
+                + [
                     html.Th(
                         header_element,
                         style={
-                            "text-align": align
+                            # "text-align": align
                         },
                     )
-                    for header_element in header
+                    for header_element in header[1:]
                 ]
             )
         )
@@ -75,9 +76,11 @@ def generate_html_table(
                         html.Td(
                             value,
                             style={
-                                "text-align": align,
-                                "padding": "0 5px 0 5px" if variant == "compact" else "unset",
-                            }, 
+                                # "text-align": align,
+                                "padding": (
+                                    "0 5px 0 5px" if variant == "compact" else "unset"
+                                ),
+                            },
                         )
                         for value in row_data
                     ]
@@ -88,7 +91,14 @@ def generate_html_table(
     ]
 
     return html.Div(
-        [dmc.Table(header + body, striped=striped, highlightOnHover=highlightOnHover)],
+        [
+            dbc.Table(
+                header + body,
+                striped=striped,
+                hover=highlightOnHover,
+                style={"box-shadow": "unset", "text-align": align},
+            )
+        ],
         style={
             "overflow-x": "auto",
             "white-space": "nowrap",
@@ -202,6 +212,7 @@ def block_files_list():
                         "e",
                     ],
                 ],
+                align="center",
             ),
         ],
         className="block-background",
