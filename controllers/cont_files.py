@@ -112,11 +112,11 @@ def block_files_list():
         [
             dmc.Grid(
                 [
-                    dmc.Col(
+                    dmc.GridCol(
                         html.H5("Менеджер файлов", style={"margin": "0"}),
                         span="content",
                     ),
-                    dmc.Col(span="auto"),
+                    dmc.GridCol(span="auto"),
                     dbc.ButtonGroup(
                         [
                             dbc.Button(

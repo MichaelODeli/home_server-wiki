@@ -21,7 +21,7 @@ def gen(er, from_search=False):
                 dmc.Text(f"{line}", style={"margin": "5px !important"})
                 for line in traceback.format_exception(er)
             ],
-            spacing=0,
+            gap=0,
             justify="center",
         ),
         w="70%" if from_search==False else '100%',

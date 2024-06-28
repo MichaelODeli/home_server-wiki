@@ -58,7 +58,7 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
         request.remote_addr, "videoplayer", f'v_id "{v}" | v_type "{v_type}"'
     )
     text_label = "канала" if v_type == "youtube" else "категории"
-    return dmc.NotificationsProvider(
+    return html.Div(
         dmc.Container(
             children=[
                 html.Div(id="notifications-container1"),
@@ -81,7 +81,7 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                 dmc.Space(h=10),
                                 dmc.Grid(
                                     children=[
-                                        dmc.Col(
+                                        dmc.GridCol(
                                             dmc.Center(
                                                 [
                                                     dmc.Tooltip(
@@ -99,8 +99,8 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                             ),
                                             span="content",
                                         ),
-                                        dmc.Col(span="auto"),
-                                        dmc.Col(
+                                        dmc.GridCol(span="auto"),
+                                        dmc.GridCol(
                                             dmc.Group(
                                                 children=[
                                                     dmc.Tooltip(
@@ -158,7 +158,7 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                                         ],
                                                     ),
                                                 ],
-                                                spacing="xs",
+                                                gap="xs",
                                             ),
                                             span="content",
                                         ),

@@ -25,7 +25,7 @@ def get_video_card(video_title, video_length, video_link):
                     ),
                     dmc.Group(
                         [
-                            dmc.Text(str(video_title), weight=500),
+                            dmc.Text(str(video_title), fw=500),
                             dbc.Badge(
                                 str(video_length),
                                 text_color="primary",
@@ -33,7 +33,7 @@ def get_video_card(video_title, video_length, video_link):
                                 color="white",
                             ),
                         ],
-                        position="apart",
+                        justify="space-around",
                         mt="md",
                         mb="xs",
                         style={"padding": "0 10px 0 10px"}

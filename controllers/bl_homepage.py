@@ -34,14 +34,14 @@ def get_ring(drive: str, current_value: float, max_value: float, id: str, valid:
                     id=id,
                     sections=[{"value": percent, "color": "--bs-primary"}],
                     label=dmc.Center(
-                        dmc.Text(f"{str(percent)}%", color="--bs-primary", size=20)
+                        dmc.Text(f"{str(percent)}%", c="--bs-primary", size=20)
                     ),
                     roundCaps=True,
                     size=100,
                 ),
                 dmc.Text(f"{drive}: {current_value} GB / {max_value} GB"),
             ],
-            spacing=0,
+            gap=0,
             align="center",
         )
     else:
@@ -50,7 +50,7 @@ def get_ring(drive: str, current_value: float, max_value: float, id: str, valid:
                 dmc.RingProgress(
                     id=id,
                     sections=[{"value": 100, "color": "var(--bs-danger)"}],
-                    label=dmc.Center(dmc.Text("NaN", color="--bs-primary", size=20)),
+                    label=dmc.Center(dmc.Text("NaN", c="--bs-primary", size=20)), 
                     roundCaps=True,
                     size=100,
                 ),
@@ -60,7 +60,7 @@ def get_ring(drive: str, current_value: float, max_value: float, id: str, valid:
                     не обнаружен"""
                 ),
             ],
-            spacing=0,
+            gap=0,
             align="center",
         )
 
@@ -96,8 +96,8 @@ def widget_disk_size(**kwargs):
                     get_drive_size("/mnt/sdc1/"),
                     get_drive_size("/mnt/sdd1/"),
                 ],
-                position="center",
-                spacing="xs",
+                justify="center",
+                gap="xs",
             ),
         ],
         className="block-background mobile-block",
@@ -126,19 +126,19 @@ def get_weather_label(selected_date: str, temperature: list, weather_type="sunny
         [
             dmc.Text(
                 calendar.day_abbr[converted_date.weekday()].capitalize(),
-                color="var(--bs-blue)" if converted_date.weekday() < 5 else "red",
+                c="var(--bs-blue)" if converted_date.weekday() < 5 else "red",
             ),
             dmc.Text(
                 f"{converted_date.day} {calendar.month_abbr[converted_date.month]}",
-                color="var(--bs-gray)",
+                c="var(--bs-gray)",
             ),
             dmc.Space(h=10),
             DashIconify(icon=weather_types[weather_type], width=40),
-            dmc.Text(temperature[0], color="var(--bs-blue)"),
-            dmc.Text(temperature[1], color="var(--bs-gray)"),
+            dmc.Text(temperature[0], c="var(--bs-blue)"),
+            dmc.Text(temperature[1], c="var(--bs-gray)"),
         ],
         align="center",
-        spacing=0,
+        gap=0,
     )
 
 
@@ -168,8 +168,8 @@ def widget_weather(**kwargs):
                     get_weather_label(get_date_str(3), ["+10", "-4"], "thunderstorm"),
                     get_weather_label(get_date_str(4), ["+1", "-40"], "rain"),
                 ],
-                position="center",
-                spacing="xs",
+                justify="center",
+                gap="xs",
                 # style={'display': 'inline-flex', 'flex-direction': 'column'}
             ),
         ],
@@ -191,7 +191,7 @@ def widget_torrents(qbittorrent_url):
                     dmc.Text("Раздается: NaN", id="home-torrents-upload"),
                 ],
                 style={"text-align": "left"},
-                spacing="xs",
+                gap="xs",
             ),
             dmc.Space(h=15),
             html.A("Перейти в qbittorrent", href=qbittorrent_url),

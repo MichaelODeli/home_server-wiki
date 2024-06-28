@@ -67,8 +67,8 @@ def layout(
             dmc.Space(h=10),
             dmc.Grid(
                 children=[
-                    # dmc.Col(span="auto"),
-                    dmc.Col(
+                    dmc.GridCol(span="auto"),
+                    dmc.GridCol(
                         children=[
                             html.Div(
                                 children=[
@@ -152,12 +152,13 @@ def layout(
                                 style={"width": "100%"},
                             ),
                             dmc.Space(h=15),
-                            dmc.LoadingOverlay(
+                            html.Div(
+                            # dmc.LoadingOverlay(
                                 html.Div(
                                     children=[
                                         dmc.Grid(
                                             [
-                                                dmc.Col(
+                                                dmc.GridCol(
                                                     [
                                                         html.H3(
                                                             "Результаты поиска",
@@ -168,8 +169,8 @@ def layout(
                                                     ],
                                                     span="content",
                                                 ),
-                                                dmc.Col(span="auto"),
-                                                dmc.Col(
+                                                dmc.GridCol(span="auto"),
+                                                dmc.GridCol(
                                                     dmc.Tooltip(
                                                         label="Количество результатов поиска ограничено - 500.",
                                                         position="bottom",
@@ -196,14 +197,16 @@ def layout(
                                     className="block-background",
                                     style={"width": "100%", "min-height": "100px"},
                                 ),
-                                loaderProps={
-                                    "variant": "bars",
-                                    "color": "--bs-primary",
-                                    "size": "xl",
-                                },
+                                # loaderProps={
+                                #     "variant": "bars",
+                                #     "color": "--bs-primary",
+                                #     "size": "xl",
+                                # },
                             ),
                         ],
+                        span=10
                     ),
+                    dmc.GridCol(span="auto"),
                 ]
             ),
         ],
@@ -327,7 +330,7 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
                 id="my-notif",
                 action="show",
                 message=f"Результаты получены за {round(time.time() - start_time, 3)} секунд. Результатов {len(results)}",
-                icon=DashIconify(icon="ep:success-filled"),
+                icon=DashIconify(icon="ep:success-filled")
             ),
             no_update,
         )

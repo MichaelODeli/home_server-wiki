@@ -22,7 +22,6 @@ register_page(__name__, path="/settings", icon="fa-solid:home")
 checker_layout = dmc.Stepper(
             id="stepper",
             active=0,
-            breakpoint="sm",
             children=[
                 dmc.StepperStep(
                     label="Интернет",

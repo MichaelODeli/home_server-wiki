@@ -107,7 +107,7 @@ def float_player():
         [
             dmc.Grid(
                 [
-                    dmc.Col(
+                    dmc.GridCol(
                         [
                             dmc.ActionIcon(
                                 DashIconify(
@@ -124,7 +124,7 @@ def float_player():
                         ],
                         span="content",
                     ),
-                    dmc.Col(
+                    dmc.GridCol(
                         dmc.Stack(
                             [
                                 html.P(
@@ -140,11 +140,11 @@ def float_player():
                                     id="song-artist",
                                 ),
                             ],
-                            spacing=0,
+                            gap=0,
                         ),
                         span="content",
                     ),
-                    dmc.Col(
+                    dmc.GridCol(
                         [
                             dmc.Stack(
                                 [
@@ -211,7 +211,7 @@ def float_player():
                                         ],
                                         align='center',
                                         style={"justify-content": "center"},
-                                        spacing='xs'
+                                        gap='xs'
                                     ),
                                     dmc.Group(
                                         [
@@ -228,7 +228,7 @@ def float_player():
                                             ),
                                             html.P("59:59", id="audio-full-time", className='hided_element'),
                                         ],
-                                        spacing="sm",
+                                        gap="sm",
                                         align='center',
                                         style={"justify-content": "center"},
                                     )
@@ -237,7 +237,7 @@ def float_player():
                         ],
                         span="auto",
                     ),
-                    dmc.Col(
+                    dmc.GridCol(
                         [
                             dbc.Button(
                                 DashIconify(

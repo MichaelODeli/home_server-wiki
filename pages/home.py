@@ -25,11 +25,11 @@ def layout():
     lay = dmc.Container(
         children=[
             dmc.Grid([
-                # dmc.Col(span='auto'),
-                dmc.Col([bl_h.widget_disk_size()], span='content', className='mobile-widget', id='t'),
-                dmc.Col([bl_h.widget_weather()], span='content', className='mobile-widget', id='widget-weather'),
-                dmc.Col([bl_h.widget_torrents(qbittorrent_url)], span='content', className='mobile-widget', id='widget_torrents'),
-                # dmc.Col(span='auto')
+                # dmc.GridCol(span='auto'),
+                dmc.GridCol([bl_h.widget_disk_size()], span='content', className='mobile-widget', id='t'),
+                dmc.GridCol([bl_h.widget_weather()], span='content', className='mobile-widget', id='widget-weather'),
+                dmc.GridCol([bl_h.widget_torrents(qbittorrent_url)], span='content', className='mobile-widget', id='widget_torrents'),
+                # dmc.GridCol(span='auto')
             ],
             align='stretch',
             justify="center",

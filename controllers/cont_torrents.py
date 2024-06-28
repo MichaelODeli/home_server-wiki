@@ -9,7 +9,7 @@ from datetime import datetime
 
 def add_torrent_modal():
     loading_skeleton = dmc.Stack(
-        spacing="xs",
+        gap="xs",
         children=[
             dmc.Skeleton(height=8, width="70%"),
             dmc.Skeleton(height=8),
@@ -238,11 +238,11 @@ def block_torrents():
         [
             dmc.Grid(
                 [
-                    dmc.Col(
+                    dmc.GridCol(
                         html.H5("Управление торрентами", style={"margin": "0"}),
                         span="content",
                     ),
-                    dmc.Col(span="auto"),
+                    dmc.GridCol(span="auto"),
                     dbc.ButtonGroup(
                         [
                             dbc.Button(

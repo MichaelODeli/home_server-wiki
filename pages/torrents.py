@@ -33,7 +33,7 @@ def layout(l="n", **kwargs):
         # all workers must be here!
         return dmc.Container(
             children=[
-                dmc.NotificationsProvider(
+                html.Div(
                     [
                         cont_t.block_torrents(),
                         cont_t.add_torrent_modal(),

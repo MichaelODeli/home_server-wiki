@@ -5,12 +5,26 @@ from dash_iconify import DashIconify
 import dash_bootstrap_components as dbc
 from dash_extensions import Purify
 
+dash._dash_renderer._set_react_version("18.2.0")
+
 # css styles
 icons_link = (
     "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css"
 )
+mantine_stylesheets = [
+    "https://unpkg.com/@mantine/dates@7/styles.css",
+    "https://unpkg.com/@mantine/code-highlight@7/styles.css",
+    "https://unpkg.com/@mantine/charts@7/styles.css",
+    "https://unpkg.com/@mantine/carousel@7/styles.css",
+    "https://unpkg.com/@mantine/notifications@7/styles.css",
+    "https://unpkg.com/@mantine/nprogress@7/styles.css",
+]
+
 app = dash.Dash(
-    __name__, use_pages=True, external_stylesheets=[dbc.themes.ZEPHYR, icons_link, dbc.icons.FONT_AWESOME]
+    __name__,
+    use_pages=True,
+    external_stylesheets=[dbc.themes.ZEPHYR, icons_link, dbc.icons.FONT_AWESOME]
+    + mantine_stylesheets,
 )
 
 server = app.server
@@ -88,12 +102,15 @@ navbar = dbc.Navbar(
                 children=[
                     dmc.Grid(
                         [
-                            dmc.Col(
+                            dmc.GridCol(
                                 dbc.DropdownMenu(
                                     label="Внешние утилиты",
                                     children=[
                                         dbc.DropdownMenuItem(
-                                            "Настройка сервера", header=True, class_name='h6', style={"text-decoration": "unset"},
+                                            "Настройка сервера",
+                                            header=True,
+                                            class_name="h6",
+                                            style={"text-decoration": "unset"},
                                         ),
                                         dbc.DropdownMenuItem(
                                             "Webmin", href="https://192.168.3.33:10000/"
@@ -124,9 +141,9 @@ navbar = dbc.Navbar(
                                     nav=True,
                                     in_navbar=True,
                                 ),
-                                span="content"
+                                span="content",
                             ),
-                            dmc.Col(
+                            dmc.GridCol(
                                 dbc.DropdownMenu(
                                     label="Медиа и файлы",
                                     children=[
@@ -154,40 +171,57 @@ navbar = dbc.Navbar(
                                     nav=True,
                                     in_navbar=True,
                                 ),
-                                span="content"
+                                span="content",
                             ),
-                            dmc.Col(
+                            dmc.GridCol(
                                 [
                                     html.Span(
                                         [
-                                            dbc.Label(className="fa fa-moon", html_for="color-mode-switch", color='primary'),
-                                            dbc.Switch( id="color-mode-switch", value=True, className="d-inline-block ms-1", persistence=True),
-                                            dbc.Label(className="fa fa-sun", html_for="color-mode-switch", color='primary'), 
+                                            dbc.Label(
+                                                className="fa fa-moon",
+                                                html_for="color-mode-switch",
+                                                color="primary",
+                                            ),
+                                            dbc.Switch(
+                                                id="color-mode-switch",
+                                                value=True,
+                                                className="d-inline-block ms-1",
+                                                persistence=True,
+                                            ),
+                                            dbc.Label(
+                                                className="fa fa-sun",
+                                                html_for="color-mode-switch",
+                                                color="primary",
+                                            ),
                                         ]
                                     )
                                 ],
-                                span="content"
+                                span="content",
                             ),
-                            # dmc.Col(span="auto"),  # column for filling empty space
+                            # dmc.GridCol(span="auto"),  # column for filling empty space
                         ],
-                        className='custom-flex'
+                        className="custom-flex",
                     ),
-                    html.Div(search_bar, style={'padding': '0 10px 0 10px'}), 
+                    html.Div(search_bar, style={"padding": "0 10px 0 10px"}),
                 ],
                 id="navbar-collapse",
                 is_open=False,
                 navbar=True,
-            )
+            ),
         ]
     ),
-    style={'min-height': '80px'},
-    class_name='rounded border-bottom',
-    color='default',
+    style={"min-height": "80px"},
+    class_name="rounded border-bottom",
+    color="default",
 )
 
 
 # Конструкция всего макета
-app.layout = dmc.NotificationsProvider(html.Div(children=[navbar, dash.page_container]))
+app.layout = dmc.MantineProvider(
+    children=[navbar, dash.page_container, dmc.NotificationProvider()],
+    id="mantine_theme",
+    defaultColorScheme="light",
+)
 
 
 # add callback for toggling the collapse on small screens
@@ -201,6 +235,7 @@ def toggle_navbar_collapse(n, is_open):
         return not is_open
     return is_open
 
+
 clientside_callback(
     """
     (switchOn) => {
@@ -211,6 +246,11 @@ clientside_callback(
     Output("color-mode-switch", "id"),
     Input("color-mode-switch", "value"),
 )
+@app.callback(
+    Output("mantine_theme", "forceColorScheme"), Input("color-mode-switch", "value")
+)
+def make_mantine_theme(value):
+    return "dark" if value == False else "light"
 
 
 if __name__ == "__main__":
