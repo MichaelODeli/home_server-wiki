@@ -35,7 +35,7 @@ import dash_bootstrap_components as dbc
 from flask import request
 from datetime import datetime
 from utils import sql_traceback_generator
-from controllers import bl_search as bl_s
+from controllers import cont_search as cont_s
 from controllers import service_controller as service
 
 register_page(__name__, path="/search", icon="fa-solid:home")
@@ -177,7 +177,7 @@ def layout(
                                                         offset=3,
                                                         withArrow=True,
                                                         children=[
-                                                            bl_s.get_icon(
+                                                            cont_s.get_icon(
                                                                 "material-symbols:info",
                                                                 size=25,
                                                                 icon_color="black",
@@ -294,9 +294,9 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
                 html.Tr(
                     [
                         # html.Td(search_in_filetype),
-                        html.Td(bl_s.search_link(search_in_filetype, category)),
+                        html.Td(cont_s.search_link(search_in_filetype, category)),
                         html.Td(
-                            bl_s.link_builder(
+                            cont_s.link_builder(
                                 server_link,
                                 name,
                                 result_line[1],
@@ -305,9 +305,9 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
                                 filename,
                             )
                         ),
-                        html.Td(bl_s.get_size_str(result_line[5])),
+                        html.Td(cont_s.get_size_str(result_line[5])),
                         (
-                            html.Td(bl_s.get_duration(result_line[6]))
+                            html.Td(cont_s.get_duration(result_line[6]))
                             if search_in_filetype in videos_categories
                             else None
                         ),

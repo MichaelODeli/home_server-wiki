@@ -4,6 +4,7 @@ import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 import dash_bootstrap_components as dbc
 from dash_extensions import Purify
+from config import *
 
 dash._dash_renderer._set_react_version("18.2.0")
 
@@ -57,36 +58,6 @@ search_bar = Purify(
         </div>
     </form>"""
 )
-
-# ---- FORM NOT SUBMITTING ---
-# search_bar2 = dbc.Form(
-#     children=[
-#         html.Div(
-#             [
-#                 html.Div(
-#                     [
-#                         dbc.Input(
-#                             id="query",
-#                             name="query",
-#                             placeholder="Поиск по хранилищу",
-#                             step="any",
-#                         )
-#                     ],
-#                     className="col",
-#                 ),
-#                 dbc.Input(type="hidden", value="y", name="l"),
-#                 html.Div(
-#                     [dbc.Button("Найти", className="ms-2")],
-#                     className="col-auto",
-#                 ),
-#             ],
-#             className="g-0 ms-auto flex-nowrap mt-3 mt-md-0 align-items-center row",
-#         )
-#     ],
-#     className="",
-#     method="GET",
-#     action="/search",
-# )
 
 # navbar with buttons
 navbar = dbc.Navbar(
@@ -254,4 +225,4 @@ def make_mantine_theme(value):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True, host="0.0.0.0", port=81)
+    app.run_server(debug=True, host=webui_ip, port=webui_port)

@@ -1,38 +1,50 @@
-database_ip = ''
-database_port = ''
-baseway = ''
-overwrite_existing_table = True
-videos_categories = ['cartoon_serials', 'en_serials', 'tv_shows', 'youtube', 'films', 'ru_serials']
-other_categories = ['apps', 'books', 'wiki']
-search_avaliable_directories = 'ALL' # 'ALL" or list with inculded directories
-create_directories = False
-webui_ip = ''
-webui_port = ''
+from config import *
 
-
-settings_tablename = 'settings'
-setting_id_columname = 'setting_id'
-setting_name_columname = 'setting_name'
-setting_value_columname = 'setting_value'
-
-create_database_string = 'CREATE database home_server'
-
-create_table_string = f'''CREATE TABLE public.{settings_tablename} (
-	{setting_id_columname} varchar NOT NULL,
-	{setting_name_columname} varchar NOT NULL,
-	{setting_value_columname} varchar NOT NULL,
-	CONSTRAINT {settings_tablename}_pk PRIMARY KEY ({setting_id_columname})
+# create table
+def get_createtable_string(tablename):
+    return f"""CREATE TABLE public.{tablename} (
+    {tablename}_id SERIAL PRIMARY KEY,
+    {tablename}_name varchar NOT NULL,
+    {tablename}_value varchar NOT NULL
 );
-'''
+"""
 
+# insert data
+def get_insert_string(tablename, params_dict):
+    params_list = tuple(params_dict.items())
+    return f"""INSERT INTO {tablename} ({tablename}_name, {tablename}_value)
+    VALUES
+    {params_list};"""
+
+
+# creating tables
+get_createtable_string('settings_tablename')
+get_createtable_string('filemanager_tablename')
+get_createtable_string('filemanager_categories_tablename')
+get_createtable_string('widgets_tablename')
+
+
+# parameter_name - parameter_value
 settings_dict = {
-    'database_ip': database_ip,
-    'database_port' : database_port,
-    'filemanager_baseway': baseway,
-    'videos_categories': str(videos_categories).replace("'", "").replace(" ", "")[1:-1],
-    'other_categories': str(other_categories).replace("'", "").replace(" ", "")[1:-1],
-    'webui_ip': webui_ip,
-    'webui_port': webui_port
+    "webui_ip": webui_ip,
+    "webui_port": webui_port,
+}
+filemanager_dict = {
+    "main_dir": baseway,
+    "update_interval": '1',
+}
+widgets_dict = {
+    'weather_city': 'Среднеуральск'
 }
 
-print(settings_dict)
+get_insert_string(settings_tablename, settings_dict)
+get_insert_string(filemanager_tablename, filemanager_dict)
+
+# columns
+
+filemanager_categories_columns = {
+    "category_id": "int",
+    "category_name": "varchar",
+    "category_isvideo": "bool",
+    "category_scan_enable": "bool",
+}

@@ -84,3 +84,7 @@ body {
 .btn-outline-secondary {
     color: unset
 }
+
+.card-title {
+    text-align: center;
+}

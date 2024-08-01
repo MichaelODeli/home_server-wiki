@@ -13,35 +13,55 @@ from dash import (
 import dash_mantine_components as dmc
 from flask import request
 from datetime import datetime
-from controllers import bl_homepage as bl_h
 from controllers import cont_homepage
 from controllers import service_controller as service
 
 register_page(__name__, path="/", icon="fa-solid:home")
-qbittorrent_url = 'http://192.168.3.33:8124'
+qbittorrent_url = "http://192.168.3.33:8124"
+
 
 def layout():
     global qbittorrent_url
     lay = dmc.Container(
         children=[
-            dmc.Grid([
-                # dmc.GridCol(span='auto'),
-                dmc.GridCol([bl_h.widget_disk_size()], span='content', className='mobile-widget', id='t'),
-                dmc.GridCol([bl_h.widget_weather()], span='content', className='mobile-widget', id='widget-weather'),
-                dmc.GridCol([bl_h.widget_torrents(qbittorrent_url)], span='content', className='mobile-widget', id='widget_torrents'),
-                # dmc.GridCol(span='auto')
-            ],
-            align='stretch',
-            justify="center",
-            className='adaptive-grid')
+            dmc.Grid(
+                [
+                    dmc.GridCol(
+                        [cont_homepage.widget_systeminfo()],
+                        span="content",
+                        className="mobile-widget",
+                    ),
+                    dmc.GridCol(
+                        [cont_homepage.widget_disk_size()],
+                        span="content",
+                        className="mobile-widget",
+                        id="t",
+                    ),
+                    dmc.GridCol(
+                        [cont_homepage.widget_torrents(qbittorrent_url)],
+                        span="content",
+                        className="mobile-widget",
+                        id="widget_torrents",
+                    ),   
+                    dmc.GridCol(
+                        [cont_homepage.widget_weather()],
+                        span=3,
+                        className="mobile-widget",
+                        id="widget-weather",
+                    ),                  
+                ],
+                align="stretch",
+                justify="center",
+                className="adaptive-grid",
+            ),
         ],
         pt=20,
         # style={"paddingTop": 20},
-        className='dmc-container adaptive-container'
+        className="dmc-container adaptive-container",
     )
 
     # print(f'{request.remote_addr} - - [{now}] | homepage {request.base_url}')
-    service.log_printer(request.remote_addr, 'homepage', 'page opened')
+    service.log_printer(request.remote_addr, "homepage", "page opened")
     return lay
 
 

@@ -115,7 +115,7 @@ def bytes2human(n, format="%(value).1f %(symbol)s", symbols="customary"):
       '9.76562 K'
     """
     SYMBOLS = {
-        "customary": ("B", "K", "M", "G", "T", "P", "E", "Z", "Y"),
+        "customary": ("B", "Kb", "Mb", "Gb", "Tb", "Pb", "Eb", "Zb", "Yb"),
         "customary_ext": (
             "byte",
             "kilo",
@@ -193,7 +193,6 @@ def decode_torrent_status(name):
         return "Перемещение"
     else:
         return "Неизвестно"
-
 
 def get_torrents_data(qbittorrent_url="192.168.3.33:8124"):
     try:

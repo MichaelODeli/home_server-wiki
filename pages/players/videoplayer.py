@@ -18,7 +18,7 @@ from flask import request
 from datetime import datetime
 from utils import sql_traceback_generator
 import sys
-from controllers import bl_videoplayer as bl_v
+from controllers import cont_videoplayer as cont_v
 from controllers import service_controller as service
 
 register_page(__name__, path="/players/videoplayer", icon="fa-solid:home")
@@ -209,31 +209,31 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                 dmc.Space(h=10),
                                 html.Div(
                                     [
-                                        bl_v.get_video_card(
+                                        cont_v.get_video_card(
                                             "Sample video 1",
                                             "00:50",
                                             "https://example.com",
                                         ),
                                         dmc.Space(h=7),
-                                        bl_v.get_video_card(
+                                        cont_v.get_video_card(
                                             "Sample video 2",
                                             "01:50",
                                             "https://example.com",
                                         ),
                                         dmc.Space(h=7),
-                                        bl_v.get_video_card(
+                                        cont_v.get_video_card(
                                             "Sample video 3",
                                             "02:50",
                                             "https://example.com",
                                         ),
                                         dmc.Space(h=7),
-                                        bl_v.get_video_card(
+                                        cont_v.get_video_card(
                                             "Sample video 4",
                                             "03:50",
                                             "https://example.com",
                                         ),
                                         dmc.Space(h=7),
-                                        bl_v.get_video_card(
+                                        cont_v.get_video_card(
                                             "Sample video 5",
                                             "1:04:50",
                                             "https://example.com",

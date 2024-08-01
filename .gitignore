@@ -58,3 +58,4 @@ Thumbs.db
 tests/
 _ip_properties
 tests.*
+.env

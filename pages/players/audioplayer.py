@@ -19,7 +19,7 @@ from datetime import datetime
 import pandas as pd
 from controllers import cont_audioplayer as cont_a
 from controllers import service_controller as service
-from controllers import bl_search as bl_s
+from controllers import cont_search as cont_s
 import dash_player
 
 register_page(__name__, path="/players/audioplayer", icon="fa-solid:home")
@@ -182,4 +182,4 @@ def player_volume(currentTime, duration):
     currentTime = int(currentTime) if currentTime != None else 0
     duration = int(duration) if duration != None else 0
 
-    return currentTime, duration, bl_s.get_duration(currentTime), bl_s.get_duration(duration)
+    return currentTime, duration, cont_s.get_duration(currentTime), cont_s.get_duration(duration)
