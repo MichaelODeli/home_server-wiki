@@ -58,4 +58,5 @@ Thumbs.db
 tests/
 _ip_properties
 tests.*
-.env
+_filemanager_test.ipynb
+_PLANS.md

@@ -30,7 +30,7 @@ def get_icon(icon, size=18, background=True, icon_color="white"):
         else DashIconify(icon=icon, width=size, color=icon_color)
     )
 
-def str_hider(name, limiter=25):
+def str_hider(name, limiter=35):
     """
     Сокращение строки до 30 символов, если не задано иное
 

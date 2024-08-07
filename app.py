@@ -4,7 +4,11 @@ import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 import dash_bootstrap_components as dbc
 from dash_extensions import Purify
-from config import *
+from dash_extensions.pages import setup_page_components
+# from config import *
+from dotenv import dotenv_values
+import flask
+import os
 
 dash._dash_renderer._set_react_version("18.2.0")
 
@@ -21,14 +25,27 @@ mantine_stylesheets = [
     "https://unpkg.com/@mantine/nprogress@7/styles.css",
 ]
 
-app = dash.Dash(
-    __name__,
-    use_pages=True,
-    external_stylesheets=[dbc.themes.ZEPHYR, icons_link, dbc.icons.FONT_AWESOME]
-    + mantine_stylesheets,
-)
+config = {
+    **dotenv_values(".env"),  # load variables
+    # **dotenv_values(".env.secret"),  # load sensitive variables
+    **os.environ,  # override loaded values with environment variables
+}
 
-server = app.server
+# flask and dash configuration
+server = flask.Flask(config["APP_NAME"])
+app = dash.Dash(
+    config["APP_NAME"],
+    server=server,
+    use_pages=True,
+    external_stylesheets=[
+        dbc.themes.ZEPHYR,
+        "assets/offline/bootstrap.min.css",
+    ]
+    + mantine_stylesheets,
+    title=config["WEB_PAGE_TITLE"],
+    update_title=config["WEB_PAGE_LOADING_TITLE"],
+    suppress_callback_exceptions=True,
+)
 app.config.suppress_callback_exceptions = True
 
 
@@ -64,7 +81,7 @@ navbar = dbc.Navbar(
     dbc.Container(
         [
             html.A(
-                dbc.NavbarBrand("Home server", className="ms-2 h2"),
+                dbc.NavbarBrand(config["WEB_PAGE_HEADER_BRAND"], className="ms-2 h2"),
                 href="/",
                 style={"text-decoration": "unset"},
             ),
@@ -189,7 +206,7 @@ navbar = dbc.Navbar(
 
 # Конструкция всего макета
 app.layout = dmc.MantineProvider(
-    children=[navbar, dash.page_container, dmc.NotificationProvider()],
+    children=[navbar, dash.page_container, dmc.NotificationProvider(), setup_page_components(),],
     id="mantine_theme",
     defaultColorScheme="light",
 )
@@ -224,5 +241,11 @@ def make_mantine_theme(value):
     return "dark" if value == False else "light"
 
 
+dev = bool(config['APP_DEBUG_ENABLED'])
+
 if __name__ == "__main__":
-    app.run_server(debug=True, host=webui_ip, port=webui_port)
+    if dev:
+        app.run_server(debug=True, host=config['APP_HOST'], port=int(config['APP_PORT']))
+    else:
+        from waitress import serve
+        serve(app.server, host=config['APP_HOST'], port=int(config['APP_PORT']))

@@ -88,3 +88,7 @@ body {
 .card-title {
     text-align: center;
 }
+
+.link-primary {
+    box-shadow: unset !important;
+}

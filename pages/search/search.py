@@ -237,7 +237,7 @@ def table_results(search_by, search_query, search_in_filetype, n_clicks):
     if search_query == "":
         return "Введен пустой поисковый запрос", None
     elif len(search_query) <= setting_min_search_len: 
-        return f"Минимальное количество символов для поиска - {str(setting_min_search_len)}", None
+        return f"Минимальное количество символов для поиска - {str(setting_min_search_len)}", no_update, no_update
     else:
         if search_by == "search_by_category":
             column = "type"

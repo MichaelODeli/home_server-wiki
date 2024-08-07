@@ -31,9 +31,16 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
     if l == "n":
         return dmc.Container()
     global link
-    # server_link = '192.168.3.33'
+
     server_link = request.base_url.replace(":81", "").split("/")[2]
-    if v != None:
+    # server_link = '192.168.0.33'
+
+    if v == "dummy":
+        v = "default_video"
+        channel = "Blender"
+        name = "Big buck bunny"
+        link = "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4"
+    elif v != None:
         try:
             conn = sqlite3.connect("bases/nstorage.sqlite3")
             c = conn.cursor()
@@ -49,10 +56,18 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
             err_cont = sql_traceback_generator.gen(er)
             return err_cont
     else:
-        v = "default_video"
-        channel = "Blender"
-        name = "Big buck bunny"
-        link = "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4"
+        return dmc.Stack(
+            [
+                html.H5("Заготовка под главную страницу видеоплеера"),
+                html.A(
+                    children=dbc.Button("Открыть тестовое видео"),
+                    href="/players/videoplayer?l=y&v=dummy",
+                ),
+            ],
+            pt="30px",
+            w='100%',
+            align='center'
+        )
 
     service.log_printer(
         request.remote_addr, "videoplayer", f'v_id "{v}" | v_type "{v_type}"'
@@ -182,8 +197,8 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                             outline=True,
                                             color="primary",
                                             id="video-button-recommended",
-                                            n_clicks=0, 
-                                            size="sm"
+                                            n_clicks=0,
+                                            size="sm",
                                         ),
                                         dbc.Button(
                                             f"Канал: {channel}",
@@ -192,7 +207,7 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                             color="primary",
                                             id="video-button-channel",
                                             n_clicks=0,
-                                            size="sm"
+                                            size="sm",
                                         ),
                                         dbc.Button(
                                             "Похожие",
@@ -201,7 +216,7 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                             color="primary",
                                             id="video-button-same",
                                             n_clicks=0,
-                                            size="sm"
+                                            size="sm",
                                         ),
                                     ],
                                     style={"width": "100%"},
@@ -231,13 +246,7 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                             "Sample video 4",
                                             "03:50",
                                             "https://example.com",
-                                        ),
-                                        dmc.Space(h=7),
-                                        cont_v.get_video_card(
-                                            "Sample video 5",
-                                            "1:04:50",
-                                            "https://example.com",
-                                        ),
+                                        )
                                     ],
                                     id="recommended-videos-tab",
                                 ),
@@ -331,4 +340,4 @@ def videos_tab_recommended(rec_c, chan_c, same_c):
 
     vars_list = [rec_c, chan_c, same_c]
 
-    return [False if element == 0 else True for element in vars_list]+[0]*3
+    return [False if element == 0 else True for element in vars_list] + [0] * 3

@@ -157,7 +157,7 @@ def get_partitions_info_rows():
     return [generate_tablerow(html.H6("Накопители и разделы"))] + parts_data
 
 
-def layout(l="n", tab="main", **kwargs):
+def layout(l="n", tab="server_info", **kwargs):
     if l == "n":
         return dmc.Container()
     service.log_printer(request.remote_addr, "settings", "page opened")
