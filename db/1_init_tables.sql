@@ -37,9 +37,6 @@ create table
     "primary_mime_id" int not null,
     "type_name" varchar(100) not null,
     "extension" varchar(100),
-    "compressible" BOOLEAN,
-    "is_audio" BOOLEAN not null DEFAULT FALSE,
-    "is_video" BOOLEAN not null DEFAULT FALSE,
     "html_video_ready" BOOLEAN not null DEFAULT FALSE,
     "html_audio_ready" BOOLEAN not null DEFAULT FALSE,
     "search_enabled" BOOLEAN not null DEFAULT TRUE,
@@ -85,7 +82,7 @@ create table
 
 create table
   "filestorage_files" (
-    "id" uuid not null primary key,
+    "id" bytea not null primary key,
     "type_id" int not null,
     "way" text not null DEFAULT '/',
     "filename" text not null,
@@ -95,14 +92,12 @@ create table
     "created_at" timestamp not null default NOW(),
     "updated_at" timestamp not null default NOW(),
     FOREIGN KEY (type_id) REFERENCES filestorage_types (id) ON DELETE CASCADE,
-    FOREIGN KEY (mime_type_id) REFERENCES mime_types_secondary (id) ON DELETE CASCADE,
-    UNIQUE(id, type_id)
+    FOREIGN KEY (mime_type_id) REFERENCES mime_types_secondary (id) ON DELETE CASCADE
 );
 
 create table
-  "filestorage_mediainfo" (
-    "id" serial primary key,
-    "file_id" uuid not null,
+  "filestorage_mediainfo_video" (
+    "file_id" bytea not null,
     "duration" real not null,
     "fps" int,
     "codec" varchar(20),
@@ -110,3 +105,21 @@ create table
     "updated_at" timestamp not null default NOW(),
     FOREIGN KEY (file_id) REFERENCES filestorage_files (id) ON DELETE CASCADE
 );
+
+create table
+  "filestorage_mediainfo_audio" (
+    "file_id" bytea not null,
+    "duration" real not null,
+    "bitrate" int,
+    "sample_rate" real,
+    "artist" varchar(255),
+    "audio_title" varchar(255),
+    "album_title" varchar(255),
+    "year" smallint,
+    "genre" varchar(255),
+    "created_at" timestamp not null default NOW(),
+    "updated_at" timestamp not null default NOW(),
+    FOREIGN KEY (file_id) REFERENCES filestorage_files (id) ON DELETE CASCADE
+);
+
+CREATE EXTENSION pgcrypto;
