@@ -5,6 +5,7 @@ from dash_iconify import DashIconify
 import dash_bootstrap_components as dbc
 from dash_extensions import Purify
 from dash_extensions.pages import setup_page_components
+
 # from config import *
 from dotenv import dotenv_values
 import flask
@@ -17,12 +18,13 @@ icons_link = (
     "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css"
 )
 mantine_stylesheets = [
-    "https://unpkg.com/@mantine/dates@7/styles.css",
-    "https://unpkg.com/@mantine/code-highlight@7/styles.css",
-    "https://unpkg.com/@mantine/charts@7/styles.css",
-    "https://unpkg.com/@mantine/carousel@7/styles.css",
-    "https://unpkg.com/@mantine/notifications@7/styles.css",
-    "https://unpkg.com/@mantine/nprogress@7/styles.css",
+    # dmc.styles.DATES,
+    # dmc.styles.CODE_HIGHLIGHT,
+    # dmc.styles.CHARTS,
+    # dmc.styles.CAROUSEL,
+    # dmc.styles.NOTIFICATIONS,
+    "https://unpkg.com/@mantine/notifications@7.11.0/styles.css",
+    # dmc.styles.NPROGRESS,
 ]
 
 config = {
@@ -91,44 +93,48 @@ navbar = dbc.Navbar(
                     dmc.Grid(
                         [
                             dmc.GridCol(
-                                dbc.DropdownMenu(
-                                    label="Внешние утилиты",
-                                    children=[
-                                        dbc.DropdownMenuItem(
-                                            "Настройка сервера",
-                                            header=True,
-                                            class_name="h6",
-                                            style={"text-decoration": "unset"},
-                                        ),
-                                        dbc.DropdownMenuItem(
-                                            "Webmin", href="https://192.168.3.33:10000/"
-                                        ),
-                                        dbc.DropdownMenuItem(
-                                            "Параметры ПО", href="/settings?l=y"
-                                        ),
-                                        dbc.DropdownMenuItem(divider=True),
-                                        dbc.DropdownMenuItem(
-                                            "Торрент клиенты", header=True
-                                        ),
-                                        dbc.DropdownMenuItem(
-                                            "qBittorrent",
-                                            href="http://192.168.3.33:8124/",
-                                        ),
-                                        dbc.DropdownMenuItem(
-                                            "Transmission (obsolete)",
-                                            href="http://192.168.3.33:12345/",
-                                        ),
-                                        dbc.DropdownMenuItem(divider=True),
-                                        dbc.DropdownMenuItem(
-                                            "Wiki-ресурсы", header=True
-                                        ),
-                                        dbc.DropdownMenuItem(
-                                            "Kiwix", href="http://192.168.3.33:789/"
-                                        ),
-                                    ],
-                                    nav=True,
-                                    in_navbar=True,
-                                ),
+                                [
+                                    html.A("Новый поиск", href="/new_search?l=y"),
+                                    dbc.DropdownMenu(
+                                        label="Внешние утилиты",
+                                        children=[
+                                            dbc.DropdownMenuItem(
+                                                "Настройка сервера",
+                                                header=True,
+                                                class_name="h6",
+                                                style={"text-decoration": "unset"},
+                                            ),
+                                            dbc.DropdownMenuItem(
+                                                "Webmin",
+                                                href="https://192.168.3.33:10000/",
+                                            ),
+                                            dbc.DropdownMenuItem(
+                                                "Параметры ПО", href="/settings?l=y"
+                                            ),
+                                            dbc.DropdownMenuItem(divider=True),
+                                            dbc.DropdownMenuItem(
+                                                "Торрент клиенты", header=True
+                                            ),
+                                            dbc.DropdownMenuItem(
+                                                "qBittorrent",
+                                                href="http://192.168.3.33:8124/",
+                                            ),
+                                            dbc.DropdownMenuItem(
+                                                "Transmission (obsolete)",
+                                                href="http://192.168.3.33:12345/",
+                                            ),
+                                            dbc.DropdownMenuItem(divider=True),
+                                            dbc.DropdownMenuItem(
+                                                "Wiki-ресурсы", header=True
+                                            ),
+                                            dbc.DropdownMenuItem(
+                                                "Kiwix", href="http://192.168.3.33:789/"
+                                            ),
+                                        ],
+                                        nav=True,
+                                        in_navbar=True,
+                                    ),
+                                ],
                                 span="content",
                             ),
                             dmc.GridCol(
@@ -206,7 +212,13 @@ navbar = dbc.Navbar(
 
 # Конструкция всего макета
 app.layout = dmc.MantineProvider(
-    children=[navbar, dash.page_container, dmc.NotificationProvider(), setup_page_components(),],
+    children=[
+        navbar,
+        dash.page_container,
+        dmc.NotificationProvider(position="bottom-right"),
+        setup_page_components(),
+        html.Div(id="notifications-container-search"),
+    ],
     id="mantine_theme",
     defaultColorScheme="light",
 )
@@ -234,6 +246,8 @@ clientside_callback(
     Output("color-mode-switch", "id"),
     Input("color-mode-switch", "value"),
 )
+
+
 @app.callback(
     Output("mantine_theme", "forceColorScheme"), Input("color-mode-switch", "value")
 )
@@ -241,11 +255,14 @@ def make_mantine_theme(value):
     return "dark" if value == False else "light"
 
 
-dev = bool(config['APP_DEBUG_ENABLED'])
+dev = bool(config["APP_DEBUG_ENABLED"])
 
 if __name__ == "__main__":
     if dev:
-        app.run_server(debug=True, host=config['APP_HOST'], port=int(config['APP_PORT']))
+        app.run_server(
+            debug=True, host=config["APP_HOST"], port=int(config["APP_PORT"])
+        )
     else:
         from waitress import serve
-        serve(app.server, host=config['APP_HOST'], port=int(config['APP_PORT']))
+
+        serve(app.server, host=config["APP_HOST"], port=int(config["APP_PORT"]))

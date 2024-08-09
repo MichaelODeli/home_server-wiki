@@ -975,6 +975,7 @@ INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUE
 INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(8, 'text/yaml', 'yaml,yml');
 INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(9, 'video/3gpp', '3gp,3gpp');
 INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(9, 'video/3gpp2', '3g2');
+INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(9, 'video/avi', 'avi');
 INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(9, 'video/h261', 'h261');
 INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(9, 'video/h263', 'h263');
 INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(9, 'video/h264', 'h264');
@@ -1027,17 +1028,34 @@ UPDATE mime_types_secondary SET (html_video_ready, html_audio_ready, primary_mim
 
 INSERT INTO config (parameter_name, parameter_value) VALUES ('filemanager.baseway', '/home/michael/server-side/storage/');
 INSERT INTO config (parameter_name, parameter_value, test_value) VALUES ('filemanager.baseway', 'Z:/', TRUE);
+INSERT INTO config (parameter_name, parameter_value) VALUES ('server.local_ip', '192.168.0.33');
+INSERT INTO config (parameter_name, parameter_value) VALUES ('filemanager.apache_storage_subdir', '/storage/');
 INSERT INTO config (parameter_name, parameter_value) VALUES ('filemanager.update_interval', '1');
 
 -- files_summary
-CREATE VIEW filestorage_files_summary as select file_id, category_name, type_name, file_fullway, file_fullway_test, mime_type, mime_type_id, size_kb, html_video_ready, html_audio_ready, type_id, category_id from
+CREATE VIEW filestorage_files_summary as select file_id, category_name, type_name, file_fullway, file_fullway_test, file_fullway_nobaseway, file_fullway_forweb, filename as file_name, mime_type, mime_type_id, size_kb, html_video_ready, html_audio_ready, type_id, category_id from
 (select *, 
-concat((select parameter_value FROM config where parameter_name = 'filemanager.baseway' and test_value), way_category, way_type, way_file, filename) as file_fullway_test,
-concat((select parameter_value FROM config where parameter_name = 'filemanager.baseway' and not test_value), way_category, way_type, way_file, filename) as file_fullway
+concat(
+  (select parameter_value FROM config where parameter_name = 'filemanager.baseway' and test_value), 
+  way_category, way_type, way_file, filename
+) as file_fullway_test,
+concat(
+  (select parameter_value FROM config where parameter_name = 'filemanager.baseway' and not test_value), 
+  way_category, way_type, way_file, filename
+) as file_fullway,
+concat(
+  way_category, way_type, way_file, filename
+) as file_fullway_nobaseway,
+concat(
+  (select parameter_value FROM config where parameter_name = 'server.local_ip'), 
+  (select parameter_value FROM config where parameter_name = 'filemanager.apache_storage_subdir'), 
+  way_category, way_type, way_file, filename
+) as file_fullway_forweb
 from (select encode(id, 'hex') as file_id, type_id, way as way_file, filename, mime_type_id, size_kb from filestorage_files) ff 
 left join (select id as type_id, category_id, type_name, way as way_type from filestorage_types where active = true) ft using(type_id)
 left join (select id as category_id, category_name, way as way_category from filestorage_categories) fc using(category_id)
-left join (select id as mime_type_id, type_name as mime_type, html_video_ready, html_audio_ready from mime_types_secondary) mts using(mime_type_id));
+left join (select id as mime_type_id, type_name as mime_type, html_video_ready, html_audio_ready from mime_types_secondary) mts using(mime_type_id))
+order by category_name asc, type_name asc, file_name asc;
 
 -- mediafiles_summary
 create view filestorage_mediafiles_summary as select * from (select * from filestorage_files_summary where mime_type like '%audio%' or mime_type like '%video%')

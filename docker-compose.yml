@@ -1,4 +1,4 @@
-version: '3'
+version: '3.9'
 
 services:
   postgres:
@@ -27,9 +27,27 @@ services:
     container_name: ${APP_NAME}
     volumes:
       - .:/app
+      - ${LOCAL_STORAGE_DIR}:${DOCKER_INTERNAL_FILES_DIR}
     links:
       - postgres
     depends_on:
       postgres:
         condition: 
           service_healthy
+  
+  apache_filehost:
+    image: httpd:2.4
+    container_name: apache_filehost
+    ports:
+      - 80:80
+    volumes:
+      - ${LOCAL_STORAGE_DIR}:${DOCKER_INTERNAL_FILES_DIR}
+      - ./config/httpd.conf:/usr/local/apache2/conf/httpd.conf
+    depends_on:
+      postgres:
+        condition: 
+          service_healthy
+      dash_app:
+        condition: 
+          service_healthy
+

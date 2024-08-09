@@ -159,10 +159,13 @@ def getBaseway(conn, test: bool = True):
         )
         result = cursor.fetchone()[0]
 
-    if os.path.exists(result) == True:
+    if test:
         return result
     else:
-        raise NotADirectoryError("Директория не найдена")
+        if os.path.exists(result) == True:
+            return result
+        else:
+            raise NotADirectoryError("Директория не найдена")
 
 
 def getCategories(conn, category_id=None):
@@ -185,7 +188,7 @@ def getCategories(conn, category_id=None):
             f"where id = {category_id}" if category_id != None else "where active"
         )
         cursor.execute(
-            f"select id as category_id, way, category_name, category_pseudonym, is_absolute_way from filestorage_categories {addition};"
+            f"select id as category_id, way, category_name, category_pseudonym, is_absolute_way from filestorage_categories {addition} order by category_name;"
         )
         desc = cursor.description
         column_names = [col[0] for col in desc]
@@ -223,7 +226,7 @@ def getTypes(conn, category_id, type_id=None):
         addition = f"and id = {type_id}" if type_id != None else "and active"
         cursor.execute(
             f"""select id as type_id, category_id, way, type_name, type_pseudonym, is_absolute_way 
-            from filestorage_types where category_id = {category_id} {addition};"""
+            from filestorage_types where category_id = {category_id} {addition} order by type_name;"""
         )
         desc = cursor.description
         column_names = [col[0] for col in desc]

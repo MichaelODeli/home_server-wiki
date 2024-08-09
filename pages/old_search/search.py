@@ -197,11 +197,6 @@ def layout(
                                     className="block-background",
                                     style={"width": "100%", "min-height": "100px"},
                                 ),
-                                # loaderProps={
-                                #     "variant": "bars",
-                                #     "color": "--bs-primary",
-                                #     "size": "xl",
-                                # },
                             ),
                         ],
                         span=10
