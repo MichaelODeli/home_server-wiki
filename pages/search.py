@@ -15,26 +15,37 @@ from dash_iconify import DashIconify
 import time
 import dash_bootstrap_components as dbc
 from flask import request
-from datetime import datetime
-from utils import sql_traceback_generator
 from controllers import db_connection
 from controllers import file_manager
 from controllers import service_controller as service
 from controllers import cont_search as cont_s
 from dash.exceptions import PreventUpdate
-from psycopg2.extensions import AsIs
+import time
 
-register_page(__name__, path="/new_search", icon="fa-solid:home")
+register_page(__name__, path="/search", icon="fa-solid:home")
 
 
 def layout(
     l="n",
     query="",
+    category_id=[],
+    type_id=[],
+    auto_search="n",
     **other_unknown_query_strings,
 ):
     if l == "n":
         return dmc.Container()
     else:
+        service.log_printer(request.remote_addr, "search", "page opened")
+
+        category_id = [category_id] if category_id != [] else category_id
+        type_id = [type_id] if type_id != [] else type_id
+
+        if auto_search != "n" and (query != "" or category_id != []):
+            search_clicks = 1
+        else:
+            search_clicks = 0
+
         conn = db_connection.get_conn()
 
         category_select_data = [
@@ -99,7 +110,7 @@ def layout(
                                                                                     id="n_search_in_category",
                                                                                     placeholder="Поиск по всем категориям",
                                                                                     data=category_select_data,
-                                                                                    value=[],
+                                                                                    value=category_id,
                                                                                 )
                                                                             ],
                                                                             span=6,
@@ -116,7 +127,7 @@ def layout(
                                                                                     id="n_search_in_types",
                                                                                     placeholder="Поиск по всем типам",
                                                                                     disabled=True,
-                                                                                    value=[],
+                                                                                    value=type_id,
                                                                                 )
                                                                             ],
                                                                             span=6,
@@ -134,21 +145,28 @@ def layout(
                                                                     h="md",
                                                                 ),
                                                                 dmc.Space(h="md"),
-                                                                dmc.Group(
-                                                                    [
-                                                                        dmc.Chip(
-                                                                            "Открывать поддерживаемые "
-                                                                            "медиафайлы во встроенном плеере",
-                                                                            checked=False,
-                                                                            disabled=True,
-                                                                        ),
-                                                                        dmc.Chip(
-                                                                            "Открывать медиафайлы в VLC "
-                                                                            "(mobile)",
-                                                                            checked=False,
-                                                                            disabled=True,
-                                                                        ),
-                                                                    ]
+                                                                dmc.RadioGroup(
+                                                                    dmc.Stack(
+                                                                        [
+                                                                            dmc.Radio(
+                                                                                label="Открывать поддерживаемые "
+                                                                                "медиафайлы во встроенном плеере",
+                                                                                value="open_mediafiles_in_internal_player",
+                                                                            ),
+                                                                            dmc.Radio(
+                                                                                label="Открывать медиафайлы в VLC "
+                                                                                "(mobile)",
+                                                                                value="open_mediafiles_in_vlc",
+                                                                            ),
+                                                                            dmc.Radio(
+                                                                                label="Стандартные прямые ссылки",
+                                                                                value="full_links",
+                                                                            ),
+                                                                        ],
+                                                                        gap="xs",
+                                                                    ),
+                                                                    value="full_links",
+                                                                    id="mediafiles_links_format",
                                                                 ),
                                                             ]
                                                         ),
@@ -160,7 +178,7 @@ def layout(
                                         dmc.Button(
                                             "Поиск",
                                             id="n_search_button",
-                                            n_clicks=0,
+                                            n_clicks=search_clicks,
                                             fullWidth=True,
                                         ),
                                     ],
@@ -172,8 +190,7 @@ def layout(
                                     dmc.Stack(
                                         children=[
                                             html.H3(
-                                                "Результаты поиска",
-                                                style={"margin-bottom": "0"},
+                                                "Результаты поиска", className="p-0 m-0"
                                             ),
                                             dmc.Space(h=10),
                                             html.Div(
@@ -272,9 +289,12 @@ def add_types_in_search(category_id, selected_types):
     State("n_search_in_category", "value"),
     State("n_search_in_types", "value"),
     State("n_search_query", "value"),
+    State("mediafiles_links_format", "value"),
     prevent_initial_call=True,
 )
-def search(current_page, n_clicks, categories, types, query, test=True):
+def search(
+    current_page, n_clicks, categories, types, query, mediafiles_links_format, test=True
+):
 
     if n_clicks == 0:
         raise PreventUpdate
@@ -288,6 +308,7 @@ def search(current_page, n_clicks, categories, types, query, test=True):
         # icon=DashIconify(icon="ic:round-celebration"),
     )
 
+    start_time = time.time()
     conn = db_connection.get_conn()
 
     current_page -= 1
@@ -308,8 +329,6 @@ def search(current_page, n_clicks, categories, types, query, test=True):
             limit=PAGE_LIMIT,
             offset=OFFSET,
         )
-
-        returner = ["Поиск по всей библиотеке файлов", no_update]
     elif (query != None and query != "") and (categories != [] and types == []):
         counter, query_results = file_manager.get_filesearch_result(
             conn,
@@ -319,8 +338,6 @@ def search(current_page, n_clicks, categories, types, query, test=True):
             limit=PAGE_LIMIT,
             offset=OFFSET,
         )
-
-        returner = ["Поиск по определенной категории", no_update]
     elif (query == None or query == "") and (categories != [] and types == []):
         counter, query_results = file_manager.get_filesearch_result(
             conn,
@@ -329,8 +346,6 @@ def search(current_page, n_clicks, categories, types, query, test=True):
             limit=PAGE_LIMIT,
             offset=OFFSET,
         )
-
-        returner = ["Отображаем все файлы категории", no_update]
     elif (query == None or query == "") and (categories != [] and types != []):
         counter, query_results = file_manager.get_filesearch_result(
             conn,
@@ -340,8 +355,6 @@ def search(current_page, n_clicks, categories, types, query, test=True):
             limit=PAGE_LIMIT,
             offset=OFFSET,
         )
-
-        returner = ["Отображаем все файлы из категории и типа", no_update]
     elif (query != None and query != "") and (categories != [] and types != []):
         counter, query_results = file_manager.get_filesearch_result(
             conn,
@@ -352,10 +365,8 @@ def search(current_page, n_clicks, categories, types, query, test=True):
             limit=PAGE_LIMIT,
             offset=OFFSET,
         )
-
-        returner = ["Отображаем файлы из категории и типа по запросу", no_update]
     else:
-        return "Ошибочка", no_update
+        return "Ошибочка", no_update, 1
 
     if counter == 0:
         return html.H6("По Вашему запросу результатов нет"), no_update, 1
@@ -371,12 +382,7 @@ def search(current_page, n_clicks, categories, types, query, test=True):
                 [
                     dmc.TableTd(element["category_name"]),
                     dmc.TableTd(element["type_name"]),
-                    dmc.TableTd(
-                        html.A(
-                            element["file_name"],
-                            href="http://" + element["file_fullway_forweb"],
-                        )
-                    ),
+                    dmc.TableTd(cont_s.link_builder(mediafiles_links_format, element)),
                 ]
             )
             for element in query_results
@@ -393,17 +399,17 @@ def search(current_page, n_clicks, categories, types, query, test=True):
         )
         body = dmc.TableTbody(rows)
 
-        return dmc.Table([head, body]), no_update, pages
+        result_notif = dmc.Notification(
+            title="Запрос выполнен",
+            id="my-notif",
+            action="show",
+            message=f"Результаты получены за {round(time.time() - start_time, 3)} секунд. Результатов {counter}",
+            icon=DashIconify(icon="ep:success-filled"),
+        )
+        service.log_printer(
+            request.remote_addr,
+            "search",
+            f'category {str(categories)} | type {str(types)} | query "{query}" | results {counter} | page {current_page} | time {round(time.time() - start_time, 3)}',
+        )
 
-    # print(
-    #     "found",
-    #     counter,
-    #     "results /",
-    #     returner[0],
-    #     "/ offset",
-    #     OFFSET,
-    #     "/ data len",
-    #     len(query_results),
-    # )
-
-    # return returner + [pages]
+        return dmc.Table([head, body]), result_notif, pages

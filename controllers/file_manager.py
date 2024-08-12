@@ -695,10 +695,30 @@ def parse(conn, mode="update_files"):
         updateMIMEonCategoriesTypes(conn)
 
 
+def getFileInfo(conn, file_id):
+    """
+    Функция getFileInfo выполняет получение информации о файле из базы данных.
+
+    :param conn: соединение с базой данных
+    :param file_id: идентификатор файла
+    :return: словарь с описанием файла
+    """
+    with conn.cursor() as cursor:
+        cursor.execute(
+            "SELECT * FROM filestorage_files_summary where file_id = %(file_id)s;",
+            {"file_id": file_id},
+        )
+        desc = cursor.description
+        column_names = [col[0] for col in desc]
+        data = [dict(zip(column_names, row)) for row in cursor.fetchall()]
+
+        return data
+
+
 def get_filesearch_result(
     conn,
     mode,
-    query = '',
+    query="",
     limit=50,
     offset=0,
     categories=[],
@@ -726,7 +746,9 @@ def get_filesearch_result(
     if mode == "all":
         where_addition = "LOWER(file_name) LIKE LOWER(%(query)s)"
     elif mode == "by_category":
-        where_addition = ("LOWER(file_name) LIKE LOWER(%(query)s) and category_id in (%(categories)s)")
+        where_addition = (
+            "LOWER(file_name) LIKE LOWER(%(query)s) and category_id in (%(categories)s)"
+        )
     elif mode == "all_from_category":
         where_addition = "category_id in (%(categories)s)"
     elif mode == "all_from_category_type":
@@ -739,15 +761,13 @@ def get_filesearch_result(
     with conn.cursor() as cursor:
 
         cursor.execute(
-            "SELECT %(what)s FROM %(table_name)s WHERE {};".format(
-                where_addition
-            ),
+            "SELECT %(what)s FROM %(table_name)s WHERE {};".format(where_addition),
             {
                 "what": AsIs("count(*)"),
                 "table_name": AsIs(table_name),
                 "query": "%%" + query + "%%",
                 "categories": AsIs(", ".join(categories)),
-                "types": AsIs(", ".join(types))
+                "types": AsIs(", ".join(types)),
             },
         )
 

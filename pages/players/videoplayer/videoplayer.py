@@ -15,64 +15,59 @@ import dash_bootstrap_components as dbc
 from dash_iconify import DashIconify
 from dash_extensions import Purify
 from flask import request
-from datetime import datetime
-from utils import sql_traceback_generator
 import sys
-from controllers import cont_videoplayer as cont_v
 from controllers import service_controller as service
+from controllers import db_connection, file_manager
 
-register_page(__name__, path="/players/videoplayer", icon="fa-solid:home")
+register_page(__name__, path="/players/videoplayer", icon="fa-solid:home") 
 
-link = ""
+video_id = ""
+video_link = ""
 
 
 def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
     service.log_printer(request.remote_addr, "videoplayer", "page opened")
     if l == "n":
         return dmc.Container()
-    global link
 
-    server_link = request.base_url.replace(":81", "").split("/")[2]
-    # server_link = '192.168.0.33'
+    global video_id
+    global video_link
+    video_id = v
 
-    if v == "dummy":
-        v = "default_video"
-        channel = "Blender"
-        name = "Big buck bunny"
-        link = "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4"
-    elif v != None:
-        try:
-            conn = sqlite3.connect("bases/nstorage.sqlite3")
-            c = conn.cursor()
-            c.execute(f"SELECT * FROM {v_type} WHERE {v_type}_filehash = '{v}'")
-            one_result = c.fetchone()
-            channel = one_result[2]
-            filename = one_result[3]
-            name = ".".join(filename.split(".")[:-1])
-            link = f"http://{server_link}/storage/{v_type}/{channel}/{filename}"
-            c.close()
-            conn.close()
-        except sqlite3.Error as er:
-            err_cont = sql_traceback_generator.gen(er)
-            return err_cont
-    else:
+    conn = db_connection.get_conn()
+
+    file_data = file_manager.getFileInfo(conn, file_id=video_id)
+
+    if len(file_data) == 0:
         return dmc.Stack(
             [
-                html.H5("Заготовка под главную страницу видеоплеера"),
-                html.A(
-                    children=dbc.Button("Открыть тестовое видео"),
-                    href="/players/videoplayer?l=y&v=dummy",
-                ),
+                html.H5("Ошибка идентификатора видео. Попробуйте еще раз."),
             ],
             pt="30px",
-            w='100%',
-            align='center'
+            w="100%",
+            align="center",
         )
+    elif not file_data[0]["html_video_ready"]:
+        return dmc.Stack(
+            [
+                html.H5("Неподдерживаемый файл"),
+            ],
+            pt="30px",
+            w="100%",
+            align="center",
+        )
+    else:
+        file_data = file_data[0]
 
-    service.log_printer(
-        request.remote_addr, "videoplayer", f'v_id "{v}" | v_type "{v_type}"'
-    )
-    text_label = "канала" if v_type == "youtube" else "категории"
+        video_name = ".".join(file_data["file_name"].split(".")[:-1])
+        video_type = file_data["type_name"]
+        video_type_id = file_data["type_id"]
+        video_category = file_data["category_name"]
+        video_category_id = file_data["category_id"]
+        video_link = "http://" + file_data["file_fullway_forweb"]
+
+    service.log_printer(request.remote_addr, "videoplayer", f'v_id "{v}"')
+
     return html.Div(
         dmc.Container(
             children=[
@@ -83,7 +78,7 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                             children=[
                                 dp.DashPlayer(
                                     id="player",
-                                    url=link,
+                                    url=video_link,
                                     controls=True,
                                     width="1200px",
                                     className="video_container",
@@ -91,7 +86,9 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                 ),
                                 dmc.Space(h=10),
                                 html.H4(
-                                    name, style={"width": "100%"}, id="player_videoname"
+                                    video_name,
+                                    style={"width": "100%"},
+                                    id="player_videoname",
                                 ),
                                 dmc.Space(h=10),
                                 dmc.Grid(
@@ -100,13 +97,15 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                             dmc.Center(
                                                 [
                                                     dmc.Tooltip(
-                                                        label=f'Показать все видео с {text_label} "{channel}"',
-                                                        position="bottom",
+                                                        label=f'Показать все видео с типа "{video_type}"',
+                                                        position="top",
                                                         offset=3,
                                                         withArrow=True,
                                                         children=[
                                                             Purify(
-                                                                f'<a href="/search?l=y&from_video_view=True&query={channel}&search_category={v_type}" class="btn btn-outline-primary btn-sm" role="button">{channel}</a>'
+                                                                f'<a href="/search?l=y&auto_search=y&category_id={video_category_id}&'
+                                                                f'type_id={video_type_id}" '
+                                                                f'class="btn btn-outline-primary btn-sm" role="button">{video_type}</a>'
                                                             )
                                                         ],
                                                     ),
@@ -130,7 +129,7 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                                                                 ),
                                                                 size="sm",
                                                                 id="player_download",
-                                                                # disabled=True,
+                                                                disabled=True,
                                                                 outline=True,
                                                                 className="btn btn-outline-primary",
                                                             ),
@@ -187,71 +186,71 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
                         ),
                         dbc.Col(
                             children=[
-                                html.H5("Смотрите также:"),
-                                dmc.Stack(h=10),
-                                dbc.ButtonGroup(
-                                    [
-                                        dbc.Button(
-                                            "Рекомендации",
-                                            # disabled=True,
-                                            outline=True,
-                                            color="primary",
-                                            id="video-button-recommended",
-                                            n_clicks=0,
-                                            size="sm",
-                                        ),
-                                        dbc.Button(
-                                            f"Канал: {channel}",
-                                            active=True,
-                                            outline=True,
-                                            color="primary",
-                                            id="video-button-channel",
-                                            n_clicks=0,
-                                            size="sm",
-                                        ),
-                                        dbc.Button(
-                                            "Похожие",
-                                            # disabled=True,
-                                            outline=True,
-                                            color="primary",
-                                            id="video-button-same",
-                                            n_clicks=0,
-                                            size="sm",
-                                        ),
-                                    ],
-                                    style={"width": "100%"},
-                                ),
-                                dmc.Space(h=10),
-                                html.Div(
-                                    [
-                                        cont_v.get_video_card(
-                                            "Sample video 1",
-                                            "00:50",
-                                            "https://example.com",
-                                        ),
-                                        dmc.Space(h=7),
-                                        cont_v.get_video_card(
-                                            "Sample video 2",
-                                            "01:50",
-                                            "https://example.com",
-                                        ),
-                                        dmc.Space(h=7),
-                                        cont_v.get_video_card(
-                                            "Sample video 3",
-                                            "02:50",
-                                            "https://example.com",
-                                        ),
-                                        dmc.Space(h=7),
-                                        cont_v.get_video_card(
-                                            "Sample video 4",
-                                            "03:50",
-                                            "https://example.com",
-                                        )
-                                    ],
-                                    id="recommended-videos-tab",
-                                ),
+                                # html.H5("Смотрите также:"),
+                                # dmc.Stack(h=10),
+                                # dbc.ButtonGroup(
+                                #     [
+                                #         dbc.Button(
+                                #             "Рекомендации",
+                                #             # disabled=True,
+                                #             outline=True,
+                                #             color="primary",
+                                #             id="video-button-recommended",
+                                #             n_clicks=0,
+                                #             size="sm",
+                                #         ),
+                                #         dbc.Button(
+                                #             f"Тип: {video_type}",
+                                #             active=True,
+                                #             outline=True,
+                                #             color="primary",
+                                #             id="video-button-video_type",
+                                #             n_clicks=0,
+                                #             size="sm",
+                                #         ),
+                                #         dbc.Button(
+                                #             "Похожие",
+                                #             # disabled=True,
+                                #             outline=True,
+                                #             color="primary",
+                                #             id="video-button-same",
+                                #             n_clicks=0,
+                                #             size="sm",
+                                #         ),
+                                #     ],
+                                #     style={"width": "100%"},
+                                # ),
+                                # dmc.Space(h=10),
+                                # html.Div(
+                                #     [
+                                #         cont_v.get_video_card(
+                                #             "Sample video 1",
+                                #             "00:50",
+                                #             "https://example.com",
+                                #         ),
+                                #         dmc.Space(h=7),
+                                #         cont_v.get_video_card(
+                                #             "Sample video 2",
+                                #             "01:50",
+                                #             "https://example.com",
+                                #         ),
+                                #         dmc.Space(h=7),
+                                #         cont_v.get_video_card(
+                                #             "Sample video 3",
+                                #             "02:50",
+                                #             "https://example.com",
+                                #         ),
+                                #         dmc.Space(h=7),
+                                #         cont_v.get_video_card(
+                                #             "Sample video 4",
+                                #             "03:50",
+                                #             "https://example.com",
+                                #         ),
+                                #     ],
+                                #     id="recommended-videos-tab",
+                                # ),
                             ],
-                            className="block-background columns-margin overflow-column",
+                            className="block-background columns-margin overflow-column border",
                         ),
                     ],
                     className="gx-3",
@@ -275,9 +274,9 @@ def layout(l="n", v=None, v_type="youtube", **other_unknown_query_strings):
     prevent_initial_call=True,
 )
 def func(n_clicks):
-    global link
+    global video_link
     service.log_printer(
-        request.remote_addr, "videoplayer", f"download triggered | {link}"
+        request.remote_addr, "videoplayer", f"download triggered | {video_link}"
     )
     notif_bad = dmc.Notification(
         title="Ошибка при загрузке файла",
@@ -297,15 +296,15 @@ def func(n_clicks):
     )
 
     if sys.platform == "linux" or sys.platform == "linux2":
-        # link_l = link.replace('http://localhost', '/home/michael/server-side')
+        link_l = video_link.replace('http://localhost', '/home/michael/server-side')
         return None, notif_bad
     elif sys.platform == "win32":
-        link_l = link.replace("http://localhost/storage", "Z:")
+        link_l = video_link.replace("http://localhost/storage", "Z:")
     else:
         raise OSError("Unsupported OS")
 
     try:
-        return dcc.send_file(link_l), notif_cool
+        return dcc.send_file(video_link), notif_cool
     except OSError:
         return None, notif_bad
 
@@ -313,16 +312,16 @@ def func(n_clicks):
 @callback(
     [
         Output("video-button-recommended", "active"),
-        Output("video-button-channel", "active"),
+        Output("video-button-video_type", "active"),
         Output("video-button-same", "active"),
         Output("video-button-recommended", "n_clicks"),
-        Output("video-button-channel", "n_clicks"),
+        Output("video-button-video_type", "n_clicks"),
         Output("video-button-same", "n_clicks"),
         # Output('recommended-videos-tab', 'children')
     ],
     [
         Input("video-button-recommended", "n_clicks"),
-        Input("video-button-channel", "n_clicks"),
+        Input("video-button-video_type", "n_clicks"),
         Input("video-button-same", "n_clicks"),
     ],
     prevent_initial_call=True,

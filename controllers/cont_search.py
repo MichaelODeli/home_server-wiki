@@ -1,21 +1,19 @@
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 import time
+from dash import html
 import dash_bootstrap_components as dbc
 
-videos_categories = [
-    "cartoon_serials",
-    "en_serials",
-    "tv_shows",
-    "youtube",
-    "films",
-    "ru_serials",
-]
 
 def get_icon(icon, size=18, background=True, icon_color="white"):
     """
-    param:  \n
-    `icon`: icon name
+    Функция get_icon возвращает иконку с заданными параметрами.
+
+    :param icon: имя иконки
+    :param size: размер иконки
+    :param background: флаг, указывающий на необходимость отображения фона у иконки
+    :param icon_color: цвет иконки
+    :return: иконка с заданными параметрами
     """
     return (
         dmc.ThemeIcon(
@@ -30,80 +28,69 @@ def get_icon(icon, size=18, background=True, icon_color="white"):
         else DashIconify(icon=icon, width=size, color=icon_color)
     )
 
+
 def str_hider(name, limiter=35):
     """
-    Сокращение строки до 30 символов, если не задано иное
+    Функция str_hider сокращает строку до заданного лимита символов.
 
-    Параметры:
-    ----------
-    - name (str): сокращаемый текст
-    - limiter (int): кол-во оставляемых символов (по умолчанию 30)
+    :param name: сокращаемый текст
+    :param limiter: количество оставляемых символов (по умолчанию 35)
+    :return: сокращенная строка
     """
     if len(name) <= limiter:
         return name
     else:
         return name[0:limiter] + "..."
 
-def link_builder(server_link, name, hash, filetype, category, filename):
-    """
-    Генерация ссылок в файловом хранилище сервера
 
-    Параметры:
-    ----------
-    - server_link - текущий адрес сервера
-    - name - текст ссылки
-    - hash - хэш файла на сервере
-    - filetype - тип контента
-    - category - категория контента
-    - filename - название файла
+def link_builder(mode, file_dict):
     """
-    return (
-        dbc.Button(
-            children=[
-                (
-                    get_icon("mdi:youtube")
-                    if filetype == "youtube"
-                    else get_icon("ic:movie")
-                ),
-                str_hider(name),
-            ],
-            style={"text-align": "center", "display": "flex", "align-items": "center"},
-            outline=True,
-            size="sm",
-            href=f"/players/videoplayer?v={hash}&v_type={filetype}&l=y",
-            className="link-primary",
-        )
-        if filetype in videos_categories and ".mp4" in filename
-        else dbc.Button(
-            children=[get_icon("ic:baseline-download"), str_hider(name)],
-            style={"text-align": "center", "display": "flex", "align-items": "center"},
-            outline=True,
-            size="sm",
-            href=f"http://{server_link}/storage/{filetype}/{category}/{filename}",
-            download=filename,
-            className="link-primary",
-        )
+    Функция link_builder создает ссылку на файл в зависимости от заданного режима.
+
+    :param mode: режим, определяющий, как будет создана ссылка
+    :param file_dict: словарь с информацией о файле
+    :return: ссылка на файл
+    """
+    file_href = "http://" + file_dict["file_fullway_forweb"]
+
+    if mode == "open_mediafiles_in_internal_player" and file_dict["html_video_ready"]:
+        file_href = f"/players/videoplayer?v={file_dict['file_id']}&l=y"
+    elif mode == "open_mediafiles_in_vlc" and file_dict["mime_type"].split("/")[0] in [
+        "video",
+        "audio",
+    ]:
+        file_href = "vlc://" + file_dict["file_fullway_forweb"]
+    else:
+        pass
+
+    return html.A(
+        str_hider(file_dict["file_name"]),
+        href=file_href,
+        target='_blank'
     )
 
-def search_link(filetype, category):
+
+def search_link(category_id, type_id):
     """
-    Получение ссылки на формирование поискового запроса
+    Получение ссылки на формирование поискового запроса по категории и типу
 
     Параметры:
     - filetype - тип файла
     - category - категория
     """
-    return dbc.Button(
+    return html.A(
         children=[
-            get_icon("mdi:youtube") if filetype == "youtube" else None,
-            str_hider(category),
+            # get_icon("mdi:youtube") if filetype == "youtube" else None,
+            get_icon("mdi:youtube"),
+            str_hider(category_id),
         ],
         style={"text-align": "center", "display": "flex", "align-items": "center"},
         outline=True,
         size="sm",
-        href=f"/search?query={category}&from_video_view=True&l=y&search_category={filetype}",
+        href=f"/search?auto_search=y&l=y&category_id={category_id}&type_id={type_id}",
         className="link-primary",
     )
+
 
 def get_duration(seconds_data):
     """
@@ -115,9 +102,12 @@ def get_duration(seconds_data):
     Вывод:
     str: Строка в формате HH:MM:SS, представляющая время.
     """
-    if seconds_data < 3600: time_format = "%M:%S"
-    else: time_format = "%H:%M:%S"
+    if seconds_data < 3600:
+        time_format = "%M:%S"
+    else:
+        time_format = "%H:%M:%S"
     return time.strftime(time_format, time.gmtime(float(seconds_data)))
+
 
 def get_size_str(size):
     """

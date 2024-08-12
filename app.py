@@ -14,9 +14,9 @@ import os
 dash._dash_renderer._set_react_version("18.2.0")
 
 # css styles
-icons_link = (
+icons_link = [
     "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css"
-)
+]
 mantine_stylesheets = [
     # dmc.styles.DATES,
     # dmc.styles.CODE_HIGHLIGHT,
@@ -42,8 +42,10 @@ app = dash.Dash(
     external_stylesheets=[
         dbc.themes.ZEPHYR,
         "assets/offline/bootstrap.min.css",
+        dbc.icons.FONT_AWESOME,
     ]
-    + mantine_stylesheets,
+    + mantine_stylesheets
+    + icons_link,
     title=config["WEB_PAGE_TITLE"],
     update_title=config["WEB_PAGE_LOADING_TITLE"],
     suppress_callback_exceptions=True,
@@ -73,6 +75,7 @@ search_bar = Purify(
             <div class="col"><input class="form-control" id="query" name="query" placeholder="Поиск по хранилищу"
                     step="any"></div>
             <input type="hidden" value="y" name="l" />
+            <input type="hidden" value="y" name="auto_search" />
             <div class="col-auto"><button class="ms-2 btn btn-primary">Найти</button></div>
         </div>
     </form>"""
@@ -94,7 +97,6 @@ navbar = dbc.Navbar(
                         [
                             dmc.GridCol(
                                 [
-                                    html.A("Новый поиск", href="/new_search?l=y"),
                                     dbc.DropdownMenu(
                                         label="Внешние утилиты",
                                         children=[
