@@ -54,60 +54,114 @@ def layout(
                 dmc.Space(h=10),
                 dmc.Grid(
                     [
-                        dmc.GridCol(span="auto"),
+                        dmc.GridCol(span="auto", className="hided_element"),
                         dmc.GridCol(
                             [
                                 html.Div(
                                     children=[
-                                        html.H3("Поиск"),
+                                        dmc.TextInput(
+                                            label="Поисковый запрос",
+                                            id="n_search_query",
+                                            value=str(query),
+                                            style={"width": "100%"},
+                                            pe="md",
+                                        ),
                                         dmc.Space(h=10),
-                                        dmc.Stack(
+                                        dmc.Accordion(
+                                            variant="filled",
+                                            chevronPosition="left",
                                             children=[
-                                                dmc.TextInput(
-                                                    label="Поисковый запрос",
-                                                    id="n_search_query",
-                                                    value=str(query),
-                                                    style={"width": "100%"},
-                                                    description="Если будет задан пустой поисковый запрос - "
-                                                    "будет отображен весь список файлов из данной категории/типа.",
-                                                ),
-                                                dmc.Group(
+                                                dmc.AccordionItem(
                                                     [
-                                                        dmc.MultiSelect(
-                                                            w="47%",
-                                                            searchable=True,
-                                                            hidePickedOptions=True,
-                                                            clearable=True,
-                                                            label="Категория для поиска",
-                                                            id="n_search_in_category",
-                                                            placeholder="Поиск по всем категориям",
-                                                            data=category_select_data,
-                                                            value=[],
+                                                        dmc.AccordionControl(
+                                                            dmc.Text(
+                                                                "Дополнительные параметры",
+                                                                c="var(--bs-body-color)",
+                                                            )
                                                         ),
-                                                        dmc.MultiSelect(
-                                                            w="47%",
-                                                            searchable=True,
-                                                            hidePickedOptions=True,
-                                                            clearable=True,
-                                                            label="Типы для поиска",
-                                                            id="n_search_in_types",
-                                                            placeholder="Поиск по всем типам",
-                                                            disabled=True,
-                                                            value=[],
+                                                        dmc.AccordionPanel(
+                                                            [
+                                                                dmc.Divider(
+                                                                    label="Фильтры для поиска",
+                                                                    labelPosition="left",
+                                                                    h="lg",
+                                                                ),
+                                                                dmc.Grid(
+                                                                    [
+                                                                        dmc.GridCol(
+                                                                            [
+                                                                                dmc.MultiSelect(
+                                                                                    w="100%",
+                                                                                    searchable=True,
+                                                                                    hidePickedOptions=True,
+                                                                                    clearable=True,
+                                                                                    label="Категория для поиска",
+                                                                                    id="n_search_in_category",
+                                                                                    placeholder="Поиск по всем категориям",
+                                                                                    data=category_select_data,
+                                                                                    value=[],
+                                                                                )
+                                                                            ],
+                                                                            span=6,
+                                                                            className="adaptive-container",
+                                                                        ),
+                                                                        dmc.GridCol(
+                                                                            [
+                                                                                dmc.MultiSelect(
+                                                                                    w="100%",
+                                                                                    searchable=True,
+                                                                                    hidePickedOptions=True,
+                                                                                    clearable=True,
+                                                                                    label="Типы для поиска",
+                                                                                    id="n_search_in_types",
+                                                                                    placeholder="Поиск по всем типам",
+                                                                                    disabled=True,
+                                                                                    value=[],
+                                                                                )
+                                                                            ],
+                                                                            span=6,
+                                                                            className="adaptive-container",
+                                                                        ),
+                                                                    ],
+                                                                    w="100%",
+                                                                    justify="center",
+                                                                    className="adaptive-grid",
+                                                                ),
+                                                                dmc.Space(h="md"),
+                                                                dmc.Divider(
+                                                                    label="Опции для отображения результатов",
+                                                                    labelPosition="left",
+                                                                    h="md",
+                                                                ),
+                                                                dmc.Space(h="md"),
+                                                                dmc.Group(
+                                                                    [
+                                                                        dmc.Chip(
+                                                                            "Открывать поддерживаемые "
+                                                                            "медиафайлы во встроенном плеере",
+                                                                            checked=False,
+                                                                            disabled=True,
+                                                                        ),
+                                                                        dmc.Chip(
+                                                                            "Открывать медиафайлы в VLC "
+                                                                            "(mobile)",
+                                                                            checked=False,
+                                                                            disabled=True,
+                                                                        ),
+                                                                    ]
+                                                                ),
+                                                            ]
                                                         ),
                                                     ],
-                                                    w="100%",
-                                                    grow=True,
-                                                    gap="xs",
-                                                    justify="center",
+                                                    value="info",
                                                 ),
-                                                dmc.Space(h=3),
-                                                dbc.Button(
-                                                    "Поиск",
-                                                    id="n_search_button",
-                                                    n_clicks=0,
-                                                ),
-                                            ]
+                                            ],
+                                        ),
+                                        dmc.Button(
+                                            "Поиск",
+                                            id="n_search_button",
+                                            n_clicks=0,
+                                            fullWidth=True,
                                         ),
                                     ],
                                     className="block-background",
@@ -115,58 +169,40 @@ def layout(
                                 ),
                                 dmc.Space(h=15),
                                 html.Div(
-                                    html.Div(
+                                    dmc.Stack(
                                         children=[
-                                            dmc.Grid(
-                                                [
-                                                    dmc.GridCol(
-                                                        [
-                                                            html.H3(
-                                                                "Результаты поиска",
-                                                                style={
-                                                                    "margin-bottom": "0"
-                                                                },
-                                                            )
-                                                        ],
-                                                        span="content",
-                                                    ),
-                                                    dmc.GridCol(span="auto"),
-                                                    dmc.GridCol(
-                                                        dmc.Tooltip(
-                                                            label="Количество результатов поиска ограничено - 500.",
-                                                            position="bottom",
-                                                            offset=3,
-                                                            withArrow=True,
-                                                            children=[
-                                                                cont_s.get_icon(
-                                                                    "material-symbols:info",
-                                                                    size=25,
-                                                                    icon_color="black",
-                                                                    background=False,
-                                                                )
-                                                            ],
-                                                        ),
-                                                        span="content",
-                                                    ),
-                                                ],
-                                                align="center",
+                                            html.H3(
+                                                "Результаты поиска",
+                                                style={"margin-bottom": "0"},
                                             ),
                                             dmc.Space(h=10),
                                             html.Div(
                                                 id="n_search_results",
                                                 style={"overflow-x": "auto"},
                                             ),
+                                            dmc.Space(h=10),
+                                            dmc.Pagination(
+                                                total=1,
+                                                value=1,
+                                                siblings=1,
+                                                withControls=True,
+                                                withEdges=True,
+                                                id="search_pagination",
+                                            ),
                                         ],
                                         id="results_loader",
                                         className="block-background",
                                         style={"width": "100%", "min-height": "100px"},
+                                        gap="xs",
                                     ),
                                 ),
                             ],
                             span=10,
+                            className="adaptive-container",
                         ),
-                        dmc.GridCol(span="auto"),
-                    ]
+                        dmc.GridCol(span="auto", className="hided_element"),
+                    ],
+                    className="adaptive-grid",
                 ),
             ],
             pt=20,
@@ -230,13 +266,15 @@ def add_types_in_search(category_id, selected_types):
 @callback(
     Output("n_search_results", "children"),
     Output("notifications-container-search", "children"),
+    Output("search_pagination", "total"),
+    Input("search_pagination", "value"),
     Input("n_search_button", "n_clicks"),
     State("n_search_in_category", "value"),
     State("n_search_in_types", "value"),
     State("n_search_query", "value"),
     prevent_initial_call=True,
 )
-def search(n_clicks, categories, types, query, test=True):
+def search(current_page, n_clicks, categories, types, query, test=True):
 
     if n_clicks == 0:
         raise PreventUpdate
@@ -250,82 +288,122 @@ def search(n_clicks, categories, types, query, test=True):
         # icon=DashIconify(icon="ic:round-celebration"),
     )
 
-    sql_limit = 500
-    sql_source = """select file_id, category_name, type_name, file_fullway_forweb, 
-    file_name, mime_type, mime_type_id, size_kb, 
-    html_video_ready, html_audio_ready, type_id, category_id 
-    from filestorage_files_summary"""
+    conn = db_connection.get_conn()
 
-    with db_connection.get_conn().cursor() as cursor:
-        # check inputs and get results
-        if (query == None or query == "") and (
-            categories == [] or (categories == [] and types == [])
-        ):
-            return no_update, notif_empty_input
-        elif (query != None and query != "") and (categories == [] and types == []):
-            cursor.execute(
-                sql_source
-                + " WHERE LOWER(file_name) LIKE LOWER(%(query)s) LIMIT %(limit)s;",
-                {"query": "%%" + query + "%%", "limit": sql_limit},
+    current_page -= 1
+
+    PAGE_LIMIT = 20
+    OFFSET = current_page * PAGE_LIMIT
+
+    # check inputs and get results
+    if (query == None or query == "") and (
+        categories == [] or (categories == [] and types == [])
+    ):
+        return no_update, notif_empty_input, 1
+    elif (query != None and query != "") and (categories == [] and types == []):
+        counter, query_results = file_manager.get_filesearch_result(
+            conn,
+            mode="all",
+            query=query,
+            limit=PAGE_LIMIT,
+            offset=OFFSET,
+        )
+
+        returner = ["Поиск по всей библиотеке файлов", no_update]
+    elif (query != None and query != "") and (categories != [] and types == []):
+        counter, query_results = file_manager.get_filesearch_result(
+            conn,
+            mode="by_category",
+            query=query,
+            categories=categories,
+            limit=PAGE_LIMIT,
+            offset=OFFSET,
+        )
+
+        returner = ["Поиск по определенной категории", no_update]
+    elif (query == None or query == "") and (categories != [] and types == []):
+        counter, query_results = file_manager.get_filesearch_result(
+            conn,
+            mode="all_from_category",
+            categories=categories,
+            limit=PAGE_LIMIT,
+            offset=OFFSET,
+        )
+
+        returner = ["Отображаем все файлы категории", no_update]
+    elif (query == None or query == "") and (categories != [] and types != []):
+        counter, query_results = file_manager.get_filesearch_result(
+            conn,
+            mode="all_from_category_type",
+            categories=categories,
+            types=types,
+            limit=PAGE_LIMIT,
+            offset=OFFSET,
+        )
+
+        returner = ["Отображаем все файлы из категории и типа", no_update]
+    elif (query != None and query != "") and (categories != [] and types != []):
+        counter, query_results = file_manager.get_filesearch_result(
+            conn,
+            mode="by_category_type_query",
+            query=query,
+            categories=categories,
+            types=types,
+            limit=PAGE_LIMIT,
+            offset=OFFSET,
+        )
+
+        returner = ["Отображаем файлы из категории и типа по запросу", no_update]
+    else:
+        return "Ошибочка", no_update
+
+    if counter == 0:
+        return html.H6("По Вашему запросу результатов нет"), no_update, 1
+    else:
+        pages = (
+            int(counter / PAGE_LIMIT) + 1
+            if counter % PAGE_LIMIT != 0
+            else counter / PAGE_LIMIT
+        )
+
+        rows = [
+            dmc.TableTr(
+                [
+                    dmc.TableTd(element["category_name"]),
+                    dmc.TableTd(element["type_name"]),
+                    dmc.TableTd(
+                        html.A(
+                            element["file_name"],
+                            href="http://" + element["file_fullway_forweb"],
+                        )
+                    ),
+                ]
             )
+            for element in query_results
+        ]
 
-            returner = ["Поиск по всей библиотеке файлов", no_update]
-        elif (query != None and query != "") and (categories != [] and types == []):
-            cursor.execute(
-                sql_source
-                + " WHERE LOWER(file_name) LIKE LOWER(%(query)s) and category_id in (%(categories)s) LIMIT %(limit)s;",
-                {
-                    "query": "%%" + query + "%%",
-                    "categories": AsIs(", ".join(categories)),
-                    "limit": sql_limit,
-                },
+        head = dmc.TableThead(
+            dmc.TableTr(
+                [
+                    dmc.TableTh("Категория", className="sticky-th"),
+                    dmc.TableTh("Тип", className="sticky-th"),
+                    dmc.TableTh("Файл", className="sticky-th"),
+                ]
             )
+        )
+        body = dmc.TableTbody(rows)
 
-            returner = ["Поиск по определенной категории", no_update]
-        elif (query == None or query == "") and (categories != [] and types == []):
-            cursor.execute(
-                sql_source + " WHERE category_id in (%(categories)s) LIMIT %(limit)s;",
-                {"categories": AsIs(", ".join(categories)), "limit": sql_limit},
-            )
+        return dmc.Table([head, body]), no_update, pages
 
-            returner = ["Отображаем все файлы категории", no_update]
-        elif (query == None or query == "") and (categories != [] and types != []):
-            cursor.execute(
-                sql_source
-                + " WHERE category_id in (%(categories)s) and type_id in (%(types)s) LIMIT %(limit)s;",
-                {
-                    "categories": AsIs(", ".join(categories)),
-                    "types": AsIs(", ".join(types)),
-                    "limit": sql_limit,
-                },
-            )
+    # print(
+    #     "found",
+    #     counter,
+    #     "results /",
+    #     returner[0],
+    #     "/ offset",
+    #     OFFSET,
+    #     "/ data len",
+    #     len(query_results),
+    # )
 
-            returner = ["Отображаем все файлы из категории и типа", no_update]
-        elif (query != None and query != "") and (categories != [] and types != []):
-            cursor.execute(
-                sql_source
-                + " WHERE LOWER(file_name) LIKE LOWER(%(query)s) and category_id in (%(categories)s) and type_id in (%(types)s) LIMIT %(limit)s;",
-                {
-                    "query": "%%" + query + "%%",
-                    "categories": AsIs(", ".join(categories)),
-                    "types": AsIs(", ".join(types)),
-                    "limit": sql_limit,
-                },
-            )
-
-            returner = ["Отображаем файлы из категории и типа по запросу", no_update]
-        else:
-            return "Ошибочка", no_update
-
-        # get query result as dict
-        desc = cursor.description
-        column_names = [col[0] for col in desc]
-        data = [dict(zip(column_names, row)) for row in cursor.fetchall()]
-
-        if len(data) > 0:
-            print(f"found {len(data)} results")
-            print(data[0])
-        else:
-            print("not found")
-
-        return returner
+    # return returner + [pages]

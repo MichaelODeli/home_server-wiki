@@ -9,6 +9,7 @@ import hashlib
 import cv2 as cv
 import mutagen
 import traceback
+from psycopg2.extensions import AsIs
 
 
 FORBIDDEN_FIRST_SYMBOLS = ["_", "-", "."]
@@ -58,13 +59,13 @@ def audioPropertiesWithMutagen(media_fullway):
 
     data = {
         "audio_duration": 0,
-        "audio_bitrate": 'NULL',
-        "audio_samplerate": 'NULL',
-        "audio_artist": 'NULL',
-        "audio_title": 'NULL',
-        "audio_album_title": 'NULL',
-        "audio_year": 'NULL',
-        "audio_genre": 'NULL'
+        "audio_bitrate": "NULL",
+        "audio_samplerate": "NULL",
+        "audio_artist": "NULL",
+        "audio_title": "NULL",
+        "audio_album_title": "NULL",
+        "audio_year": "NULL",
+        "audio_genre": "NULL",
     }
 
     try:
@@ -74,19 +75,27 @@ def audioPropertiesWithMutagen(media_fullway):
         data["audio_samplerate"] = int(audiofile.info.sample_rate) / 1000
 
         data["audio_artist"] = (
-            "'" + audiofile.tags["TPE1"].text[0] + "'" if "TPE1" in audiofile.keys() else 'NULL'
+            "'" + audiofile.tags["TPE1"].text[0] + "'"
+            if "TPE1" in audiofile.keys()
+            else "NULL"
         )
         data["audio_title"] = (
-            "'" + audiofile.tags["TIT2"].text[0] + "'" if "TIT2" in audiofile.keys() else 'NULL'
+            "'" + audiofile.tags["TIT2"].text[0] + "'"
+            if "TIT2" in audiofile.keys()
+            else "NULL"
         )
         data["audio_album_title"] = (
-            "'" + audiofile.tags["TALB"].text[0] + "'" if "TALB" in audiofile.keys() else 'NULL'
+            "'" + audiofile.tags["TALB"].text[0] + "'"
+            if "TALB" in audiofile.keys()
+            else "NULL"
         )
         data["audio_year"] = (
-            audiofile.tags["TDRC"].text[0] if "TDRC" in audiofile.keys() else 'NULL'
+            audiofile.tags["TDRC"].text[0] if "TDRC" in audiofile.keys() else "NULL"
         )
         data["audio_genre"] = (
-            "'" + audiofile.tags["TCON"].text[0] + "'" if "TCON" in audiofile.keys() else 'NULL'
+            "'" + audiofile.tags["TCON"].text[0] + "'"
+            if "TCON" in audiofile.keys()
+            else "NULL"
         )
     except:
         pass
@@ -286,6 +295,7 @@ def getFiles(conn, category_id, type_id, file_id=None):
     else:
         return []
 
+
 # Обновление Mime-типа для категории/типа
 def updateMIMEonCategoriesTypes(conn):
     """
@@ -297,33 +307,45 @@ def updateMIMEonCategoriesTypes(conn):
     """
     with conn.cursor() as cursor:
         for category in getCategories(conn):
-            category_id = category['category_id']
-            cursor.execute(f"select mime_type_id from filestorage_mimes_categories_summary where category_id = {category_id}")
+            category_id = category["category_id"]
+            cursor.execute(
+                f"select mime_type_id from filestorage_mimes_categories_summary where category_id = {category_id}"
+            )
             result = cursor.fetchone()
 
             if result != None:
                 mime_type_id_secondary = result[0]
-                cursor.execute(f"select primary_mime_id from mime_types_secondary where id = {mime_type_id_secondary}")
+                cursor.execute(
+                    f"select primary_mime_id from mime_types_secondary where id = {mime_type_id_secondary}"
+                )
                 mime_type_id_primary = cursor.fetchone()[0]
 
-                print(category['category_name'], mime_type_id_primary)
+                print(category["category_name"], mime_type_id_primary)
 
-                cursor.execute(f"UPDATE filestorage_categories SET main_mime_type_id = {mime_type_id_primary} WHERE id = {category_id};")
+                cursor.execute(
+                    f"UPDATE filestorage_categories SET main_mime_type_id = {mime_type_id_primary} WHERE id = {category_id};"
+                )
             else:
                 pass
             for types in getTypes(conn, category_id=category_id):
-                type_id = types['type_id']
-                cursor.execute(f"select mime_type_id from filestorage_mimes_types_summary where type_id = {type_id}")
+                type_id = types["type_id"]
+                cursor.execute(
+                    f"select mime_type_id from filestorage_mimes_types_summary where type_id = {type_id}"
+                )
                 result = cursor.fetchone()
 
                 if result != None:
                     mime_type_id_secondary = result[0]
-                    cursor.execute(f"select primary_mime_id from mime_types_secondary where id = {mime_type_id_secondary}")
+                    cursor.execute(
+                        f"select primary_mime_id from mime_types_secondary where id = {mime_type_id_secondary}"
+                    )
                     mime_type_id_primary = cursor.fetchone()[0]
 
-                    print(types['type_name'], mime_type_id_primary)
+                    print(types["type_name"], mime_type_id_primary)
 
-                    cursor.execute(f"UPDATE filestorage_types SET main_mime_type_id = {mime_type_id_primary} WHERE id = {type_id};")
+                    cursor.execute(
+                        f"UPDATE filestorage_types SET main_mime_type_id = {mime_type_id_primary} WHERE id = {type_id};"
+                    )
                 else:
                     pass
 
@@ -562,7 +584,7 @@ def parseFiles(conn, category_id, type_id, reset=False):
                                             audio_info["audio_title"],
                                             audio_info["audio_album_title"],
                                             audio_info["audio_year"],
-                                            audio_info["audio_genre"]
+                                            audio_info["audio_genre"],
                                         )
                                     else:
                                         pass
@@ -598,7 +620,7 @@ def parseFiles(conn, category_id, type_id, reset=False):
                         except Exception as e:
                             print(traceback.format_exc())
                             print(command)
-                    
+
                     # выполнение команд на добавление инфомрации к медиафайлам
                     for media_command in media_commands:
                         try:
@@ -673,9 +695,84 @@ def parse(conn, mode="update_files"):
         updateMIMEonCategoriesTypes(conn)
 
 
+def get_filesearch_result(
+    conn,
+    mode,
+    query = '',
+    limit=50,
+    offset=0,
+    categories=[],
+    types=[],
+    columns_names="""file_id, category_name, type_name, file_fullway_forweb, 
+    file_name, mime_type, mime_type_id, size_kb, 
+    html_video_ready, html_audio_ready, type_id, category_id""",
+    table_name="filestorage_files_summary",
+):
+    """
+    Функция get_filesearch_result получает результаты поиска файлов в базе данных.
 
+    :param conn: соединение с базой данных
+    :param query: поисковый запрос
+    :param mode: режим поиска. Допустимые значения: "all", "by_category", "all_from_category", "all_from_category_type", "by_category_type_query".
+    :param limit: количество результатов на странице
+    :param offset: смещение
+    :param categories: список категорий
+    :param types: список типов
+    :param columns_names: имена столбцов для выборки
+    :param table_name: имя таблицы в базе данных
+    :return: количество результатов и список результатов поиска
+    """
 
+    if mode == "all":
+        where_addition = "LOWER(file_name) LIKE LOWER(%(query)s)"
+    elif mode == "by_category":
+        where_addition = ("LOWER(file_name) LIKE LOWER(%(query)s) and category_id in (%(categories)s)")
+    elif mode == "all_from_category":
+        where_addition = "category_id in (%(categories)s)"
+    elif mode == "all_from_category_type":
+        where_addition = "category_id in (%(categories)s) and type_id in (%(types)s)"
+    elif mode == "by_category_type_query":
+        where_addition = "LOWER(file_name) LIKE LOWER(%(query)s) and category_id in (%(categories)s) and type_id in (%(types)s)"
+    else:
+        raise TypeError("Неверный режим")
 
-# # работа с файлами
-# def renamer():
-#     return NotImplementedError
+    with conn.cursor() as cursor:
+
+        cursor.execute(
+            "SELECT %(what)s FROM %(table_name)s WHERE {};".format(
+                where_addition
+            ),
+            {
+                "what": AsIs("count(*)"),
+                "table_name": AsIs(table_name),
+                "query": "%%" + query + "%%",
+                "categories": AsIs(", ".join(categories)),
+                "types": AsIs(", ".join(types))
+            },
+        )
+
+        count_results = cursor.fetchone()[0]
+
+        if count_results > 0:
+            cursor.execute(
+                "SELECT %(what)s FROM %(table_name)s WHERE {} LIMIT %(limit)s OFFSET %(offset)s;".format(
+                    where_addition
+                ),
+                {
+                    "what": AsIs(columns_names),
+                    "table_name": AsIs(table_name),
+                    "query": "%%" + query + "%%",
+                    "categories": AsIs(", ".join(categories)),
+                    "types": AsIs(", ".join(types)),
+                    "limit": limit,
+                    "offset": offset,
+                },
+            )
+
+            desc = cursor.description
+            column_names = [col[0] for col in desc]
+            data = [dict(zip(column_names, row)) for row in cursor.fetchall()]
+        else:
+            data = []
+
+        return count_results, data
