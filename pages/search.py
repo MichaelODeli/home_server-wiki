@@ -377,28 +377,6 @@ def search(
             else counter / PAGE_LIMIT
         )
 
-        rows = [
-            dmc.TableTr(
-                [
-                    dmc.TableTd(element["category_name"]),
-                    dmc.TableTd(element["type_name"]),
-                    dmc.TableTd(cont_s.link_builder(mediafiles_links_format, element)),
-                ]
-            )
-            for element in query_results
-        ]
-
-        head = dmc.TableThead(
-            dmc.TableTr(
-                [
-                    dmc.TableTh("Категория", className="sticky-th"),
-                    dmc.TableTh("Тип", className="sticky-th"),
-                    dmc.TableTh("Файл", className="sticky-th"),
-                ]
-            )
-        )
-        body = dmc.TableTbody(rows)
-
         result_notif = dmc.Notification(
             title="Запрос выполнен",
             id="my-notif",
@@ -412,4 +390,11 @@ def search(
             f'category {str(categories)} | type {str(types)} | query "{query}" | results {counter} | page {current_page} | time {round(time.time() - start_time, 3)}',
         )
 
-        return dmc.Table([head, body]), result_notif, pages
+        return (
+            cont_s.format_search_results(
+                query_results=query_results,
+                mediafiles_links_format=mediafiles_links_format,
+            ),
+            result_notif,
+            pages,
+        )

@@ -194,7 +194,8 @@ def decode_torrent_status(name):
     else:
         return "Неизвестно"
 
-def get_torrents_data(qbittorrent_url="192.168.3.33:8124"):
+
+def get_torrents_data(qbittorrent_url="192.168.0.33:8124"):
     try:
         qbt_client = qbittorrentapi.Client(host=qbittorrent_url)
         torrents_data = []
@@ -209,15 +210,21 @@ def get_torrents_data(qbittorrent_url="192.168.3.33:8124"):
             t_added = datetime.fromtimestamp(torrent_info["added_on"]).strftime(
                 "%Y-%m-%d %H:%M:%S"
             )
-            t_completed = datetime.fromtimestamp(
-                torrent_info["completion_on"]
-            ).strftime("%Y-%m-%d %H:%M:%S")
+            t_completed = datetime.fromtimestamp(torrent_info["completion_on"]).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
             torrents_data.append(
                 [
                     dmc.Checkbox(id=f"torrent-{t_hash}"),
                     t_name,
-                    dmc.Progress(
-                        value=t_progress, label=f"{str(t_progress)}%", size="xl"
+                    dmc.ProgressRoot(
+                        [
+                            dmc.ProgressSection(
+                                dmc.ProgressLabel(f"{str(t_progress)}%"),
+                                value=t_progress,
+                            ),
+                        ],
+                        size="xl",
                     ),
                     t_status,
                     t_seeds,

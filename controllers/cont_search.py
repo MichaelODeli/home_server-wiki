@@ -1,9 +1,10 @@
+from dash import html
+import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 import time
-from dash import html
-import dash_bootstrap_components as dbc
 
+from controllers import file_manager
 
 def get_icon(icon, size=18, background=True, icon_color="white"):
     """
@@ -124,3 +125,28 @@ def get_size_str(size):
         return str(size) + " MB"
     else:
         return str(round(size / 1024, 2)) + " GB"
+
+def format_search_results(query_results, mediafiles_links_format):
+    rows = [
+        dmc.TableTr(
+            [
+                dmc.TableTd(element["category_name"]),
+                dmc.TableTd(element["type_name"]),
+                dmc.TableTd(link_builder(mediafiles_links_format, element)),
+            ]
+        )
+        for element in query_results
+    ]
+
+    head = dmc.TableThead(
+        dmc.TableTr(
+            [
+                dmc.TableTh("Категория", className="sticky-th"),
+                dmc.TableTh("Тип", className="sticky-th"),
+                dmc.TableTh("Файл", className="sticky-th"),
+            ]
+        )
+    )
+    body = dmc.TableTbody(rows)
+    
+    return dmc.Table([head, body])

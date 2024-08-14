@@ -177,6 +177,14 @@ def getBaseway(conn, test: bool = True):
             raise NotADirectoryError("Директория не найдена")
 
 
+def getSettings(conn):
+    with conn.cursor() as cursor:
+        cursor.execute(f"select * FROM config;")
+        data = cursor.fetchall()
+
+        return {(i[1] if i[3] == False else i[1]+'.test'): i[2] for i in data}
+
+
 def getCategories(conn, category_id=None):
     """
     Функция getCategories получает категории из базы данных и добавляет к каждой категории ее актуальный путь.
@@ -197,7 +205,7 @@ def getCategories(conn, category_id=None):
             f"where id = {category_id}" if category_id != None else "where active"
         )
         cursor.execute(
-            f"select id as category_id, way, category_name, category_pseudonym, is_absolute_way from filestorage_categories {addition} order by category_name;"
+            f"select id as category_id, way, category_name, category_pseudonym, is_absolute_way, main_mime_type_id from filestorage_categories {addition} order by category_name;"
         )
         desc = cursor.description
         column_names = [col[0] for col in desc]

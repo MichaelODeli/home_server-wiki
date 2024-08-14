@@ -76,7 +76,7 @@ def generate_html_table(
                         html.Td(
                             value,
                             style={
-                                # "text-align": align,
+                                "align-content": 'center',
                                 "padding": (
                                     "0 5px 0 5px" if variant == "compact" else "unset"
                                 ),

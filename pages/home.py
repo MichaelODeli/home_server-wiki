@@ -17,7 +17,7 @@ from controllers import cont_homepage
 from controllers import service_controller as service
 
 register_page(__name__, path="/", icon="fa-solid:home")
-qbittorrent_url = "http://192.168.3.33:8124"
+qbittorrent_url = "http://192.168.0.33:8124"
 
 
 def layout():

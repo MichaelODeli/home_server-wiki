@@ -1,10 +1,11 @@
 import dash
-from dash import dcc, html, Output, Input, State, clientside_callback
+from dash import dcc, html, Output, Input, State, clientside_callback, no_update
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 import dash_bootstrap_components as dbc
 from dash_extensions import Purify
 from dash_extensions.pages import setup_page_components
+from controllers import db_connection
 
 # from config import *
 from dotenv import dotenv_values
@@ -108,7 +109,7 @@ navbar = dbc.Navbar(
                                             ),
                                             dbc.DropdownMenuItem(
                                                 "Webmin",
-                                                href="https://192.168.3.33:10000/",
+                                                href="https://192.168.0.33:10000/",
                                             ),
                                             dbc.DropdownMenuItem(
                                                 "Параметры ПО", href="/settings?l=y"
@@ -119,18 +120,18 @@ navbar = dbc.Navbar(
                                             ),
                                             dbc.DropdownMenuItem(
                                                 "qBittorrent",
-                                                href="http://192.168.3.33:8124/",
+                                                href="http://192.168.0.33:8124/",
                                             ),
                                             dbc.DropdownMenuItem(
                                                 "Transmission (obsolete)",
-                                                href="http://192.168.3.33:12345/",
+                                                href="http://192.168.0.33:12345/",
                                             ),
                                             dbc.DropdownMenuItem(divider=True),
                                             dbc.DropdownMenuItem(
                                                 "Wiki-ресурсы", header=True
                                             ),
                                             dbc.DropdownMenuItem(
-                                                "Kiwix", href="http://192.168.3.33:789/"
+                                                "Kiwix", href="http://192.168.0.33:789/"
                                             ),
                                         ],
                                         nav=True,
@@ -215,11 +216,27 @@ navbar = dbc.Navbar(
 # Конструкция всего макета
 app.layout = dmc.MantineProvider(
     children=[
-        navbar,
-        dash.page_container,
+        dmc.Container(
+            [
+                navbar,
+                dash.page_container,
+                dmc.LoadingOverlay(
+                    visible=True,
+                    id="loading-overlay",
+                    zIndex=1000,
+                    overlayProps={"radius": "sm", "blur": 5},
+                    loaderProps={"size": "lg"},
+                ),
+            ],
+            miw="100%",
+            mih="100%",
+            id="server-blocker",
+            p=0,
+        ),
         dmc.NotificationProvider(position="bottom-right"),
         setup_page_components(),
         html.Div(id="notifications-container-search"),
+        dcc.Store(id="server-avaliablity"),
     ],
     id="mantine_theme",
     defaultColorScheme="light",
@@ -231,6 +248,25 @@ app.layout = dmc.MantineProvider(
         '"Noto Color Emoji"',
     },
 )
+
+
+# standart callback for connection checking
+@app.callback(
+    Output("server-avaliablity", "data"),
+    Output("server-blocker", "children"),
+    Input("mantine_theme", "style"),
+    running=[
+        (Output("loading-overlay", "visible"), True, False),
+    ],
+)
+def server_blocker(style):
+    if db_connection.test_conn():
+        return True, no_update
+    else:
+        return False, html.Center(
+            [html.H5("Сервис недоступен. ")],
+            style={"margin-top": "70px"},
+        )
 
 
 # add callback for toggling the collapse on small screens
