@@ -1,0 +1,13 @@
+.alert-pos {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5rem;
+    overflow-x: auto;
+}
+
+/* на телефоне увеличится ширина блока */
+@media (max-width: 768px) {
+    .alert-pos {
+        width: 95%;
+    }
+}

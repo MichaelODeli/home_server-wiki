@@ -1,0 +1,53 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:14.5
+    container_name: postgres_14
+    hostname: ${DB_HOST_DOCKER}
+    ports:
+      - 6543:5432
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+    
+  dash_app:
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    build: .
+    container_name: ${APP_NAME}
+    volumes:
+      - .:/app
+      - ${LOCAL_STORAGE_DIR}:${DOCKER_INTERNAL_FILES_DIR}
+    links:
+      - postgres
+    depends_on:
+      postgres:
+        condition: 
+          service_healthy
+  
+  apache_filehost:
+    image: httpd:2.4
+    container_name: apache_filehost
+    ports:
+      - 80:80
+    volumes:
+      - ${LOCAL_STORAGE_DIR}:${DOCKER_INTERNAL_FILES_DIR}
+      - ./config/httpd.conf:/usr/local/apache2/conf/httpd.conf
+    depends_on:
+      postgres:
+        condition: 
+          service_healthy
+      dash_app:
+        condition: 
+          service_healthy
+
