@@ -58,10 +58,14 @@ body {
 /* на телефоне увеличится ширина блока */
 @media (max-width: 768px) {
     .adaptive-container {
-        max-width: 100%;
+        max-width: 100% !important;
     }
     .adaptive-grid {
-        display: block;
+        display: block !important;
+    }
+    
+    .adaptive-grid .mantine-Grid-inner {
+        display: block !important;
     }
 }
 
@@ -87,4 +91,8 @@ body {
 
 .card-title {
     text-align: center;
+}
+
+.link-primary {
+    box-shadow: unset !important;
 }

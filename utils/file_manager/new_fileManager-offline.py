@@ -35,7 +35,7 @@ def getCategoriesList(baseway: str):
     Параметры:
     - baseway - директория для поиска файлов. Строка должна кончаться на слэш/два обратных слэша
     """
-    if baseway[-1] != '/' and baseway[-2:] != '//':
+    if baseway[-1] != '/' and baseway[-2:] != '\\\\':
         raise ValueError('In the end of baseway string you must provide "/" or "\\\\" symbols.')
     dirs_list = [f.path.replace(baseway, '') for f in os.scandir(baseway) if f.is_dir()]
     if len(dirs_list) == 0: 
@@ -111,7 +111,7 @@ try:
     with open('new_settings.ini') as fp:
         cfg.read_file(fp)
 except FileNotFoundError:
-    raise FileNotFoundError("You didn't created config file (soon it will be automatic)")
+    raise FileNotFoundError("You didn't create config file (soon it will be automatic)")
 log_printer('main', 'config read')
 # конфиг
 if sys.platform == "linux" or sys.platform == "linux2":
@@ -127,7 +127,7 @@ filesRenamer(baseway)
 conn = sqlite3.connect(baseName)
 c = conn.cursor()
 for category in getCategoriesList(baseway):
-    if '-' in category and category[0]=='_': continue
+    if '-' in category or category[0]=='_': continue
     log_printer('main_loop', f'work with category "{category}"')
     basescript = f"""
                 BEGIN TRANSACTION;

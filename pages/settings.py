@@ -16,6 +16,7 @@ from dash_extensions import Purify
 from flask import request
 from datetime import datetime
 from controllers import service_controller as service
+from controllers import db_connection, file_manager
 import psutil
 import platform
 
@@ -157,7 +158,7 @@ def get_partitions_info_rows():
     return [generate_tablerow(html.H6("Накопители и разделы"))] + parts_data
 
 
-def layout(l="n", tab="main", **kwargs):
+def layout(l="n", tab="server_info", **kwargs):
     if l == "n":
         return dmc.Container()
     service.log_printer(request.remote_addr, "settings", "page opened")
@@ -198,8 +199,11 @@ def layout(l="n", tab="main", **kwargs):
 
 
 @callback(Output("tabs-content", "children"), Input("tabs-settings", "value"))
-def render_content(active):
+def render_content(active, test=True):
     if active == "files":
+        conn = db_connection.get_conn()
+        categories = file_manager.getCategories(conn)
+        settings = file_manager.getSettings(conn)
         return dmc.Stack(
             [
                 html.H5("Каталоги"),
@@ -207,85 +211,57 @@ def render_content(active):
                     label="Родительский каталог с папками",
                     style={"width": 250},
                     id="settings-catalog-main_folder",
+                    value=(
+                        settings["filemanager.baseway.test"]
+                        if test
+                        else settings["filemanager.baseway"]
+                    ),
+                    disabled=True,
                 ),
-                dbc.Button("Сохранить", style={"width": "min-content"}),
+                dbc.Button("Сохранить", style={"width": "min-content"}, disabled=True),
                 dmc.Divider(variant="solid"),
                 html.H5("Обновление библиотеки"),
                 dmc.NumberInput(
                     label="Интервал обновления базы",
                     description="Указана периодичность в днях",
-                    value=1,
+                    value=int(settings["filemanager.update_interval"]),
                     min=1,
                     style={"width": 250},
                     id="settings-catalog-update_interval",
+                    disabled=True,
                 ),
-                dbc.Button("Сохранить", style={"width": "min-content"}),
+                dbc.Button("Сохранить", style={"width": "min-content"}, disabled=True),
                 dmc.Divider(variant="solid"),
                 html.H5("Категории"),
                 dmc.MultiSelect(
                     label="Используемые категории файлов",
                     description="Категорией служит название подпапки в родительской папке с файлами. Обратите внимание, папки, у которых в начале стоит нижнее подчеркивание, не будут проанализированы.",
-                    value=[
-                        "cartoon_serials",
-                        "en_serials",
-                        "apps",
-                        "books",
-                        "tv_shows",
-                        "youtube",
-                        "films",
-                    ],
-                    data=[
-                        "history",
-                        "cartoon_serials",
-                        "en_serials",
-                        "data_science",
-                        "apps",
-                        "books",
-                        "tv_shows",
-                        "youtube",
-                        "films",
-                        "wiki",
-                    ],
+                    value=[i["category_name"] for i in categories],
+                    data=[i["category_name"] for i in categories],
                     style={"width": 400, "marginBottom": 10},
                     id="settings-catalog-all_categories",
+                    disabled=True,
                 ),
                 dmc.MultiSelect(
                     label="Категории с видеоконтентом",
-                    description="Для выбранных категорий будет доступен просмотр видео через отдельную страницу /videoview",
+                    description="Для выбранных категорий будет доступен просмотр видео в браузере",
                     value=[
-                        "cartoon_serials",
-                        "en_serials",
-                        "tv_shows",
-                        "youtube",
-                        "films",
-                        "ru_serials",
+                        i["category_name"]
+                        for i in categories
+                        if i["main_mime_type_id"] == 9
                     ],
-                    data=[
-                        "history",
-                        "cartoon_serials",
-                        "en_serials",
-                        "data_science",
-                        "apps",
-                        "books",
-                        "tv_shows",
-                        "youtube",
-                        "films",
-                        "wiki",
-                    ],
+                    data=[i["category_name"] for i in categories],
                     style={"width": 400, "marginBottom": 10},
                     id="settings-catalog-video_categories",
+                    disabled=True,
                 ),
                 dmc.Group(
                     [
                         dbc.Button(
-                            "Обновить библиотеку по выбранным категориям",
+                            "Сохранить изменения",
                             id="settings-catalog-update_by_categories",
                             style={"width": "max-content"},
-                        ),
-                        dbc.Button(
-                            "Повторное сканирование категорий",
-                            id="settings-catalog-scan_categories",
-                            style={"width": "max-content"},
+                            disabled=True,
                         ),
                     ],
                     style={"width": "max-content"},
@@ -298,21 +274,38 @@ def render_content(active):
                             "Пересканировать библиотеку файлов",
                             id="settings-catalog-manual_update",
                             style={"width": "max-content"},
+                            disabled=True,
+                        ),
+                        dbc.Button(
+                            "Пересканировать типы категорий",
+                            style={"width": "max-content"},
+                            disabled=True,
+                        ),
+                        dbc.Button(
+                            "Пересканировать категории",
+                            style={"width": "max-content"},
+                            disabled=True,
+                        ),
+                        dbc.Button(
+                            "Сброс базы файлового менеджера",
+                            style={"width": "max-content"},
+                            disabled=True,
                         ),
                         dbc.Button(
                             "Отключить файловый менеджер",
                             id="settings-catalog-disable_update",
                             style={"width": "max-content"},
+                            disabled=True,
                         ),
                     ]
                 ),
                 dmc.Divider(variant="solid"),
-                html.H5("Лог обновления базы"),
-                dbc.Button(
-                    "Получить лог",
-                    id="settings-catalog-get_log",
-                    style={"width": "max-content"},
-                ),
+                # html.H5("Лог обновления базы"),
+                # dbc.Button(
+                #     "Получить лог",
+                #     id="settings-catalog-get_log",
+                #     style={"width": "max-content"},
+                # ),
             ]
         )
     elif active == "server_info":
