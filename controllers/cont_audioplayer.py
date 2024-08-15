@@ -119,7 +119,7 @@ def float_player():
                                 radius="md",
                                 variant="default",
                                 id="open-drawer-albums",
-                                className="shown_affix",
+                                className="shown-affix",
                             ),
                         ],
                         span="content",

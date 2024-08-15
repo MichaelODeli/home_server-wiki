@@ -1,0 +1,20 @@
+.btn-outline-secondary {
+    color: unset
+}
+
+.card-title {
+    text-align: center;
+}
+
+.link-primary {
+    box-shadow: unset !important;
+}
+
+.button-center-content {
+    display: flex;
+    align-items: center;
+}
+
+.td-none {
+    text-decoration: none !important;
+}

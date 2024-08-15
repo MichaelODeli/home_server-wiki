@@ -1,0 +1,9 @@
+/* adaptive containers and grids */
+.dmc-container {
+    padding-top: 20px;
+    max-width: 90%;
+}
+
+.dash-debug-menu__outer, .dash-debug-menu {
+    display: none !important;
+}

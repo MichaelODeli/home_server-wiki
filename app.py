@@ -47,6 +47,10 @@ app = dash.Dash(
     ]
     + mantine_stylesheets
     + icons_link,
+    # external_scripts=[
+    #     "https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js",
+    #     "https://cdnjs.cloudflare.com/ajax/libs/mediaelement/7.0.5/mediaelement-and-player.min.js",
+    # ],
     title=config["WEB_PAGE_TITLE"],
     update_title=config["WEB_PAGE_LOADING_TITLE"],
     suppress_callback_exceptions=True,
@@ -69,149 +73,143 @@ def get_icon(icon):
 
 
 # search bar HTML code
-search_bar = Purify(
-    """
-        <form action="/search" method="GET" class="">
-        <div class="g-0 ms-auto flex-nowrap mt-3 mt-md-0 align-items-center row">
-            <div class="col"><input class="form-control" id="query" name="query" placeholder="Поиск по хранилищу"
-                    step="any"></div>
-            <input type="hidden" value="y" name="l" />
-            <input type="hidden" value="y" name="auto_search" />
-            <div class="col-auto"><button class="ms-2 btn btn-primary">Найти</button></div>
-        </div>
-    </form>"""
+search_bar = html.Form(
+    children=[
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        dbc.Input(
+                            id="search-bar-query",
+                            name="query",
+                            placeholder="Поиск по всем файлам",
+                            step="any",
+                        ),
+                        dbc.Input(type="hidden", value="y", name="l"),
+                        dbc.Input(type="hidden", value="y", name="auto_search"),
+                    ]
+                ),
+                dbc.Col([dbc.Button("Найти", className="ms-2")], width="auto"),
+            ],
+        )
+    ],
+    method="GET",
+    action="/search",
+    className="nav-item",
+    id="search-bar",
 )
 
-# navbar with buttons
+theme_switch = html.Div(
+    dmc.Switch(
+        offLabel=DashIconify(icon="radix-icons:moon", width=20),
+        onLabel=DashIconify(icon="radix-icons:sun", width=20),
+        size="lg",
+        id="color-mode-switch",
+        checked=True,
+        className="nav-item",
+        color="var(--bs-primary)",
+        label=dmc.Text(
+            "Переключить тему приложения", className="adaptive-show p-0 m-0", size="sm"
+        ),
+    ),
+    className="pt-3 pt-sm-0",
+)
+
+navbar_items = dmc.Group(
+    [
+        dbc.DropdownMenu(
+            label="Внешние утилиты",
+            children=[
+                dbc.DropdownMenuItem(
+                    "Настройка сервера",
+                    header=True,
+                    class_name="h6",
+                    style={"text-decoration": "unset"},
+                ),
+                dbc.DropdownMenuItem(
+                    "Webmin",
+                    href="https://192.168.0.33:10000/",
+                ),
+                dbc.DropdownMenuItem("Параметры ПО", href="/settings?l=y"),
+                dbc.DropdownMenuItem(divider=True),
+                dbc.DropdownMenuItem("Торрент клиенты", header=True),
+                dbc.DropdownMenuItem(
+                    "qBittorrent",
+                    href="http://192.168.0.33:8124/",
+                ),
+                dbc.DropdownMenuItem(
+                    "Transmission (obsolete)",
+                    href="http://192.168.0.33:12345/",
+                ),
+                dbc.DropdownMenuItem(divider=True),
+                dbc.DropdownMenuItem("Wiki-ресурсы", header=True),
+                dbc.DropdownMenuItem("Kiwix", href="http://192.168.0.33:789/"),
+            ],
+            nav=True,
+            in_navbar=True,
+        ),
+        dbc.DropdownMenu(
+            label="Медиа и файлы",
+            children=[
+                dbc.DropdownMenuItem("Плееры", header=True),
+                dbc.DropdownMenuItem(
+                    "Видеоплеер",
+                    href="/players/video?l=y",
+                ),
+                dbc.DropdownMenuItem(
+                    "Аудиоплеер",
+                    href="/players/audio?l=y",
+                ),
+                dbc.DropdownMenuItem("Управление файлами", header=True),
+                dbc.DropdownMenuItem(
+                    "Файловый менеджер",
+                    href="/files?l=y",
+                ),
+                dbc.DropdownMenuItem(
+                    "Управление торрентом",
+                    href="/torrents?l=y",
+                ),
+            ],
+            nav=True,
+            # in_navbar=True,
+        ),
+        dmc.Space(h=3),
+        search_bar,
+        theme_switch,
+    ],
+    # gap="sm",
+    # className='adaptive-block'
+)
+
 navbar = dbc.Navbar(
     dbc.Container(
         [
-            html.A(
-                dbc.NavbarBrand(config["WEB_PAGE_HEADER_BRAND"], className="ms-2 h2"),
-                href="/",
-                style={"text-decoration": "unset"},
+            dbc.Row(
+                [
+                    dbc.Col(
+                        html.A(
+                            dbc.NavbarBrand("HomeServer", className="ms-2"),
+                            href="/",
+                            style={"textDecoration": "none"},
+                        ),
+                    ),
+                ],
+                align="center",
+                className="g-0",
             ),
             dbc.NavbarToggler(id="navbar-toggler", n_clicks=0),
             dbc.Collapse(
-                children=[
-                    dmc.Grid(
-                        [
-                            dmc.GridCol(
-                                [
-                                    dbc.DropdownMenu(
-                                        label="Внешние утилиты",
-                                        children=[
-                                            dbc.DropdownMenuItem(
-                                                "Настройка сервера",
-                                                header=True,
-                                                class_name="h6",
-                                                style={"text-decoration": "unset"},
-                                            ),
-                                            dbc.DropdownMenuItem(
-                                                "Webmin",
-                                                href="https://192.168.0.33:10000/",
-                                            ),
-                                            dbc.DropdownMenuItem(
-                                                "Параметры ПО", href="/settings?l=y"
-                                            ),
-                                            dbc.DropdownMenuItem(divider=True),
-                                            dbc.DropdownMenuItem(
-                                                "Торрент клиенты", header=True
-                                            ),
-                                            dbc.DropdownMenuItem(
-                                                "qBittorrent",
-                                                href="http://192.168.0.33:8124/",
-                                            ),
-                                            dbc.DropdownMenuItem(
-                                                "Transmission (obsolete)",
-                                                href="http://192.168.0.33:12345/",
-                                            ),
-                                            dbc.DropdownMenuItem(divider=True),
-                                            dbc.DropdownMenuItem(
-                                                "Wiki-ресурсы", header=True
-                                            ),
-                                            dbc.DropdownMenuItem(
-                                                "Kiwix", href="http://192.168.0.33:789/"
-                                            ),
-                                        ],
-                                        nav=True,
-                                        in_navbar=True,
-                                    ),
-                                ],
-                                span="content",
-                            ),
-                            dmc.GridCol(
-                                dbc.DropdownMenu(
-                                    label="Медиа и файлы",
-                                    children=[
-                                        dbc.DropdownMenuItem("Плееры", header=True),
-                                        dbc.DropdownMenuItem(
-                                            "Видеоплеер",
-                                            href="/players/videoplayer?l=y",
-                                        ),
-                                        dbc.DropdownMenuItem(
-                                            "Аудиоплеер",
-                                            href="/players/audioplayer?l=y",
-                                        ),
-                                        dbc.DropdownMenuItem(
-                                            "Управление файлами", header=True
-                                        ),
-                                        dbc.DropdownMenuItem(
-                                            "Файловый менеджер",
-                                            href="/files?l=y",
-                                        ),
-                                        dbc.DropdownMenuItem(
-                                            "Управление торрентом",
-                                            href="/torrents?l=y",
-                                        ),
-                                    ],
-                                    nav=True,
-                                    in_navbar=True,
-                                ),
-                                span="content",
-                            ),
-                            dmc.GridCol(
-                                [
-                                    html.Span(
-                                        [
-                                            dbc.Label(
-                                                className="fa fa-moon",
-                                                html_for="color-mode-switch",
-                                                color="primary",
-                                            ),
-                                            dbc.Switch(
-                                                id="color-mode-switch",
-                                                value=True,
-                                                className="d-inline-block ms-1",
-                                                persistence=True,
-                                            ),
-                                            dbc.Label(
-                                                className="fa fa-sun",
-                                                html_for="color-mode-switch",
-                                                color="primary",
-                                            ),
-                                        ]
-                                    )
-                                ],
-                                span="content",
-                            ),
-                            # dmc.GridCol(span="auto"),  # column for filling empty space
-                        ],
-                        className="custom-flex",
-                    ),
-                    html.Div(search_bar, style={"padding": "0 10px 0 10px"}),
-                ],
+                navbar_items,
                 id="navbar-collapse",
                 is_open=False,
                 navbar=True,
             ),
-        ]
+        ],
+        fluid=True,
     ),
-    style={"min-height": "80px"},
-    class_name="rounded border-bottom",
     color="default",
+    class_name="rounded border-bottom",
 )
-
 
 # Конструкция всего макета
 app.layout = dmc.MantineProvider(
@@ -237,6 +235,7 @@ app.layout = dmc.MantineProvider(
         setup_page_components(),
         html.Div(id="notifications-container-search"),
         dcc.Store(id="server-avaliablity"),
+        dcc.Location(id="url"),
     ],
     id="mantine_theme",
     defaultColorScheme="light",
@@ -281,6 +280,7 @@ def toggle_navbar_collapse(n, is_open):
     return is_open
 
 
+# color theme switch
 clientside_callback(
     """
     (switchOn) => {
@@ -289,15 +289,31 @@ clientside_callback(
     }
     """,
     Output("color-mode-switch", "id"),
-    Input("color-mode-switch", "value"),
+    Input("color-mode-switch", "checked"),
 )
 
 
 @app.callback(
-    Output("mantine_theme", "forceColorScheme"), Input("color-mode-switch", "value")
+    Output("mantine_theme", "forceColorScheme"), Input("color-mode-switch", "checked")
 )
 def make_mantine_theme(value):
     return "dark" if value == False else "light"
+
+
+# search bar edits
+@app.callback(
+    Output("search-bar", "action"),
+    Output("search-bar-query", "placeholder"),
+    Input("url", "href"),
+)
+def search_bar_format(href):
+    if "/players/video" in href:
+        return (
+            "/players/video/search",
+            "Поиск по видео",
+        )
+    else:
+        return "/search", "Поиск по всем файлам"
 
 
 dev = bool(config["APP_DEBUG_ENABLED"])

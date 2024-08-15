@@ -29,30 +29,34 @@ def layout():
                     dmc.GridCol(
                         [cont_homepage.widget_systeminfo()],
                         span="content",
-                        className="mobile-widget",
+                        className="adaptive-width",
+                        mih='100%'
                     ),
                     dmc.GridCol(
                         [cont_homepage.widget_disk_size()],
                         span="content",
-                        className="mobile-widget",
+                        className="adaptive-width",
                         id="t",
+                        mih='100%'
                     ),
                     dmc.GridCol(
                         [cont_homepage.widget_torrents(qbittorrent_url)],
                         span="content",
-                        className="mobile-widget",
+                        className="adaptive-width",
                         id="widget_torrents",
+                        mih='100%'
                     ),   
                     dmc.GridCol(
                         [cont_homepage.widget_weather()],
-                        span=3,
-                        className="mobile-widget",
+                        span="content",
+                        className="adaptive-width", 
                         id="widget-weather",
+                        mih='100%'
                     ),                  
                 ],
                 align="stretch",
                 justify="center",
-                className="adaptive-grid",
+                className="adaptive-block",
             ),
         ],
         pt=20,

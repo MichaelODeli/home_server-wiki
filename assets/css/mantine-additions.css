@@ -1,0 +1,9 @@
+.mantine-Checkbox-root {
+    margin:auto;
+    display: flex;
+    justify-content: center;
+}
+
+.mantine-Switch-labelWrapper {
+    justify-content: center;
+}

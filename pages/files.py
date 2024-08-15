@@ -64,7 +64,7 @@ def layout(l="n", **kwargs):
                         id="open-drawer",
                     ),
                     position={"bottom": 20, "left": 20},
-                    className="shown_affix",
+                    className="shown-affix",
                 ),
                 cont_f.get_drawer(),
             ],

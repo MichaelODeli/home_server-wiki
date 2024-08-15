@@ -1,0 +1,27 @@
+
+
+.table-wrapper {
+  max-height: 40vh;
+  width: auto;
+  overflow: auto;
+  display: inline-block;
+}
+
+.table-earnings {
+  background: #F3F5F6;
+}
+
+/* на телефоне блок скроется */
+@media (max-width: 768px) {
+  .hided_element {
+    display: none !important;
+  }
+}
+
+.mantine-Drawer-drawer {
+  overflow-y: auto;
+}
+
+.control-button {
+  padding: 5px
+}

@@ -22,7 +22,7 @@ from controllers import service_controller as service
 from controllers import cont_search as cont_s
 import dash_player
 
-register_page(__name__, path="/players/audioplayer", icon="fa-solid:home")
+register_page(__name__, path="/players/audio", icon="fa-solid:home")
 
 
 def layout(l="n", selected_playlist_name="Любимые треки", **kwargs):
