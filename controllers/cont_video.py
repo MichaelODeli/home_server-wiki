@@ -4,13 +4,21 @@ from dash import (
 import dash_mantine_components as dmc
 import dash_player as dp
 import dash_bootstrap_components as dbc
+from controllers import cont_media
 
 
-def create_video_container(
-    href, img_video, img_channel, video_title, videotype_name, views, date
+def createVideoMiniatureContainer(
+    href,
+    video_title,
+    videotype_name,
+    views="нет просмотров",
+    date="недавно",
+    img_video="/assets/img/image-not-found.jpg",
+    img_channel="/assets/img/image-not-found.jpg",
+    video_duration=0,
 ):
     """
-    Функция video_miniatures_container создает контейнер для видео миниатюр.
+    Функция createVideoMiniaturesContainer создает контейнер для видео миниатюр.
 
     :param href (str): ссылка на видео.
     :param img_video (str): ссылка на изображение видео.
@@ -32,7 +40,22 @@ def create_video_container(
                 maw="300px",
                 children=[
                     dmc.AspectRatio(
-                        html.Img(src=img_video), ratio=16 / 9, mb="xs", w=300
+                        html.Div(
+                            dmc.Text(
+                                cont_media.getDuration(video_duration),
+                                c="white",
+                                bg="black",
+                                w="max-content",
+                                h="max-content",
+                                className="video-time m-1 px-1",
+                                size="sm",
+                            )
+                        ),
+                        ratio=16 / 9,
+                        mb="xs",
+                        w=300,
+                        className="video-background-image",
+                        style={"background-image": f"url('{img_video}')"},
                     ),
                     dmc.Flex(
                         direction="row",
@@ -69,9 +92,9 @@ def create_video_container(
     )
 
 
-def video_miniatures_container(children):
+def createVideoMiniaturesContainer(children):
     """
-    Функция video_miniatures_container создает контейнер для видео миниатюр.
+    Функция createVideoMiniaturesContainer создает контейнер для видео миниатюр.
 
     :param children (tuple): наполнение контейнера
     :return dmc.Flex:
@@ -80,15 +103,17 @@ def video_miniatures_container(children):
         direction="row",
         wrap="wrap",
         justify="space-around",
-        mt="20px",
+        mt="10px",
         mx="5px",
         children=children,
     )
 
 
-def video_search_bar(page, search_clicks=0, input_value=None, additional_children=[html.Div()]):
+def createVideoSearchBar(
+    page, search_clicks=0, input_value=None, additional_children=[html.Div()]
+):
     """
-    Функция video_search_bar создает строку поиска видео.
+    Функция createVideoSearchBar создает строку поиска видео.
 
     :param page (object): экземпляр класса page.
     :param search_clicks (int): количество кликов по кнопке поиска.
@@ -97,6 +122,29 @@ def video_search_bar(page, search_clicks=0, input_value=None, additional_childre
 
     :return dmc.Grid: экземпляр класса dmc.Grid с заданными параметрами и дочерними элементами.
     """
+
+    search_form = dmc.Group(
+        [
+            dbc.Input(
+                placeholder="Введите запрос",
+                class_name="w-100",
+                value=input_value,
+                id="n_search_query_video",
+                name="query",
+            ),
+            dbc.Input(type="hidden", value="y", name="l"),
+            dbc.Input(type="hidden", value="y", name="auto_search"),
+            dbc.Button(
+                "Поиск",
+                id="n_search_button_video",
+                n_clicks=search_clicks,
+            ),
+        ],
+        className="mx-2 mx-sm-0",
+        justify="center",
+        wrap="nowrap",
+    )
+
     return dmc.Grid(
         [
             dmc.GridCol(span=3, className="adaptive-hide"),
@@ -104,24 +152,10 @@ def video_search_bar(page, search_clicks=0, input_value=None, additional_childre
                 span="auto",
                 children=dmc.Stack(
                     [
-                        dmc.Group(
-                            [
-                                dbc.Input(
-                                    placeholder="Введите запрос",
-                                    class_name="w-100",
-                                    value=input_value,
-                                    id="n_search_query_video",
-                                    name="search_query",
-                                ),
-                                dbc.Input(type="hidden", value="y", name="l"),
-                                dbc.Input(
-                                    type="hidden", value="y", name="auto_search"
-                                ),
-                                dbc.Button("Поиск", id='n_search_button_video', n_clicks=search_clicks),
-                            ],
-                            className="mx-2 mx-sm-0",
-                            justify="center",
-                            wrap="nowrap",
+                        (
+                            html.Form(search_form, action="/players/video/search")
+                            if page == "main"
+                            else search_form
                         )
                     ]
                     + additional_children,
@@ -133,3 +167,22 @@ def video_search_bar(page, search_clicks=0, input_value=None, additional_childre
         w="90%",
         m="auto",
     )
+
+
+def getRandomVideos(conn, counter=30, type_id=None):
+    if type_id != None:
+        query = "select * from filestorage_mediafiles_summary where html_video_ready and type_id = %(type_id)s order by random() limit %(counter)s;"
+    else:
+        query = "select * from filestorage_mediafiles_summary where html_video_ready order by random() limit %(counter)s;"
+
+    with conn.cursor() as cursor:
+        cursor.execute(
+            query,
+            {"counter": counter, "type_id": type_id},
+        )
+
+        desc = cursor.description
+        column_names = [col[0] for col in desc]
+        data = [dict(zip(column_names, row)) for row in cursor.fetchall()]
+
+    return data

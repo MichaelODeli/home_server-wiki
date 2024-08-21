@@ -4,36 +4,35 @@ from flask import request
 import dash_mantine_components as dmc
 import dash_bootstrap_components as dbc
 from dash_extensions import Purify
-from controllers import cont_video
+from controllers import cont_video, db_connection, cont_search
 
 register_page(__name__, path="/players/video", icon="fa-solid:home")
 
 
 def layout(l="n", **other_unknown_query_strings):
-    service.log_printer(request.remote_addr, "videomain", "page opened")
+    service.logPrinter(request.remote_addr, "videomain", "page opened")
     if l == "n":
         return dmc.Container()
     else:
+        conn = db_connection.getConn()
 
         return dmc.Stack(
             pt="20px",
             gap="xs",
             children=[
-                cont_video.video_search_bar(page='main'),
-                cont_video.video_miniatures_container(
+                cont_video.createVideoSearchBar(page="main"),
+                cont_video.createVideoMiniaturesContainer(
                     children=[
-                        cont_video.create_video_container(
-                            href="/players/video/watch?v=3edbac2814a1b990acc291ed86278398d61bdcb0409d8ec64ad8a6236f4feadc&l=y",
-                            img_video="/assets/img/image-not-found.jpg",
-                            img_channel="/assets/img/image-not-found.jpg",
-                            video_title="Случайное такси E01_AniDUB",
-                            videotype_name="OddTaxi",
-                            views="0 просмотров",
-                            date="сегодня",
+                        cont_video.createVideoMiniatureContainer(
+                            href=f"/players/video/watch?v={video['file_id']}&l=y",
+                            video_title=cont_search.stringHider(
+                                ".".join(video["file_name"].split(".")[:-1])
+                            ),
+                            videotype_name=video["type_name"],
+                            video_duration=video["video_duration"]
                         )
-                    ]
-                    * 6
-                    * 5,
+                        for video in cont_video.getRandomVideos(conn)
+                    ],
                 ),
             ],
         )

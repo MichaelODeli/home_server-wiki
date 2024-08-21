@@ -7,7 +7,7 @@ import qbittorrentapi
 from datetime import datetime
 
 
-def add_torrent_modal():
+def addTorrentModal():
     loading_skeleton = dmc.Stack(
         gap="xs",
         children=[
@@ -154,48 +154,35 @@ def bytes2human(n, format="%(value).1f %(symbol)s", symbols="customary"):
     return format % dict(symbol=symbols[0], value=n)
 
 
-def decode_torrent_status(name):
-    if name == "error":
-        return "Ошибка"
-    elif name == "missingFiles":
-        return "Нет файлов"
-    elif name == "uploading":
-        return "[↑] Раздача"
-    elif name == "pausedUP":
-        return "[↑] Пауза"
-    elif name == "queuedUP":
-        return "[↑] В очереди"
-    elif name == "stalledUP":
-        return "[↑] Ожидание"
-    elif name == "checkingUP":
-        return "[↑] Проверка"
-    elif name == "forcedUP":
-        return "[П] Раздача"
-    elif name == "allocating":
-        return "[↓] Выделение места"
-    elif name == "downloading":
-        return "[↓] Загрузка"
-    elif name == "metaDL":
-        return "[↓] Проверка мета"
-    elif name == "pausedDL":
-        return "[↓] Пауза"
-    elif name == "queuedDL":
-        return "[↓] В очереди"
-    elif name == "stalledDL":
-        return "[↓] Ожидание"
-    elif name == "checkingDL":
-        return "[↓] Проверка"
-    elif name == "forcedDL":
-        return "[П] Загрузка"
-    elif name == "checkingResumeData":
-        return "[↓] Проверка"
-    elif name == "moving":
-        return "Перемещение"
+def decodeTorrentStatus(name):
+    status_dict = {
+        "error": "Ошибка",
+        "missingFiles": "Нет файлов",
+        "uploading": "[↑] Раздача",
+        "pausedUP": "[↑] Пауза",
+        "queuedUP": "[↑] В очереди",
+        "stalledUP": "[↑] Ожидание",
+        "checkingUP": "[↑] Проверка",
+        "forcedUP": "[П] Раздача",
+        "allocating": "[↓] Выделение места",
+        "downloading": "[↓] Загрузка",
+        "metaDL": "[↓] Проверка мета",
+        "pausedDL": "[↓] Пауза",
+        "queuedDL": "[↓] В очереди",
+        "stalledDL": "[↓] Ожидание",
+        "checkingDL": "[↓] Проверка",
+        "forcedDL": "[П] Загрузка",
+        "checkingResumeData": "[↓] Проверка",
+        "moving": "Перемещение",
+    }
+
+    if name in status_dict.keys():
+        return status_dict[name]
     else:
         return "Неизвестно"
 
 
-def get_torrents_data(qbittorrent_url="192.168.0.33:8124"):
+def getTorrentsData(qbittorrent_url="192.168.0.33:8124"):
     try:
         qbt_client = qbittorrentapi.Client(host=qbittorrent_url)
         torrents_data = []
@@ -203,16 +190,16 @@ def get_torrents_data(qbittorrent_url="192.168.0.33:8124"):
             t_hash = torrent_info["hash"]
             t_name = torrent_info["name"]
             t_progress = int(torrent_info["progress"] * 100)
-            t_status = decode_torrent_status(torrent_info["state"])
+            t_status = decodeTorrentStatus(torrent_info["state"])
             t_seeds = torrent_info["num_seeds"]
             t_speed_down = bytes2human(torrent_info["dlspeed"]) + "/s"
             t_speed_upl = bytes2human(torrent_info["upspeed"]) + "/s"
             t_added = datetime.fromtimestamp(torrent_info["added_on"]).strftime(
                 "%Y-%m-%d %H:%M:%S"
             )
-            t_completed = datetime.fromtimestamp(torrent_info["completion_on"]).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
+            t_completed = datetime.fromtimestamp(
+                torrent_info["completion_on"]
+            ).strftime("%Y-%m-%d %H:%M:%S")
             torrents_data.append(
                 [
                     dmc.Checkbox(id=f"torrent-{t_hash}"),
@@ -239,7 +226,7 @@ def get_torrents_data(qbittorrent_url="192.168.0.33:8124"):
         return None
 
 
-def block_torrents():
+def blockTorrents():
     return html.Div(
         [
             dmc.Grid(

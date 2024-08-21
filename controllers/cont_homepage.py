@@ -13,10 +13,11 @@ import psutil
 from dash_iconify import DashIconify
 
 import locale
+
 locale.setlocale(locale.LC_ALL, "ru_RU")
 
 
-def get_torrent_status(BASE_URL):
+def getTorrentStatus(BASE_URL):
     """
     Получает статус торрентов из qBittorrent API.
 
@@ -41,7 +42,9 @@ def get_torrent_status(BASE_URL):
                 requests.get(f"{BASE_URL}/api/v2/torrents/info").json()
             )  # всего
             count_downloading = len(
-                requests.get(f"{BASE_URL}/api/v2/torrents/info?filter=downloading").json()
+                requests.get(
+                    f"{BASE_URL}/api/v2/torrents/info?filter=downloading"
+                ).json()
             )  # скачивается
             count_down_av = len(
                 requests.get(
@@ -64,10 +67,10 @@ def get_torrent_status(BASE_URL):
         else:
             raise ConnectionError
     except:
-        return ['qbittorrent не отвечает.']*3
+        return ["qbittorrent не отвечает."] * 3
 
 
-def get_progress(
+def getProgress(
     drive: str, current_value: float, max_value: float, id: str, valid: bool
 ):
     """
@@ -112,7 +115,7 @@ def get_progress(
                                 dmc.ProgressLabel("Диск не обнаружен"),
                                 value=100,
                                 color="#cc0000",
-                                id=id
+                                id=id,
                             )
                         ],
                         size="xl",
@@ -123,7 +126,7 @@ def get_progress(
         )
 
 
-def get_drive_size(partition):
+def getDriveSize(partition):
     """
     Получить размер диска/раздела в виде кольцевого прогресс-бара.
 
@@ -141,12 +144,12 @@ def get_drive_size(partition):
         used = 1
         valid = False
 
-    return get_progress(
+    return getProgress(
         partition, int(used), int(total), f"ring-{partition}", valid=valid
     )
 
 
-def widget_disk_size(**kwargs):
+def widgetDiskSize(**kwargs):
     """
     Функция создает карточку с информацией о свободном месте на дисках.
 
@@ -166,21 +169,20 @@ def widget_disk_size(**kwargs):
             dmc.Space(h=10),
             html.Table(
                 [
-                    get_drive_size("/mnt/sdb1/"),
-                    get_drive_size("/mnt/sdc1/"),
-                    get_drive_size("/mnt/sdd1/"),
+                    getDriveSize("/mnt/sdb1/"),
+                    getDriveSize("/mnt/sdc1/"),
+                    getDriveSize("/mnt/sdd1/"),
                 ]
             ),
             dmc.Space(h=10),
-            html.A("Подробные свойства", href='/settings?l=y&tab=server_info'),
-
+            html.A("Подробные свойства", href="/settings?l=y&tab=server_info"),
         ],
         className="block-background mobile-block",
         # style={"min-height": "100%"},
     )
 
 
-def get_weather_label(selected_date: str, temperature: list, weather_type="sunny"):
+def getWeatherLabel(selected_date: str, temperature: list, weather_type="sunny"):
     """
     Функция создает метку с информацией о погоде.
 
@@ -224,7 +226,7 @@ def get_weather_label(selected_date: str, temperature: list, weather_type="sunny
     )
 
 
-def get_date_str(plus=0, pattern="%d%m%Y"):
+def getDateString(plus=0, pattern="%d%m%Y"):
     """
     Вывод сегодняшней даты с опцией добавление определенного числа дней к числу.
 
@@ -236,7 +238,7 @@ def get_date_str(plus=0, pattern="%d%m%Y"):
     return needed_date.strftime(pattern)
 
 
-def widget_weather(**kwargs):
+def widgetWeather(**kwargs):
     """
     Функция создает карточку с информацией о погоде.
 
@@ -256,11 +258,11 @@ def widget_weather(**kwargs):
             dmc.Space(h=5),
             dmc.Group(
                 [
-                    get_weather_label(get_date_str(0), ["+1", "-4"], "cloudy"),
-                    get_weather_label(get_date_str(1), ["+10", "-4"], "sunny"),
-                    get_weather_label(get_date_str(2), ["+1", "-4"], "partly-cloudy"),
-                    get_weather_label(get_date_str(3), ["+10", "-4"], "thunderstorm"),
-                    get_weather_label(get_date_str(4), ["+1", "-40"], "rain"),
+                    getWeatherLabel(getDateString(0), ["+1", "-4"], "cloudy"),
+                    getWeatherLabel(getDateString(1), ["+10", "-4"], "sunny"),
+                    getWeatherLabel(getDateString(2), ["+1", "-4"], "partly-cloudy"),
+                    getWeatherLabel(getDateString(3), ["+10", "-4"], "thunderstorm"),
+                    getWeatherLabel(getDateString(4), ["+1", "-40"], "rain"),
                 ],
                 justify="center",
                 gap="xs",
@@ -272,7 +274,7 @@ def widget_weather(**kwargs):
     )
 
 
-def widget_torrents(qbittorrent_url):
+def widgetTorrents(qbittorrent_url):
     """
     Функция создает карточку с информацией о торрентах.
 
@@ -303,7 +305,7 @@ def widget_torrents(qbittorrent_url):
     )
 
 
-def widget_systeminfo():
+def widgetSysteminfo():
     """
     Функция создает карточку с информацией о системе.
 
@@ -330,7 +332,11 @@ def widget_systeminfo():
                                         "tooltip": f"Используется: {psutil.cpu_percent()}%",
                                     },
                                 ],
-                                label=dmc.Text(f"{round(psutil.cpu_freq().current/1000, 2)} GHz", c="black", ta="center"),
+                                label=dmc.Text(
+                                    f"{round(psutil.cpu_freq().current/1000, 2)} GHz",
+                                    c="var(--bs-body-color)",
+                                    ta="center",
+                                ),
                                 size=120,
                                 roundCaps=True,
                             ),
@@ -348,7 +354,11 @@ def widget_systeminfo():
                                         "tooltip": f"Занято: {bytes2human(psutil.virtual_memory().used)}",
                                     },
                                 ],
-                                label=dmc.Text(bytes2human(psutil.virtual_memory().total), c="black", ta="center"),
+                                label=dmc.Text(
+                                    bytes2human(psutil.virtual_memory().total),
+                                    c="var(--bs-body-color)",
+                                    ta="center",
+                                ),
                                 size=120,
                                 roundCaps=True,
                             ),
@@ -366,7 +376,11 @@ def widget_systeminfo():
                                         "tooltip": f"Занято: {bytes2human(psutil.swap_memory().used)}",
                                     },
                                 ],
-                                label=dmc.Text(bytes2human(psutil.swap_memory().total), c="black", ta="center"),
+                                label=dmc.Text(
+                                    bytes2human(psutil.swap_memory().total),
+                                    c="var(--bs-body-color)",
+                                    ta="center",
+                                ),
                                 size=120,
                                 roundCaps=True,
                             ),
@@ -408,6 +422,16 @@ def widget_systeminfo():
     )
 
 
-def widget_fileManager_log():
+def widgetFileManagerLog():
     # статистика по добавленным файлам
     return None
+
+
+def getHeaderLinks(conn):
+    with conn.cursor() as cursor:
+        cursor.execute("select * from header_links;")
+        desc = cursor.description
+        column_names = [col[0] for col in desc]
+        data = [dict(zip(column_names, row)) for row in cursor.fetchall()]
+
+    return data

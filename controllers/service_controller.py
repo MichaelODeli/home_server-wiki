@@ -1,6 +1,6 @@
 from datetime import datetime, date
 
-def log_printer(client, page, data):
+def logPrinter(client, page, data):
     """
     Вывод строки с датой и необходимой информацией
     """

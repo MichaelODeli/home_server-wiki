@@ -122,4 +122,13 @@ create table
     FOREIGN KEY (file_id) REFERENCES filestorage_files (id) ON DELETE CASCADE
 );
 
+create table
+  "header_links" (
+    "id" serial primary key,
+    "header_group_name" varchar(255) not null,
+    "header_group_content" JSONB not null,
+    "created_at" timestamp not null default NOW(),
+    "updated_at" timestamp not null default NOW()
+);
+
 CREATE EXTENSION pgcrypto;

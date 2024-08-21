@@ -37,28 +37,18 @@ def layout(
     if l == "n":
         return dmc.Container()
     else:
-        service.log_printer(request.remote_addr, "search", "page opened")
+        service.logPrinter(request.remote_addr, "search", "page opened")
 
-        category_id , type_id = cont_search.format_category_type(category_id, type_id)
+        category_id , type_id = cont_search.formatCategoryType(category_id, type_id)
 
         if auto_search != "n" and (query != "" or category_id != []):
             search_clicks = 1
         else:
             search_clicks = 0
 
-        conn = db_connection.get_conn()
+        conn = db_connection.getConn()
 
-        category_select_data = [
-            {
-                "label": (
-                    i["category_pseudonym"]
-                    if i["category_pseudonym"] != None
-                    else i["category_name"]
-                ),
-                "value": str(i["category_id"]),
-            }
-            for i in file_manager.getCategories(conn)
-        ]
+        category_select_data = cont_search.getCategoriesForMultiSelect(conn)
 
         return dmc.Container(
             children=[
@@ -78,7 +68,7 @@ def layout(
                                             pe="md",
                                         ),
                                         dmc.Space(h=10),
-                                        cont_search.search_accordion(category_id, type_id, category_select_data, from_video=False),
+                                        cont_search.getSearchAccordion(category_id, type_id, category_select_data, from_video=False),
                                         dmc.Button(
                                             "Поиск",
                                             id="n_search_button",
@@ -130,7 +120,7 @@ def layout(
             className="dmc-container",
         )
 
-cont_search.get_types_addition_format_callback()
+cont_search.getTypesAdditionFormatCallback()
 
 @callback(
     Output("n_search_results", "children"),
@@ -161,7 +151,7 @@ def search(
     )
 
     start_time = time.time()
-    conn = db_connection.get_conn()
+    conn = db_connection.getConn()
 
     current_page -= 1
 
@@ -169,7 +159,7 @@ def search(
     OFFSET = current_page * PAGE_LIMIT
 
     # check inputs and get results
-    counter, query_results = cont_search.get_search_results(conn, query, categories, types, limit=PAGE_LIMIT, offset=OFFSET)
+    counter, query_results = cont_search.getSearchResults(conn, query, categories, types, limit=PAGE_LIMIT, offset=OFFSET)
 
     if counter == -1:
         return no_update, notif_empty_input, 1
@@ -191,14 +181,14 @@ def search(
             message=f"Результаты получены за {round(time.time() - start_time, 3)} секунд. Результатов {counter}",
             icon=DashIconify(icon="ep:success-filled"),
         )
-        service.log_printer(
+        service.logPrinter(
             request.remote_addr,
             "search",
             f'category {str(categories)} | type {str(types)} | query "{query}" | results {counter} | page {current_page} | time {round(time.time() - start_time, 3)}',
         )
 
         return (
-            cont_search.format_search_results(
+            cont_search.formatSearchResults(
                 query_results=query_results,
                 mediafiles_links_format=mediafiles_links_format,
             ),

@@ -27,27 +27,27 @@ def layout():
             dmc.Grid(
                 [
                     dmc.GridCol(
-                        [cont_homepage.widget_systeminfo()],
+                        [cont_homepage.widgetSysteminfo()],
                         span="content",
                         className="adaptive-width",
                         mih='100%'
                     ),
                     dmc.GridCol(
-                        [cont_homepage.widget_disk_size()],
+                        [cont_homepage.widgetDiskSize()],
                         span="content",
                         className="adaptive-width",
                         id="t",
                         mih='100%'
                     ),
                     dmc.GridCol(
-                        [cont_homepage.widget_torrents(qbittorrent_url)],
+                        [cont_homepage.widgetTorrents(qbittorrent_url)],
                         span="content",
                         className="adaptive-width",
-                        id="widget_torrents",
+                        id="widgetTorrents",
                         mih='100%'
                     ),   
                     dmc.GridCol(
-                        [cont_homepage.widget_weather()],
+                        [cont_homepage.widgetWeather()],
                         span="content",
                         className="adaptive-width", 
                         id="widget-weather",
@@ -65,7 +65,7 @@ def layout():
     )
 
     # print(f'{request.remote_addr} - - [{now}] | homepage {request.base_url}')
-    service.log_printer(request.remote_addr, "homepage", "page opened")
+    service.logPrinter(request.remote_addr, "homepage", "page opened")
     return lay
 
 
@@ -77,6 +77,6 @@ def layout():
     ],
     [Input("t", "children")],
 )
-def toggle_navbar_collapse(_):
+def renderTorrentsStatus(_):
     global qbittorrent_url
-    return cont_homepage.get_torrent_status(qbittorrent_url)
+    return cont_homepage.getTorrentStatus(qbittorrent_url)

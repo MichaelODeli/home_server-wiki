@@ -29,14 +29,14 @@ def layout(l="n", **kwargs):
     if l == "n":
         return dmc.Container()
     else:
-        service.log_printer(request.remote_addr, "torrents", "page opened")
+        service.logPrinter(request.remote_addr, "torrents", "page opened")
         # all workers must be here!
         return dmc.Container(
             children=[
                 html.Div(
                     [
-                        cont_t.block_torrents(),
-                        cont_t.add_torrent_modal(),
+                        cont_t.blockTorrents(),
+                        cont_t.addTorrentModal(),
                         html.Div(id="torrent-notifications-container"),
                     ],
                 ),
@@ -61,7 +61,7 @@ def layout(l="n", **kwargs):
     State("modal-add-torrent", "opened"),
     prevent_initial_call=True,
 )
-def toggle_modal(n_clicks_add, n_clicks_upload, opened):
+def toggleModal(n_clicks_add, n_clicks_upload, opened):
     if n_clicks_add > 0:
         source = "add"
         pass  # just open modal, not submitting
@@ -83,12 +83,12 @@ def toggle_modal(n_clicks_add, n_clicks_upload, opened):
 @callback(
     Output("torrents-table-container", "children"), Input("torrent-update", "n_clicks")
 )
-def return_torrents_data(n):
-    service.log_printer(request.remote_addr, "torrents", "toggle update")
-    datatable = cont_t.get_torrents_data()
+def returnTorrentsData(n):
+    service.logPrinter(request.remote_addr, "torrents", "toggle update")
+    datatable = cont_t.getTorrentsData()
     # datatable = None
     return (
-        cont_f.generate_html_table(
+        cont_f.generateHTMLTable(
             header=[
                 "",
                 "Название файла",

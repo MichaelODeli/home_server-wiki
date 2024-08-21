@@ -26,7 +26,7 @@ def layout(l="n", **kwargs):
     if l == "n":
         return dmc.Container()
     else:
-        service.log_printer(request.remote_addr, 'files', 'page opened')
+        service.logPrinter(request.remote_addr, 'files', 'page opened')
         return dmc.Container(
             children=[
                 dbc.Row(
@@ -36,7 +36,7 @@ def layout(l="n", **kwargs):
                                 dmc.Stack(
                                     [
                                         html.H5("Дерево папок"),
-                                        cont_f.tree_content(source="col")
+                                        cont_f.treeContent(source="col")
                                     ],
                                     className="block-background",
                                 )
@@ -46,7 +46,7 @@ def layout(l="n", **kwargs):
                         ),
                         dbc.Col(
                             [
-                                cont_f.block_files_list(),
+                                cont_f.blockFilesList(),
                             ]
                         ),
                     ]
@@ -66,7 +66,7 @@ def layout(l="n", **kwargs):
                     position={"bottom": 20, "left": 20},
                     className="shown-affix",
                 ),
-                cont_f.get_drawer(),
+                cont_f.getDrawer(),
             ],
             pt=20,
             className="dmc-container adaptive-container",
@@ -78,5 +78,5 @@ def layout(l="n", **kwargs):
     Input("open-drawer", "n_clicks"),
     prevent_initial_call=True,
 )
-def drawer_with_tree(n_clicks):
+def drawerWithTree(n_clicks):
     return True

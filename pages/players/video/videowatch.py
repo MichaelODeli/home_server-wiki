@@ -16,7 +16,7 @@ from dash_extensions import Purify
 from flask import request
 import sys
 from controllers import service_controller as service
-from controllers import db_connection, file_manager, cont_video
+from controllers import db_connection, file_manager, cont_video, cont_search
 
 register_page(__name__, path="/players/video/watch", icon="fa-solid:home")
 
@@ -25,7 +25,7 @@ video_link = ""
 
 
 def layout(l="n", v=None, **other_unknown_query_strings):
-    service.log_printer(request.remote_addr, "videoplayer", "page opened")
+    service.logPrinter(request.remote_addr, "videoplayer", "page opened")
     if l == "n":
         return dmc.Container()
 
@@ -33,7 +33,7 @@ def layout(l="n", v=None, **other_unknown_query_strings):
     global video_link
     video_id = v
 
-    conn = db_connection.get_conn()
+    conn = db_connection.getConn()
 
     file_data = file_manager.getFileInfo(conn, file_id=video_id)
 
@@ -65,7 +65,7 @@ def layout(l="n", v=None, **other_unknown_query_strings):
         video_category_id = file_data["category_id"]
         video_link = "http://" + file_data["file_fullway_forweb"]
 
-    service.log_printer(request.remote_addr, "videoplayer", f'v_id "{v}"')
+    service.logPrinter(request.remote_addr, "videoplayer", f'v_id "{v}"')
 
     # video_link = "http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_60fps_normal.mp4"
 
@@ -197,19 +197,20 @@ def layout(l="n", v=None, **other_unknown_query_strings):
                         ),
                         dmc.GridCol(
                             children=[
-                                cont_video.video_miniatures_container(
+                                cont_video.createVideoMiniaturesContainer(
                                     children=[
-                                        cont_video.create_video_container(
-                                            href="/players/video/watch?v=3edbac2814a1b990acc291ed86278398d61bdcb0409d8ec64ad8a6236f4feadc&l=y",
-                                            img_video="/assets/img/image-not-found.jpg",
-                                            img_channel="/assets/img/image-not-found.jpg",
-                                            video_title="Случайное такси E01_AniDUB",
-                                            videotype_name="OddTaxi",
-                                            views="0 просмотров",
-                                            date="сегодня",
+                                        cont_video.createVideoMiniatureContainer(
+                                            href=f"/players/video/watch?v={video['file_id']}&l=y",
+                                            video_title=cont_search.stringHider(
+                                                ".".join(
+                                                    video["file_name"].split(".")[:-1]
+                                                )
+                                            ),
+                                            videotype_name=video["type_name"],
+                                            video_duration=video["video_duration"],
                                         )
-                                    ]
-                                    * 6,
+                                        for video in cont_video.getRandomVideos(conn, type_id=video_type_id, counter=6)
+                                    ],
                                 )
                             ],
                             className="block-background border columns-margin adaptive-width",
@@ -240,7 +241,7 @@ def layout(l="n", v=None, **other_unknown_query_strings):
 )
 def func(n_clicks):
     global video_link
-    service.log_printer(
+    service.logPrinter(
         request.remote_addr, "videoplayer", f"download triggered | {video_link}"
     )
     notif_bad = dmc.Notification(

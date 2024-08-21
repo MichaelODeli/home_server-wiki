@@ -5,12 +5,13 @@ from dash_iconify import DashIconify
 import dash_bootstrap_components as dbc
 from dash_extensions import Purify
 from dash_extensions.pages import setup_page_components
-from controllers import db_connection
+from controllers import db_connection, cont_homepage
 
 # from config import *
 from dotenv import dotenv_values
 import flask
 import os
+from itertools import chain
 
 dash._dash_renderer._set_react_version("18.2.0")
 
@@ -59,7 +60,7 @@ app.config.suppress_callback_exceptions = True
 
 
 # function for generating Dash Iconify content
-def get_icon(icon):
+def getIcon(icon):
     """
     param:  \n
     `icon`: icon name
@@ -115,70 +116,42 @@ theme_switch = html.Div(
     className="pt-3 pt-sm-0",
 )
 
+navbar_items_dict = cont_homepage.getHeaderLinks(conn=db_connection.getConn())
+
 navbar_items = dmc.Group(
     [
         dbc.DropdownMenu(
-            label="Внешние утилиты",
-            children=[
-                dbc.DropdownMenuItem(
-                    "Настройка сервера",
-                    header=True,
-                    class_name="h6",
-                    style={"text-decoration": "unset"},
-                ),
-                dbc.DropdownMenuItem(
-                    "Webmin",
-                    href="https://192.168.0.33:10000/",
-                ),
-                dbc.DropdownMenuItem("Параметры ПО", href="/settings?l=y"),
-                dbc.DropdownMenuItem(divider=True),
-                dbc.DropdownMenuItem("Торрент клиенты", header=True),
-                dbc.DropdownMenuItem(
-                    "qBittorrent",
-                    href="http://192.168.0.33:8124/",
-                ),
-                dbc.DropdownMenuItem(
-                    "Transmission (obsolete)",
-                    href="http://192.168.0.33:12345/",
-                ),
-                dbc.DropdownMenuItem(divider=True),
-                dbc.DropdownMenuItem("Wiki-ресурсы", header=True),
-                dbc.DropdownMenuItem("Kiwix", href="http://192.168.0.33:789/"),
-            ],
+            label=header_group["header_group_name"],
             nav=True,
             in_navbar=True,
-        ),
-        dbc.DropdownMenu(
-            label="Медиа и файлы",
-            children=[
-                dbc.DropdownMenuItem("Плееры", header=True),
-                dbc.DropdownMenuItem(
-                    "Видеоплеер",
-                    href="/players/video?l=y",
-                ),
-                dbc.DropdownMenuItem(
-                    "Аудиоплеер",
-                    href="/players/audio?l=y",
-                ),
-                dbc.DropdownMenuItem("Управление файлами", header=True),
-                dbc.DropdownMenuItem(
-                    "Файловый менеджер",
-                    href="/files?l=y",
-                ),
-                dbc.DropdownMenuItem(
-                    "Управление торрентом",
-                    href="/torrents?l=y",
-                ),
-            ],
-            nav=True,
-            # in_navbar=True,
-        ),
+            children=list(  # nested list for simple list
+                chain(
+                    *[
+                        [dbc.DropdownMenuItem(key, header=True)]  # header
+                        + [
+                            dbc.DropdownMenuItem(
+                                data["link_name"],
+                                href=data["link_href"],
+                            )
+                            for data in header_group["header_group_content"][
+                                key
+                            ]  # data inside dict
+                        ]
+                        + [
+                            dbc.DropdownMenuItem(divider=True),
+                        ]
+                        for key in header_group["header_group_content"].keys()
+                    ]
+                )
+            )[:-1],
+        )
+        for header_group in navbar_items_dict
+    ]
+    + [
         dmc.Space(h=3),
         search_bar,
         theme_switch,
-    ],
-    # gap="sm",
-    # className='adaptive-block'
+    ]
 )
 
 navbar = dbc.Navbar(
@@ -258,8 +231,8 @@ app.layout = dmc.MantineProvider(
         (Output("loading-overlay", "visible"), True, False),
     ],
 )
-def server_blocker(style):
-    if db_connection.test_conn():
+def serverBlocker(style):
+    if db_connection.testConn():
         return True, no_update
     else:
         return False, html.Center(
@@ -274,7 +247,7 @@ def server_blocker(style):
     [Input("navbar-toggler", "n_clicks")],
     [State("navbar-collapse", "is_open")],
 )
-def toggle_navbar_collapse(n, is_open):
+def toggleNavbarCollapse(n, is_open):
     if n:
         return not is_open
     return is_open
@@ -296,7 +269,7 @@ clientside_callback(
 @app.callback(
     Output("mantine_theme", "forceColorScheme"), Input("color-mode-switch", "checked")
 )
-def make_mantine_theme(value):
+def makeMantineTheme(value):
     return "dark" if value == False else "light"
 
 
@@ -306,7 +279,7 @@ def make_mantine_theme(value):
     Output("search-bar-query", "placeholder"),
     Input("url", "href"),
 )
-def search_bar_format(href):
+def searchBarFormat(href):
     if "/players/video" in href:
         return (
             "/players/video/search",

@@ -7,7 +7,7 @@ from dash_extensions import Purify
 from controllers import service_controller as service
 
 
-def nested_list_to_html(lst):
+def nestedListToHTML(lst):
     """
     Рекурсивно преобразует вложенный список в маркированный список HTML.
 
@@ -22,7 +22,7 @@ def nested_list_to_html(lst):
     html = "<ul>\n"
     for item in lst:
         if isinstance(item, list):
-            html += nested_list_to_html(item)
+            html += nestedListToHTML(item)
         else:
             if str(item)[0] == "*" and str(item)[-1] == "*":
                 html += "<li><b>" + str(item)[1:-1] + "</b></li>\n"
@@ -32,7 +32,7 @@ def nested_list_to_html(lst):
     return html.replace("\n", "")
 
 
-def generate_html_table(
+def generateHTMLTable(
     header: list,
     data: list,
     align="right",
@@ -107,7 +107,7 @@ def generate_html_table(
     )
 
 
-def block_files_list():
+def blockFilesList():
     return html.Div(
         [
             dmc.Grid(
@@ -161,7 +161,7 @@ def block_files_list():
                 justify="center",
             ),
             dmc.Space(h=15),
-            generate_html_table(
+            generateHTMLTable(
                 ["Маркер", "Название файла", "Размер", "Дата добавления", "Действия"],
                 [
                     [
@@ -219,7 +219,7 @@ def block_files_list():
     )
 
 
-def tree_content(source):
+def treeContent(source):
     if source == "col":
         label = "Hello! This is on column!"
     elif source == "drawer":
@@ -231,7 +231,7 @@ def tree_content(source):
         [
             # label,
             Purify(
-                nested_list_to_html(
+                nestedListToHTML(
                     [
                         "C:/",
                         [
@@ -247,9 +247,9 @@ def tree_content(source):
     )
 
 
-def get_drawer():
+def getDrawer():
     return dmc.Drawer(
-        children=[tree_content(source="drawer")],
+        children=[treeContent(source="drawer")],
         title=html.H5("Дерево папок"),
         id="drawer-tree",
         padding="md",

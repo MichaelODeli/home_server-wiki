@@ -23,7 +23,7 @@ import platform
 register_page(__name__, path="/settings", icon="fa-solid:home")
 
 
-def generate_tablerow(param_name, param_value="", head=False):
+def generateTableRow(param_name, param_value="", head=False):
     return html.Tr(
         [
             (
@@ -47,7 +47,7 @@ def generate_tablerow(param_name, param_value="", head=False):
     )
 
 
-def get_size(bytes, suffix="B"):
+def getSize(bytes, suffix="B"):
     """
     Scale bytes to its proper format
     e.g:
@@ -61,32 +61,32 @@ def get_size(bytes, suffix="B"):
         bytes /= factor
 
 
-def get_system_info_rows():
+def getSystemInfoRows():
     uname = platform.uname()
     return [
-        generate_tablerow(html.H6("Информация о системе")),
-        generate_tablerow("Операционная система", f"{uname.system}"),
-        generate_tablerow("Идентификатор устройства", f"{uname.node}"),
-        generate_tablerow("Релиз", f"{uname.release}"),
-        generate_tablerow("Версия ОС", f"{uname.version}"),
-        generate_tablerow("Архитектура", f"{uname.machine}"),
-        generate_tablerow("Процессор", f"{uname.processor}"),
+        generateTableRow(html.H6("Информация о системе")),
+        generateTableRow("Операционная система", f"{uname.system}"),
+        generateTableRow("Идентификатор устройства", f"{uname.node}"),
+        generateTableRow("Релиз", f"{uname.release}"),
+        generateTableRow("Версия ОС", f"{uname.version}"),
+        generateTableRow("Архитектура", f"{uname.machine}"),
+        generateTableRow("Процессор", f"{uname.processor}"),
     ]
 
 
-def get_cpu_info_rows():
+def getCPUInfoRows():
     cpufreq = psutil.cpu_freq()
     return [
-        generate_tablerow(html.H6("Информация о процессоре")),
-        generate_tablerow(
+        generateTableRow(html.H6("Информация о процессоре")),
+        generateTableRow(
             "Физических/логических ядер",
             f"{psutil.cpu_count(logical=False)}/{psutil.cpu_count(logical=True)}",
         ),
-        generate_tablerow(
+        generateTableRow(
             "Базовая частота",
             f"{cpufreq.current:.2f}Mhz",
         ),
-        generate_tablerow(
+        generateTableRow(
             "Использование ядер процессора",
             html.Div(
                 [
@@ -98,34 +98,34 @@ def get_cpu_info_rows():
                 id="cpu-ring-usage",
             ),
         ),
-        generate_tablerow(
+        generateTableRow(
             "Использование процессора",
             f"{psutil.cpu_percent()}%",
         ),
     ]
 
 
-def get_ram_swap_info_rows():
+def getRAMSWARInfoRows():
     svmem = psutil.virtual_memory()
     swap = psutil.swap_memory()
     return [
-        generate_tablerow(html.H6("ОЗУ")),
-        generate_tablerow("Всего", f"{get_size(svmem.total)}"),
-        generate_tablerow(
+        generateTableRow(html.H6("ОЗУ")),
+        generateTableRow("Всего", f"{getSize(svmem.total)}"),
+        generateTableRow(
             "Доступно",
-            f"{get_size(svmem.available)}",
+            f"{getSize(svmem.available)}",
         ),
-        generate_tablerow("Использовано", f"{get_size(svmem.used)}"),
-        generate_tablerow("Процент использования", f"{svmem.percent}%"),
-        generate_tablerow(html.H6("SWAP")),
-        generate_tablerow("Всего", f"{get_size(swap.total)}"),
-        generate_tablerow("Свободно", f"{get_size(swap.free)}"),
-        generate_tablerow("Использовано", f"{get_size(swap.used)}"),
-        generate_tablerow("Процент использования", f"{swap.percent}%"),
+        generateTableRow("Использовано", f"{getSize(svmem.used)}"),
+        generateTableRow("Процент использования", f"{svmem.percent}%"),
+        generateTableRow(html.H6("SWAP")),
+        generateTableRow("Всего", f"{getSize(swap.total)}"),
+        generateTableRow("Свободно", f"{getSize(swap.free)}"),
+        generateTableRow("Использовано", f"{getSize(swap.used)}"),
+        generateTableRow("Процент использования", f"{swap.percent}%"),
     ]
 
 
-def get_partitions_info_rows():
+def getPartitionsInfoRows():
     partitions = psutil.disk_partitions()
     parts_data = []
     for partition in partitions:
@@ -138,13 +138,13 @@ def get_partitions_info_rows():
         try:
             partition_usage = psutil.disk_usage(partition.mountpoint)
             partition_data.append(
-                dcc.Markdown(f"**Всего доступно**: {get_size(partition_usage.total)}")
+                dcc.Markdown(f"**Всего доступно**: {getSize(partition_usage.total)}")
             )
             partition_data.append(
-                dcc.Markdown(f"**Использовано**: {get_size(partition_usage.used)}")
+                dcc.Markdown(f"**Использовано**: {getSize(partition_usage.used)}")
             )
             partition_data.append(
-                dcc.Markdown(f"**Свободно**: {get_size(partition_usage.free)}")
+                dcc.Markdown(f"**Свободно**: {getSize(partition_usage.free)}")
             )
             partition_data.append(
                 dcc.Markdown(f"**Процент использования**: {partition_usage.percent}%")
@@ -152,16 +152,16 @@ def get_partitions_info_rows():
         except PermissionError:
             continue
         parts_data.append(
-            generate_tablerow(partition.device, dmc.Stack(partition_data, gap="xs"))
+            generateTableRow(partition.device, dmc.Stack(partition_data, gap="xs"))
         )
 
-    return [generate_tablerow(html.H6("Накопители и разделы"))] + parts_data
+    return [generateTableRow(html.H6("Накопители и разделы"))] + parts_data
 
 
 def layout(l="n", tab="server_info", **kwargs):
     if l == "n":
         return dmc.Container()
-    service.log_printer(request.remote_addr, "settings", "page opened")
+    service.logPrinter(request.remote_addr, "settings", "page opened")
 
     return dmc.Container(
         children=[
@@ -199,9 +199,9 @@ def layout(l="n", tab="server_info", **kwargs):
 
 
 @callback(Output("tabs-content", "children"), Input("tabs-settings", "value"))
-def render_content(active, test=True):
+def renderContent(active, test=True):
     if active == "files":
-        conn = db_connection.get_conn()
+        conn = db_connection.getConn()
         categories = file_manager.getCategories(conn)
         settings = file_manager.getSettings(conn)
         return dmc.Stack(
@@ -314,10 +314,10 @@ def render_content(active, test=True):
             dbc.Table(
                 [
                     html.Tbody(
-                        get_system_info_rows()
-                        + get_cpu_info_rows()
-                        + get_ram_swap_info_rows()
-                        + get_partitions_info_rows()
+                        getSystemInfoRows()
+                        + getCPUInfoRows()
+                        + getRAMSWARInfoRows()
+                        + getPartitionsInfoRows()
                     ),
                 ],
                 style={"table-layout": "auto", "width": "100%"},
@@ -436,7 +436,7 @@ def render_content(active, test=True):
     [Input("show-cpu-load", "n_clicks")],
     prevent_initial_call=True,
 )
-def get_cpu_load_rings(_):
+def getCpuLoadRings(_):
     return [
         dmc.Group(
             [

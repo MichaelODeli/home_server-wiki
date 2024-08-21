@@ -14,28 +14,18 @@ def layout(
     category_id=[],
     type_id=[],
     auto_search="n",
-    **other_unknown_query_strings
+    **other_unknown_query_strings,
 ):
-    service.log_printer(request.remote_addr, "videosearch", "page opened")
+    service.logPrinter(request.remote_addr, "videosearch", "page opened")
     if l == "n":
         return dmc.Container()
     else:
-        conn = db_connection.get_conn()
+        conn = db_connection.getConn()
 
-        category_id, type_id = cont_search.format_category_type(category_id, type_id)
+        category_id, type_id = cont_search.formatCategoryType(category_id, type_id)
 
-        category_select_data = [
-            {
-                "label": (
-                    i["category_pseudonym"]
-                    if i["category_pseudonym"] != None
-                    else i["category_name"]
-                ),
-                "value": str(i["category_id"]),
-            }
-            for i in file_manager.getCategories(conn)
-            if i["main_mime_type_id"] == 9
-        ]
+        category_select_data = cont_search.getCategoriesForMultiSelect(conn, video=True)
+
 
         if auto_search != "n" and (query != "" or category_id != []):
             search_clicks = 1
@@ -47,47 +37,91 @@ def layout(
             pt="20px",
             gap="xs",
             children=[
-                cont_video.video_search_bar(
+                cont_video.createVideoSearchBar(
                     page="search",
                     input_value=query,
                     additional_children=[
-                        cont_search.search_accordion(
+                        cont_search.getSearchAccordion(
                             category_id, type_id, category_select_data, from_video=True
                         )
                     ],
                     search_clicks=search_clicks,
                 ),
                 html.Div(id="search_results_video"),
+                html.Center(
+                    dmc.Pagination(
+                        total=1,
+                        value=1,
+                        siblings=1,
+                        withControls=True,
+                        withEdges=True,
+                        id="search_pagination_video",
+                    ),
+                    style={"width": "100%"},
+                    className="py-3",
+                ),
             ],
         )
 
 
-cont_search.get_types_addition_format_callback(from_video=True)
+cont_search.getTypesAdditionFormatCallback(from_video=True)
 
 
 @callback(
     Output("search_results_video", "children"),
+    Output("search_pagination_video", "total"),
+    Input("search_pagination_video", "value"),
     Input("n_search_button_video", "n_clicks"),
     State("n_search_in_category_video", "value"),
     State("n_search_in_types_video", "value"),
     State("n_search_query_video", "value"),
 )
-def get_video_search_results(n_clicks, categories, types, query):
+def getVideoSearchResults(current_page, n_clicks, categories, types, query):
     if n_clicks == 0:
-        return html.Center([html.H5("Пустой поисковый запрос. Повторите снова.")])
+        return html.Center([html.H5("Пустой поисковый запрос. Повторите снова.")]), 1
     else:
-        print(categories, types, query)
-        return cont_video.video_miniatures_container(
-            children=[
-                cont_video.create_video_container(
-                    href="/players/video/watch?v=3edbac2814a1b990acc291ed86278398d61bdcb0409d8ec64ad8a6236f4feadc&l=y",
-                    img_video="/assets/img/image-not-found.jpg",
-                    img_channel="/assets/img/image-not-found.jpg",
-                    video_title="Случайное такси E01_AniDUB",
-                    videotype_name="OddTaxi",
-                    views="0 просмотров",
-                    date="сегодня",
-                )
-            ]
-            * 3
+        conn = db_connection.getConn()
+        current_page -= 1
+
+        page_limit = cont_search.PAGE_LIMIT
+        offset = current_page * page_limit
+
+        counter, query_results = cont_search.getSearchResults(
+            conn,
+            query,
+            categories,
+            types,
+            limit=page_limit,
+            offset=offset,
+            from_video=True,
         )
+
+        if counter == -1:
+            return no_update, 1
+        elif counter == -2:
+            return "Ошибочка", 1
+        elif counter == 0:
+            return html.Center(html.H5("По Вашему запросу результатов нет")), 1
+        else:
+            pages = (
+                int(counter / page_limit) + 1
+                if counter % page_limit != 0
+                else counter / page_limit
+            )
+
+            return (
+                cont_video.createVideoMiniaturesContainer(
+                    children=[
+                        cont_video.createVideoMiniatureContainer(
+                            href=f"/players/video/watch?v={result['file_id']}&l=y",
+                            video_title=cont_search.stringHider(
+                                ".".join(result["file_name"].split(".")[:-1])
+                            ),
+                            videotype_name=cont_search.stringHider(result["type_name"]),
+                            video_duration=result["video_duration"]
+                        )
+                        for result in query_results
+                    ]
+                ),
+                pages,
+            )

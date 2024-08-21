@@ -20,6 +20,7 @@ import pandas as pd
 from controllers import cont_audioplayer as cont_a
 from controllers import service_controller as service
 from controllers import cont_search as cont_s
+from controllers import cont_media as cont_m
 import dash_player
 
 register_page(__name__, path="/players/audio", icon="fa-solid:home")
@@ -30,7 +31,7 @@ def layout(l="n", selected_playlist_name="Любимые треки", **kwargs):
     if l == "n":
         return dmc.Container()
     else:
-        service.log_printer(request.remote_addr, "audioplayer", "page opened")
+        service.logPrinter(request.remote_addr, "audioplayer", "page opened")
         df = pd.read_csv(
             "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv"
         )
@@ -51,7 +52,7 @@ def layout(l="n", selected_playlist_name="Любимые треки", **kwargs):
                             [
                                 dmc.Stack(
                                     [
-                                        cont_a.audio_leftcollumn(source="col"),
+                                        cont_a.audioLeftColumn(source="col"),
                                     ],
                                     className="block-background",
                                 )
@@ -75,7 +76,7 @@ def layout(l="n", selected_playlist_name="Любимые треки", **kwargs):
                                                 ),
                                                 dmc.Divider(color="--bs-blue"),
                                                 html.Div(
-                                                    html.Table(cont_a.create_table(df), style={"width": "100%"},),
+                                                    html.Table(cont_a.createTable(df), style={"width": "100%"},),
                                                     className="table-wrapper",
                                                 ),
                                             ]
@@ -87,10 +88,10 @@ def layout(l="n", selected_playlist_name="Любимые треки", **kwargs):
                     ]
                 ),
                 dmc.Affix(
-                    children=[cont_a.float_player()],
+                    children=[cont_a.floatPlayer()],
                     style={"width": "100%"},
                 ),
-                cont_a.get_drawer(),
+                cont_a.getDrawer(),
             ],
             pt=20,
             className="dmc-container adaptive-container",
@@ -102,7 +103,7 @@ def layout(l="n", selected_playlist_name="Любимые треки", **kwargs):
     Input("open-drawer-albums", "n_clicks"),
     prevent_initial_call=True,
 )
-def drawer_with_albums(n_clicks):
+def drawerWithAlbums(n_clicks):
     return True
 
 
@@ -115,7 +116,7 @@ def drawer_with_albums(n_clicks):
     State("player", "playing"),
     prevent_initial_call=True,
 )
-def player_playpause(n_clicks, playing):
+def playerPlayPause(n_clicks, playing):
     if not playing == True:
         icon = 'material-symbols:pause'
     else:
@@ -132,7 +133,7 @@ def player_playpause(n_clicks, playing):
     State("player", "loop"),
     prevent_initial_call=True,
 )
-def player_loop(n_clicks, loop):
+def playerLoop(n_clicks, loop):
     if not loop == True:
         icon = 'material-symbols:repeat-on'
     else:
@@ -149,7 +150,7 @@ def player_loop(n_clicks, loop):
     State("player", "muted"),
     prevent_initial_call=True,
 )
-def player_disable_sound(n_clicks, muted):
+def playerDisableSound(n_clicks, muted):
     if not muted == True:
         icon = 'material-symbols:volume-off'
     else:
@@ -163,7 +164,7 @@ def player_disable_sound(n_clicks, muted):
     State("player", "volume"),
     # prevent_initial_call=True,
 )
-def player_volume(volume_value, current_vol):
+def playerVolumeSlider(volume_value, current_vol):
     return volume_value / 100
 
 
@@ -178,8 +179,8 @@ def player_volume(volume_value, current_vol):
     State("player", "duration"),
     prevent_initial_call=True,
 )
-def player_volume(currentTime, duration):
+def playerVolume(currentTime, duration):
     currentTime = int(currentTime) if currentTime != None else 0
     duration = int(duration) if duration != None else 0
 
-    return currentTime, duration, cont_s.get_duration(currentTime), cont_s.get_duration(duration)
+    return currentTime, duration, cont_m.getDuration(currentTime), cont_m.getDuration(duration)

@@ -5,7 +5,7 @@ from dash import dcc, html
 import pandas as pd
 
 
-def create_table(df):
+def createTable(df):
     """
     Вывод таблицы на основе Pandas.df
     """
@@ -16,7 +16,7 @@ def create_table(df):
     return table
 
 
-def get_buttongroup_with_icons(lst):
+def getButtonGroupWithIcons(lst):
     """
     Вывод вертикальной группы с кнопками и иконками.
     Формат вложенного списка: [[button_text, button_icon_name, button_id], ...]
@@ -60,13 +60,13 @@ def get_buttongroup_with_icons(lst):
     return dbc.ButtonGroup(buttons_list, vertical=True)
 
 
-def audio_leftcollumn(source):
+def audioLeftColumn(source):
     if source != "col" and source != "drawer":
         raise ValueError
 
     content = dmc.Stack(
         [
-            get_buttongroup_with_icons(
+            getButtonGroupWithIcons(
                 [
                     ["Главная", "home", "audioplayer_mainpage"],
                     ["Поиск музыки", "search", "audioplayer_search"],
@@ -75,7 +75,7 @@ def audio_leftcollumn(source):
             ),
             dmc.Divider(color="--bs-blue"),
             html.H5("Медиатека"),
-            get_buttongroup_with_icons(
+            getButtonGroupWithIcons(
                 [
                     ["Любимые треки", "playlist", "id_1"],
                     ["My favourite rock", "playlist", "id_2"],
@@ -91,9 +91,9 @@ def audio_leftcollumn(source):
     return content
 
 
-def get_drawer():
+def getDrawer():
     return dmc.Drawer(
-        children=[audio_leftcollumn(source="drawer")],
+        children=[audioLeftColumn(source="drawer")],
         title=html.H5("Аудиоплеер"),
         id="drawer-albums",
         padding="md",
@@ -102,7 +102,7 @@ def get_drawer():
     )
 
 
-def float_player():
+def floatPlayer():
     return dbc.Card(
         [
             dmc.Grid(

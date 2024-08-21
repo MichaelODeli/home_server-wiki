@@ -1,4 +1,4 @@
-# home_server
+# media_server
 
 ## Описание проекта
 > Скоро.

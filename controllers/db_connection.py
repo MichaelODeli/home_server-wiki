@@ -15,9 +15,9 @@ PASSWORD=config['DB_PASSWORD']
 HOST=config['DB_HOST_LOCAL'] if not os.environ.get("AM_I_IN_A_DOCKER_CONTAINER", False) else config['DB_HOST_DOCKER']
 PORT=int(config['DB_PORT'])
 
-def test_conn(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT):
+def testConn(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT):
     """
-    Функция test_conn проверяет соединение с базой данных.
+    Функция testConn проверяет соединение с базой данных.
 
     :param dbname: имя базы данных.
     :param user: имя пользователя базы данных.
@@ -50,9 +50,9 @@ def test_conn(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
 
 
 
-def get_conn(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT):
+def getConn(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT):
     """
-    Функция get_conn возвращает соединение с базой данных, если оно установлено успешно, иначе None.
+    Функция getConn возвращает соединение с базой данных, если оно установлено успешно, иначе None.
 
     :param dbname: имя базы данных.
     :param user: имя пользователя базы данных.
@@ -61,7 +61,7 @@ def get_conn(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT):
     :param port: порт базы данных.
     :return: соединение с базой данных, если оно установлено успешно, иначе None.
     """
-    if test_conn():
+    if testConn():
         conn = psycopg2.connect(
             dbname=dbname,
             user=user,

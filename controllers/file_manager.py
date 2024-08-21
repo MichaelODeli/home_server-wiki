@@ -115,7 +115,7 @@ def insertMIME(mime_name, conn) -> dict:
     :return: описание MIME-типа:
     {secondary_mime_id, primary_mime_id, type_name, is_audio, is_video, html_video_ready, html_audio_ready, search_enabled}
     """
-    # conn = db_connection.get_conn()
+    # conn = db_connection.getConn()
     with conn.cursor() as cursor:
         # conn.autocommit = True
 
@@ -161,7 +161,7 @@ def getBaseway(conn, test: bool = True):
     :return: базовый путь в библиотеке
     :raises NotADirectoryError: если директория, указанная в результате запроса, не существует
     """
-    # conn = db_connection.get_conn()
+    # conn = db_connection.getConn()
     with conn.cursor() as cursor:
         cursor.execute(
             f"select parameter_value FROM config where parameter_name = 'filemanager.baseway' and test_value = '{test}';"
@@ -182,7 +182,7 @@ def getSettings(conn):
         cursor.execute(f"select * FROM config;")
         data = cursor.fetchall()
 
-        return {(i[1] if i[3] == False else i[1]+'.test'): i[2] for i in data}
+        return {(i[1] if i[3] == False else i[1] + ".test"): i[2] for i in data}
 
 
 def getCategories(conn, category_id=None):
@@ -197,7 +197,7 @@ def getCategories(conn, category_id=None):
     :return: список категорий с актуальными путями или None, если категорий нет в базе данных
     """
     baseway = getBaseway(conn)
-    # conn = db_connection.get_conn()
+    # conn = db_connection.getConn()
 
     # select categories
     with conn.cursor() as cursor:
@@ -236,7 +236,7 @@ def getTypes(conn, category_id, type_id=None):
     :param category_id: идентификатор категории.
     :return: список типов с актуальными путями или None, если типов нет в базе данных
     """
-    # conn = db_connection.get_conn()
+    # conn = db_connection.getConn()
 
     # select categories
     with conn.cursor() as cursor:
@@ -374,7 +374,7 @@ def parseCategories(
     """
     baseway = getBaseway(conn)
     global FORBIDDEN_FIRST_SYMBOLS
-    # conn = db_connection.get_conn()
+    # conn = db_connection.getConn()
 
     # verify exist categories
     with conn.cursor() as cursor:
@@ -723,7 +723,7 @@ def getFileInfo(conn, file_id):
         return data
 
 
-def get_filesearch_result(
+def getFilesearchResult(
     conn,
     mode,
     query="",
@@ -735,9 +735,10 @@ def get_filesearch_result(
     file_name, mime_type, mime_type_id, size_kb, 
     html_video_ready, html_audio_ready, type_id, category_id""",
     table_name="filestorage_files_summary",
+    from_video=False,
 ):
     """
-    Функция get_filesearch_result получает результаты поиска файлов в базе данных.
+    Функция getFilesearchResult получает результаты поиска файлов в базе данных.
 
     :param conn: соединение с базой данных
     :param query: поисковый запрос
@@ -751,6 +752,9 @@ def get_filesearch_result(
     :return: количество результатов и список результатов поиска
     """
 
+    table_name = (
+        "filestorage_mediafiles_summary" if from_video else "filestorage_files_summary"
+    )
     if mode == "all":
         where_addition = "LOWER(file_name) LIKE LOWER(%(query)s)"
     elif mode == "by_category":
@@ -767,6 +771,8 @@ def get_filesearch_result(
         raise TypeError("Неверный режим")
 
     with conn.cursor() as cursor:
+        if from_video:
+            where_addition += " and html_video_ready"
 
         cursor.execute(
             "SELECT %(what)s FROM %(table_name)s WHERE {};".format(where_addition),
@@ -783,11 +789,10 @@ def get_filesearch_result(
 
         if count_results > 0:
             cursor.execute(
-                "SELECT %(what)s FROM %(table_name)s WHERE {} LIMIT %(limit)s OFFSET %(offset)s;".format(
+                "SELECT * FROM %(table_name)s WHERE {} LIMIT %(limit)s OFFSET %(offset)s;".format(
                     where_addition
                 ),
                 {
-                    "what": AsIs(columns_names),
                     "table_name": AsIs(table_name),
                     "query": "%%" + query + "%%",
                     "categories": AsIs(", ".join(categories)),

@@ -24,7 +24,7 @@ def layout(l = 'n', **kwargs):
     if l == 'n':
         return dmc.Container()
     else:
-        service.log_printer(request.remote_addr, 'temp_page', 'page opened')
+        service.logPrinter(request.remote_addr, 'temp_page', 'page opened')
         # all workers must be here!
         return dmc.Container(
             children=[
