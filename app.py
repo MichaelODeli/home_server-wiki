@@ -59,20 +59,6 @@ app = dash.Dash(
 app.config.suppress_callback_exceptions = True
 
 
-# function for generating Dash Iconify content
-def getIcon(icon):
-    """
-    param:  \n
-    `icon`: icon name
-    """
-    return dmc.ThemeIcon(
-        DashIconify(icon=icon, width=18),
-        size=30,
-        radius=30,
-        variant="subtle",
-    )
-
-
 # search bar HTML code
 search_bar = html.Form(
     children=[
@@ -106,12 +92,13 @@ theme_switch = html.Div(
         onLabel=DashIconify(icon="radix-icons:sun", width=20),
         size="lg",
         id="color-mode-switch",
-        checked=True,
         className="nav-item",
         color="var(--bs-primary)",
         label=dmc.Text(
             "Переключить тему приложения", className="adaptive-show p-0 m-0", size="sm"
         ),
+        persistence_type='session',
+        persistence=True
     ),
     className="pt-3 pt-sm-0",
 )
@@ -209,6 +196,7 @@ app.layout = dmc.MantineProvider(
         html.Div(id="notifications-container-search"),
         dcc.Store(id="server-avaliablity"),
         dcc.Location(id="url"),
+        html.Div(id='dummy-1')
     ],
     id="mantine_theme",
     defaultColorScheme="light",
@@ -261,7 +249,7 @@ clientside_callback(
        return window.dash_clientside.no_update
     }
     """,
-    Output("color-mode-switch", "id"),
+    Output("dummy-1", "style"),
     Input("color-mode-switch", "checked"),
 )
 

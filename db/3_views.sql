@@ -1,5 +1,5 @@
 -- files_summary
-CREATE VIEW filestorage_files_summary as select file_id, category_name, type_name, file_fullway, file_fullway_test, file_fullway_nobaseway, file_fullway_forweb, filename as file_name, mime_type, mime_type_id, size_kb, html_video_ready, html_audio_ready, type_id, category_id from
+CREATE VIEW filestorage_files_summary as select file_id, category_name, type_name, file_fullway, file_fullway_test, file_fullway_nobaseway, file_fullway_forweb, filename as file_name, mime_type, mime_type_id, size_kb, html_video_ready, html_audio_ready, type_id, category_id, created_at from
 (select *, 
 concat(
   (select parameter_value FROM config where parameter_name = 'filemanager.baseway' and test_value), 
@@ -17,7 +17,7 @@ concat(
   (select parameter_value FROM config where parameter_name = 'filemanager.apache_storage_subdir'), 
   way_category, way_type, way_file, filename
 ) as file_fullway_forweb
-from (select encode(id, 'hex') as file_id, type_id, way as way_file, filename, mime_type_id, size_kb from filestorage_files) ff 
+from (select encode(id, 'hex') as file_id, type_id, way as way_file, filename, mime_type_id, size_kb, created_at from filestorage_files) ff 
 left join (select id as type_id, category_id, type_name, way as way_type from filestorage_types where active = true) ft using(type_id)
 left join (select id as category_id, category_name, way as way_category from filestorage_categories) fc using(category_id)
 left join (select id as mime_type_id, type_name as mime_type, html_video_ready, html_audio_ready from mime_types_secondary) mts using(mime_type_id))

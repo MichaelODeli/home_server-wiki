@@ -29,7 +29,10 @@ def layout(l="n", **other_unknown_query_strings):
                                 ".".join(video["file_name"].split(".")[:-1])
                             ),
                             videotype_name=video["type_name"],
-                            video_duration=video["video_duration"]
+                            video_duration=video["video_duration"],
+                            date=service.get_date_difference(video["created_at"]),
+                            category_id=video["category_id"],
+                            type_id=video["type_id"],
                         )
                         for video in cont_video.getRandomVideos(conn)
                     ],

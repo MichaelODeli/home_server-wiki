@@ -76,6 +76,7 @@ def layout():
         Output("home-torrents-upload", "children"),
     ],
     [Input("t", "children")],
+    running=[(Output("loading-overlay-widget-torrent", "visible"), True, False)]
 )
 def renderTorrentsStatus(_):
     global qbittorrent_url

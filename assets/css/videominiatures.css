@@ -9,3 +9,11 @@
     bottom:0;
     right:0;
 }
+
+.video-link {
+    color: gray;
+}
+
+.video-link:hover {
+    color: var(--bs-highlight-color);
+}

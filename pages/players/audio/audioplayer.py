@@ -38,7 +38,7 @@ def layout(l="n", selected_playlist_name="Любимые треки", **kwargs):
         return dmc.Container(
             children=[
                 dash_player.DashPlayer(
-                    id="player",
+                    id="audio-player",
                     url="https://www.youtube.com/watch?v=4xnsmyI5KMQ&t=1s",
                     width="0",
                     height="0",
@@ -109,11 +109,11 @@ def drawerWithAlbums(n_clicks):
 
 @callback(
     [
-        Output("player", "playing"),
+        Output("audio-player", "playing"),
         Output("playpause-icon", 'icon')
     ],
     Input("control-playpause", "n_clicks"),
-    State("player", "playing"),
+    State("audio-player", "playing"),
     prevent_initial_call=True,
 )
 def playerPlayPause(n_clicks, playing):
@@ -126,11 +126,11 @@ def playerPlayPause(n_clicks, playing):
 
 @callback(
     [
-        Output("player", "loop"),
+        Output("audio-player", "loop"),
         Output("loop-icon", 'icon')
     ],
     Input("control-repeat", "n_clicks"),
-    State("player", "loop"),
+    State("audio-player", "loop"),
     prevent_initial_call=True,
 )
 def playerLoop(n_clicks, loop):
@@ -143,11 +143,11 @@ def playerLoop(n_clicks, loop):
 
 @callback(
     [
-        Output("player", "muted"),
+        Output("audio-player", "muted"),
         Output("muted-icon", 'icon')
     ],
     Input("volume-muted", "n_clicks"),
-    State("player", "muted"),
+    State("audio-player", "muted"),
     prevent_initial_call=True,
 )
 def playerDisableSound(n_clicks, muted):
@@ -159,9 +159,9 @@ def playerDisableSound(n_clicks, muted):
 
 
 @callback(
-    Output("player", "volume"),
+    Output("audio-player", "volume"),
     Input("volume-slider", "value"),
-    State("player", "volume"),
+    State("audio-player", "volume"),
     # prevent_initial_call=True,
 )
 def playerVolumeSlider(volume_value, current_vol):
@@ -175,8 +175,8 @@ def playerVolumeSlider(volume_value, current_vol):
         Output("audio-current-time", "children"),
         Output("audio-full-time", "children")
     ],
-    Input("player", "currentTime"),
-    State("player", "duration"),
+    Input("audio-player", "currentTime"),
+    State("audio-player", "duration"),
     prevent_initial_call=True,
 )
 def playerVolume(currentTime, duration):

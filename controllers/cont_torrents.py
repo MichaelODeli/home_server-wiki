@@ -5,29 +5,22 @@ from dash import dcc, html
 from controllers import cont_files as cont_f
 import qbittorrentapi
 from datetime import datetime
+import re
 
 
 def addTorrentModal():
-    loading_skeleton = dmc.Stack(
-        gap="xs",
-        children=[
-            dmc.Skeleton(height=8, width="70%"),
-            dmc.Skeleton(height=8),
-            dmc.Skeleton(height=8),
-            dmc.Skeleton(height=8, width="70%"),
-        ],
-    )
     return dmc.Modal(
         title=html.H5("Добавить торрент"),
         id="modal-add-torrent",
         centered=True,
         size="55%",
-        zIndex=10000,
+        zIndex=50,
         children=[
             dmc.Stack(
                 [
                     dcc.Upload(
                         id="upload-torrent",
+                        accept=".torrent",
                         children=html.Div(
                             [
                                 "Перетащите или ",
@@ -36,7 +29,7 @@ def addTorrentModal():
                                     className="link-opacity-100",
                                     href="#",
                                 ),
-                            ]
+                            ],
                         ),
                         style={
                             "width": "100%",
@@ -50,27 +43,15 @@ def addTorrentModal():
                         },
                         # Allow multiple files to be uploaded
                         # multiple=True,
+                        max_size=40960,
                     ),
-                    dmc.Space(h=7),
-                    html.H6("Информация о файле {filename}"),
-                    loading_skeleton,
-                    dmc.Space(h=7),
-                    html.H6("Выберите категорию загружаемого файла"),
-                    dmc.Select(
-                        placeholder="Выберите",
-                        id="torrent-category-select",
-                        value="other",
-                        data=[
-                            {"value": "films", "label": "Фильмы"},
-                            {"value": "apps", "label": "Программы"},
-                            {"value": "serials", "label": "Сериалы"},
-                            {"value": "other", "label": "Другое"},
-                        ],
-                        style={"width": "100%", "margin": "auto"},
+                    dmc.TextInput(
+                        label="Либо введите magnet-ссылку",
+                        w="100%",
+                        id="torrent-magnet",
                     ),
-                    dbc.Button(
-                        "Начать загрузку", id="torrent-start-download", n_clicks=0
-                    ),
+                    dmc.Button("Скачать по magnet-ссылке", id="torrent-magnet-btn"),
+                    dmc.Stack(id="torrent-upload-props", gap="xs"),
                 ]
             )
         ],
@@ -183,126 +164,59 @@ def decodeTorrentStatus(name):
 
 
 def getTorrentsData(qbittorrent_url="192.168.0.33:8124"):
-    try:
-        qbt_client = qbittorrentapi.Client(host=qbittorrent_url)
-        torrents_data = []
-        for torrent_info in qbt_client.torrents_info():
-            t_hash = torrent_info["hash"]
-            t_name = torrent_info["name"]
-            t_progress = int(torrent_info["progress"] * 100)
-            t_status = decodeTorrentStatus(torrent_info["state"])
-            t_seeds = torrent_info["num_seeds"]
-            t_speed_down = bytes2human(torrent_info["dlspeed"]) + "/s"
-            t_speed_upl = bytes2human(torrent_info["upspeed"]) + "/s"
-            t_added = datetime.fromtimestamp(torrent_info["added_on"]).strftime(
+    # try:
+    qbt_client = qbittorrentapi.Client(host=qbittorrent_url)
+    torrents_data = []
+    for torrent_info in qbt_client.torrents_info():
+        t_hash = torrent_info["hash"]
+        t_name = torrent_info["name"]
+        t_progress = int(torrent_info["progress"] * 100)
+        t_status = decodeTorrentStatus(torrent_info["state"])
+        t_seeds = torrent_info["num_seeds"]
+        t_speed_down = bytes2human(torrent_info["dlspeed"]) + "/s"
+        t_speed_upl = bytes2human(torrent_info["upspeed"]) + "/s"
+        t_added = datetime.fromtimestamp(torrent_info["added_on"]).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+        t_completed = (
+            datetime.fromtimestamp(torrent_info["completion_on"]).strftime(
                 "%Y-%m-%d %H:%M:%S"
             )
-            t_completed = datetime.fromtimestamp(
-                torrent_info["completion_on"]
-            ).strftime("%Y-%m-%d %H:%M:%S")
-            torrents_data.append(
-                [
-                    dmc.Checkbox(id=f"torrent-{t_hash}"),
-                    t_name,
-                    dmc.ProgressRoot(
-                        [
-                            dmc.ProgressSection(
-                                dmc.ProgressLabel(f"{str(t_progress)}%"),
-                                value=t_progress,
-                            ),
-                        ],
-                        size="xl",
-                    ),
-                    t_status,
-                    t_seeds,
-                    t_speed_down,
-                    t_speed_upl,
-                    t_added,
-                    t_completed,
-                ]
-            )
-        return torrents_data
-    except:
-        return None
+            if torrent_info["completion_on"] > 0
+            else ""
+        )
+        torrents_data.append(
+            [
+                dmc.Checkbox(
+                    id={"type": "torrent-checkboxes", "id": t_hash}, checked=False
+                ),
+                t_name,
+                dmc.ProgressRoot(
+                    [
+                        dmc.ProgressSection(
+                            dmc.ProgressLabel(f"{str(t_progress)}%"),
+                            value=t_progress,
+                        ),
+                    ],
+                    size="xl",
+                ),
+                t_status,
+                t_seeds,
+                t_speed_down,
+                t_speed_upl,
+                t_added,
+                t_completed,
+            ]
+        )
+    return torrents_data
+    # except:
+    #     return None
 
 
-def blockTorrents():
-    return html.Div(
-        [
-            dmc.Grid(
-                [
-                    dmc.GridCol(
-                        html.H5("Управление торрентами", style={"margin": "0"}),
-                        span="content",
-                    ),
-                    dmc.GridCol(span="auto"),
-                    dbc.ButtonGroup(
-                        [
-                            dbc.Button(
-                                DashIconify(icon="material-symbols:sync", width=25),
-                                outline=True,
-                                color="primary",
-                                id="torrent-update",
-                                className="button-center-content",
-                                title="Обновить список",
-                                # disabled=True,
-                                size="md",
-                                n_clicks=0,
-                            ),
-                            dbc.Button(
-                                DashIconify(icon="material-symbols:add", width=25),
-                                outline=True,
-                                color="primary",
-                                id="torrent-add",
-                                className="button-center-content",
-                                title="Добавить торрент",
-                                disabled=True,
-                                size="md",
-                                n_clicks=0,
-                            ),
-                            dbc.Button(
-                                DashIconify(
-                                    icon="material-symbols:play-pause", width=25
-                                ),
-                                outline=True,
-                                color="primary",
-                                id="torrent-startstop",
-                                className="button-center-content",
-                                title="Запустить/остановить торрент",
-                                disabled=True,
-                                size="md",
-                            ),
-                            dbc.Button(
-                                DashIconify(
-                                    icon="material-symbols:info-outline", width=25
-                                ),
-                                outline=True,
-                                color="primary",
-                                id="torrent-info",
-                                className="button-center-content",
-                                title="Информация о торренте",
-                                disabled=True,
-                                size="md",
-                            ),
-                            dbc.Button(
-                                DashIconify(icon="material-symbols:delete", width=25),
-                                outline=True,
-                                color="danger",
-                                id="torrent-delete",
-                                className="button-center-content",
-                                title="ОПИСАНИЕ",
-                                disabled=True,
-                                size="md",
-                            ),
-                        ],
-                        style={"margin": "5px"},
-                    ),
-                ],
-                align="stretch",
-                justify="center",
-            ),
-            dmc.Space(h=15),
-            html.Div(id="torrents-table-container"),
-        ],
-        className="block-background",
-    )
+def verifyMagnetLink(magnet_link):
+    pattern = re.compile(r"magnet:\?xt=urn:[a-z0-9]+:[a-zA-Z0-9]{32}")
+    result = pattern.match(magnet_link)
+    if result != None:
+        return True
+    else:
+        return False

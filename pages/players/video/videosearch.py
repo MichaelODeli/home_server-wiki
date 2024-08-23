@@ -113,14 +113,17 @@ def getVideoSearchResults(current_page, n_clicks, categories, types, query):
                 cont_video.createVideoMiniaturesContainer(
                     children=[
                         cont_video.createVideoMiniatureContainer(
-                            href=f"/players/video/watch?v={result['file_id']}&l=y",
+                            href=f"/players/video/watch?v={video['file_id']}&l=y",
                             video_title=cont_search.stringHider(
-                                ".".join(result["file_name"].split(".")[:-1])
+                                ".".join(video["file_name"].split(".")[:-1])
                             ),
-                            videotype_name=cont_search.stringHider(result["type_name"]),
-                            video_duration=result["video_duration"]
+                            videotype_name=cont_search.stringHider(video["type_name"]),
+                            video_duration=video["video_duration"],
+                            date=service.get_date_difference(video['created_at']),
+                            category_id=video["category_id"],
+                            type_id=video["type_id"],
                         )
-                        for result in query_results
+                        for video in query_results
                     ]
                 ),
                 pages,

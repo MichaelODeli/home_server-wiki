@@ -809,3 +809,6 @@ def getFilesearchResult(
             data = []
 
         return count_results, data
+
+def generateThubmnails():
+    raise NotImplementedError

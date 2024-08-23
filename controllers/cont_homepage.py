@@ -70,8 +70,21 @@ def getTorrentStatus(BASE_URL):
         return ["qbittorrent не отвечает."] * 3
 
 
+def getColorByValue(current_value=None, max_value=None, percent=None):
+    if percent == None:
+        percent = (current_value / max_value) * 100
+    return (
+        "var(--bs-primary)" if percent < 70 else ("orange" if percent < 90 else "red")
+    )
+
+
 def getProgress(
-    drive: str, current_value: float, max_value: float, id: str, valid: bool
+    drive: str,
+    current_value: float,
+    max_value: float,
+    id: str,
+    valid: bool,
+    readable=None,
 ):
     """
     Получить прогресс-бар с текущим объемом накопителя
@@ -84,7 +97,7 @@ def getProgress(
     - valid: "существование" раздела. Если нет - то прогресс-бар будет окрашен в красный цвет.
 
     """
-    percent = int(round(current_value / max_value, 2) * 100)
+
     if valid == True:
         return html.Tr(
             [
@@ -93,9 +106,12 @@ def getProgress(
                     dmc.ProgressRoot(
                         [
                             dmc.ProgressSection(
-                                dmc.ProgressLabel(drive),
-                                value=percent,
-                                color="cyan",
+                                dmc.ProgressLabel(
+                                    f"{bytes2human(current_value)} | {bytes2human(max_value)}"
+                                ),
+                                value=int(round(current_value / max_value, 2) * 100),
+                                color=getColorByValue(current_value, max_value),
+                                id=id
                             )
                         ],
                         size="xl",
@@ -134,18 +150,16 @@ def getDriveSize(partition):
     - partition: путь к разделу
     """
     try:
-        total, used, _ = shutil.disk_usage(partition)
-
-        total = total // (2**30)
-        used = used // (2**30)
+        mountpoint = partition.mountpoint
+        total, used, _ = shutil.disk_usage(mountpoint)
         valid = True
-    except FileNotFoundError:
+    except Exception:
         total = 1
         used = 1
         valid = False
 
     return getProgress(
-        partition, int(used), int(total), f"ring-{partition}", valid=valid
+        mountpoint, int(used), int(total), f"ring-{mountpoint}", valid=valid
     )
 
 
@@ -162,18 +176,12 @@ def widgetDiskSize(**kwargs):
     return dbc.Card(
         [
             html.H5(
-                "Свободное место на дисках",
+                "Свободное место на разделах",
                 style={"text-align": "center"},
                 className="card-title",
             ),
             dmc.Space(h=10),
-            html.Table(
-                [
-                    getDriveSize("/mnt/sdb1/"),
-                    getDriveSize("/mnt/sdc1/"),
-                    getDriveSize("/mnt/sdd1/"),
-                ]
-            ),
+            html.Table([getDriveSize(part) for part in psutil.disk_partitions()]),
             dmc.Space(h=10),
             html.A("Подробные свойства", href="/settings?l=y&tab=server_info"),
         ],
@@ -298,7 +306,13 @@ def widgetTorrents(qbittorrent_url):
                 gap="xs",
             ),
             dmc.Space(h=15),
-            html.A("Открыть qbittorrent", href=qbittorrent_url),
+            html.A("Открыть qbittorrent", href=qbittorrent_url, target="_blank"),
+            dmc.LoadingOverlay(
+                visible=False,
+                id="loading-overlay-widget-torrent",
+                zIndex=1000,
+                overlayProps={"radius": "sm", "blur": 2},
+            ),
         ],
         className="block-background mobile-block",
         # style={"min-height": "100%"},
@@ -315,6 +329,8 @@ def widgetSysteminfo():
     Возвращает:
     dbc.Card: карточка с информацией о системе.
     """
+
+    cpu_usage = int(psutil.cpu_percent(interval=0.1))
     return dbc.Card(
         [
             html.H5("Системный монитор", className="card-title"),
@@ -327,9 +343,9 @@ def widgetSysteminfo():
                             dmc.RingProgress(
                                 sections=[
                                     {
-                                        "value": int(psutil.cpu_percent()),
-                                        "color": "var(--bs-blue)",
-                                        "tooltip": f"Используется: {psutil.cpu_percent()}%",
+                                        "value": cpu_usage,
+                                        "color": getColorByValue(percent=cpu_usage),
+                                        "tooltip": f"Используется: {cpu_usage}%",
                                     },
                                 ],
                                 label=dmc.Text(
@@ -350,7 +366,9 @@ def widgetSysteminfo():
                                 sections=[
                                     {
                                         "value": psutil.virtual_memory().percent,
-                                        "color": "var(--bs-blue)",
+                                        "color": getColorByValue(
+                                            percent=psutil.virtual_memory().percent
+                                        ),
                                         "tooltip": f"Занято: {bytes2human(psutil.virtual_memory().used)}",
                                     },
                                 ],
@@ -372,7 +390,9 @@ def widgetSysteminfo():
                                 sections=[
                                     {
                                         "value": psutil.swap_memory().percent,
-                                        "color": "var(--bs-blue)",
+                                        "color": getColorByValue(
+                                            percent=psutil.swap_memory().percent
+                                        ),
                                         "tooltip": f"Занято: {bytes2human(psutil.swap_memory().used)}",
                                     },
                                 ],
@@ -395,20 +415,22 @@ def widgetSysteminfo():
                     dmc.GridCol(
                         dmc.Group(
                             [
-                                dmc.Text("↓", fw=600, c="#369e1f"),
-                                dmc.Text("0 b/s", c="#369e1f"),
+                                dmc.Text("↓", fw=600),
+                                dmc.Text("NaN b/s"),
                             ],
                             justify="center",
+                            c="#369e1f",
                         ),
                         span="content",
                     ),
                     dmc.GridCol(
                         dmc.Group(
                             [
-                                dmc.Text("↑", fw=600, c="blue"),
-                                dmc.Text("0 b/s", c="blue"),
+                                dmc.Text("↑", fw=600),
+                                dmc.Text("NaN b/s"),
                             ],
                             justify="center",
+                            c="blue",
                         ),
                         span="content",
                     ),

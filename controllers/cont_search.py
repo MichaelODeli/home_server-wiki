@@ -1,35 +1,9 @@
 from dash import html, callback, Output, Input, State, no_update
-import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 
 from controllers import file_manager, db_connection
 
 PAGE_LIMIT = 18
-
-
-def getIcon(icon, size=18, background=True, icon_color="white"):
-    """
-    Функция getIcon возвращает иконку с заданными параметрами.
-
-    :param icon: имя иконки
-    :param size: размер иконки
-    :param background: флаг, указывающий на необходимость отображения фона у иконки
-    :param icon_color: цвет иконки
-    :return: иконка с заданными параметрами
-    """
-    return (
-        dmc.ThemeIcon(
-            DashIconify(icon=icon, width=size, color=icon_color),
-            size=size,
-            radius=size + 7,
-            # variant="subtle",
-            color="#000000",
-            m="5px",
-        )
-        if background == True
-        else DashIconify(icon=icon, width=size, color=icon_color)
-    )
 
 
 def stringHider(name, limiter=35):

@@ -20,13 +20,13 @@ VALUES
   (16, 'x-shader');
 
 
-INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(1, 'audio/mp4', 'm4a,mp4a');
+INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(2, 'audio/mp4', 'm4a,mp4a');
 INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(9, 'video/mp4', 'mp4,mp4v,mpg4');
-INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(1, 'audio/ogg', 'oga,ogg,spx,opus');
+INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(2, 'audio/ogg', 'oga,ogg,spx,opus');
 INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(9, 'video/ogg', 'ogv');
-INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(1, 'audio/webm', 'weba');
-INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(1, 'audio/aac', 'adts,aac');
-INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(1, 'audio/mpeg', 'mpga,mp2,mp2a,mp3,m2a,m3a');
+INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(2, 'audio/webm', 'weba');
+INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(2, 'audio/aac', 'adts,aac');
+INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(2, 'audio/mpeg', 'mpga,mp2,mp2a,mp3,m2a,m3a');
 INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(1, 'application/andrew-inset', 'ez');
 INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(1, 'application/appinstaller', 'appinstaller');
 INSERT INTO mime_types_secondary (primary_mime_id, type_name, "extension") VALUES(1, 'application/applixware', 'aw');

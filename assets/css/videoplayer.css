@@ -19,6 +19,8 @@ video,
 .video_container {
     max-width: 100% !important;
     height: auto !important;
+    max-height: 70dvh !important;
+    background-color: black;
 }
 
 .overflow-column {
@@ -27,4 +29,8 @@ video,
 
 .video-column {
     height: 100%;
+}
+
+.mih-100 {
+    min-height: 100%;
 }

@@ -7,15 +7,20 @@ import dash_bootstrap_components as dbc
 from controllers import cont_media
 
 
+def getSearchLink(category_id, type_id):
+    return f"/players/video/search?l=y&auto_search=y&category_id={category_id}&type_id={type_id}&from_video=y"
+
+
 def createVideoMiniatureContainer(
     href,
     video_title,
     videotype_name,
-    views="нет просмотров",
     date="недавно",
     img_video="/assets/img/image-not-found.jpg",
-    img_channel="/assets/img/image-not-found.jpg",
+    img_channel=None,
     video_duration=0,
+    category_id=None,
+    type_id=None,
 ):
     """
     Функция createVideoMiniaturesContainer создает контейнер для видео миниатюр.
@@ -37,7 +42,7 @@ def createVideoMiniatureContainer(
                 p=0,
                 mt="xs",
                 mb="sm",
-                maw="300px",
+                maw="250px",
                 children=[
                     dmc.AspectRatio(
                         html.Div(
@@ -53,14 +58,14 @@ def createVideoMiniatureContainer(
                         ),
                         ratio=16 / 9,
                         mb="xs",
-                        w=300,
+                        w=250,
                         className="video-background-image",
                         style={"background-image": f"url('{img_video}')"},
                     ),
                     dmc.Flex(
                         direction="row",
                         children=[
-                            dmc.Avatar(radius="xl"),
+                            dmc.Avatar(radius="xl", src=img_channel),
                             dmc.Container(
                                 children=[
                                     dmc.Text(
@@ -69,13 +74,26 @@ def createVideoMiniatureContainer(
                                         fw=500,
                                         mb="5px",
                                         c="var(--bs-emphasis-color)",
+                                        size="sm",
                                     ),
-                                    dmc.Text(videotype_name, c="gray", td="none"),
+                                    dmc.Text(
+                                        html.A(
+                                            videotype_name,
+                                            href=getSearchLink(category_id, type_id),
+                                            className="video-link",
+                                        ),
+                                        c="gray",
+                                        td="none",
+                                        size="sm",
+                                    ),
                                     dmc.Group(
                                         [
-                                            dmc.Text(views, c="gray", td="none"),
-                                            dmc.Text("•", c="gray", td="none"),
-                                            dmc.Text(date, c="gray", td="none"),
+                                            dmc.Text(
+                                                date,
+                                                c="gray",
+                                                td="none",
+                                                size="sm",
+                                            ),
                                         ],
                                         gap="xs",
                                     ),
@@ -103,9 +121,8 @@ def createVideoMiniaturesContainer(children):
         direction="row",
         wrap="wrap",
         justify="space-around",
-        mt="10px",
-        mx="5px",
         children=children,
+        className="mx-1",
     )
 
 
@@ -169,7 +186,7 @@ def createVideoSearchBar(
     )
 
 
-def getRandomVideos(conn, counter=30, type_id=None):
+def getRandomVideos(conn, counter=28, type_id=None):
     if type_id != None:
         query = "select * from filestorage_mediafiles_summary where html_video_ready and type_id = %(type_id)s order by random() limit %(counter)s;"
     else:
