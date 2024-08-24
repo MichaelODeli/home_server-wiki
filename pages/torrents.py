@@ -18,7 +18,7 @@ import dash_bootstrap_components as dbc
 from dash_extensions import Purify
 from flask import request
 from datetime import datetime
-from controllers import service_controller as service
+from controllers import service_controller as service, file_manager, db_connection
 from dash_iconify import DashIconify
 import re
 import base64
@@ -29,31 +29,18 @@ from controllers import cont_files as cont_f
 register_page(__name__, path="/torrents", icon="fa-solid:home")
 
 
-def getTorrentButton(
-    button_icon, button_title, button_id, disabled=False, color="primary"
-):
-    return dbc.Button(
-        DashIconify(
-            icon=button_icon,
-            width=25,
-        ),
-        outline=True,
-        color=color,
-        id=button_id,
-        className="button-center-content p-2",
-        title=button_title,
-        disabled=disabled,
-        size="md",
-        n_clicks=0,
-    )
-
-
 def layout(l="n", **kwargs):
     # lazy load block
     if l == "n":
         return dmc.Container()
     else:
         service.logPrinter(request.remote_addr, "torrents", "page opened")
+
+        conn = db_connection.getConn()
+        settings = file_manager.getSettings(conn)
+        qbt_ip = settings["apps.torrents.qbittorrent_ip"]
+        qbt_port = settings["apps.torrents.qbittorrent_port"]
+
         # all workers must be here!
         return dmc.Container(
             children=[
@@ -73,36 +60,54 @@ def layout(l="n", **kwargs):
                                         dmc.GridCol(span="auto"),
                                         dbc.ButtonGroup(
                                             [
-                                                getTorrentButton(
+                                                service.getButtonWithIcon(
                                                     button_icon="material-symbols:sync",
                                                     button_title="Обновить список",
                                                     button_id="torrent-update",
                                                     disabled=False,
                                                 ),
-                                                getTorrentButton(
+                                                service.getButtonWithIcon(
                                                     button_icon="material-symbols:add",
                                                     button_title="Добавить торрент",
                                                     button_id="torrent-add",
                                                     # disabled=True,
                                                 ),
-                                                getTorrentButton(
+                                                service.getButtonWithIcon(
                                                     button_icon="material-symbols:play-pause",
                                                     button_title="Запустить/остановить торрент",
                                                     button_id="torrent-startstop",
                                                     disabled=True,
                                                 ),
-                                                getTorrentButton(
+                                                service.getButtonWithIcon(
                                                     button_icon="material-symbols:info-outline",
                                                     button_title="Информация о торренте",
                                                     button_id="torrent-info",
                                                     disabled=True,
                                                 ),
-                                                getTorrentButton(
+                                                service.getButtonWithIcon(
                                                     button_icon="material-symbols:delete",
                                                     button_title="Удалить торрент",
                                                     button_id="torrent-delete",
                                                     color="danger",
                                                     disabled=True,
+                                                ),
+                                                dbc.Button(
+                                                    dmc.Group(
+                                                        [
+                                                            service.getIcon(
+                                                                "mdi:external-link",
+                                                                background=False,
+                                                                icon_color=None,
+                                                                size=25,
+                                                            ),
+                                                            "Открыть qbittorrent",
+                                                        ],
+                                                        gap="xs",
+                                                    ),
+                                                    href=f"http://{qbt_ip}:{qbt_port}",
+                                                    outline=True,
+                                                    color="primary",
+                                                    target="_blank",
                                                 ),
                                             ],
                                             style={"margin": "5px"},
@@ -279,7 +284,8 @@ def parceTorrentFile(
 )
 def returnTorrentsData(n):
     service.logPrinter(request.remote_addr, "torrents", "toggle update")
-    datatable = cont_t.getTorrentsData()
+
+    datatable = cont_t.getTorrentsTableData()
     # datatable = None
     return (
         cont_f.generateHTMLTable(

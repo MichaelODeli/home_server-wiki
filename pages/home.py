@@ -17,11 +17,9 @@ from controllers import cont_homepage
 from controllers import service_controller as service
 
 register_page(__name__, path="/", icon="fa-solid:home")
-qbittorrent_url = "http://192.168.0.33:8124"
 
 
 def layout():
-    global qbittorrent_url
     lay = dmc.Container(
         children=[
             dmc.Grid(
@@ -40,7 +38,7 @@ def layout():
                         mih='100%'
                     ),
                     dmc.GridCol(
-                        [cont_homepage.widgetTorrents(qbittorrent_url)],
+                        [cont_homepage.widgetTorrents()],
                         span="content",
                         className="adaptive-width",
                         id="widgetTorrents",
@@ -79,5 +77,4 @@ def layout():
     running=[(Output("loading-overlay-widget-torrent", "visible"), True, False)]
 )
 def renderTorrentsStatus(_):
-    global qbittorrent_url
-    return cont_homepage.getTorrentStatus(qbittorrent_url)
+    return cont_homepage.getTorrentStatus()

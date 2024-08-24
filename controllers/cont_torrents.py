@@ -2,10 +2,11 @@ import dash_mantine_components as dmc
 import dash_bootstrap_components as dbc
 from dash_iconify import DashIconify
 from dash import dcc, html
-from controllers import cont_files as cont_f
+from controllers import cont_files as cont_f, db_connection, file_manager
 import qbittorrentapi
 from datetime import datetime
 import re
+import signal
 
 
 def addTorrentModal():
@@ -163,56 +164,6 @@ def decodeTorrentStatus(name):
         return "Неизвестно"
 
 
-def getTorrentsData(qbittorrent_url="192.168.0.33:8124"):
-    # try:
-    qbt_client = qbittorrentapi.Client(host=qbittorrent_url)
-    torrents_data = []
-    for torrent_info in qbt_client.torrents_info():
-        t_hash = torrent_info["hash"]
-        t_name = torrent_info["name"]
-        t_progress = int(torrent_info["progress"] * 100)
-        t_status = decodeTorrentStatus(torrent_info["state"])
-        t_seeds = torrent_info["num_seeds"]
-        t_speed_down = bytes2human(torrent_info["dlspeed"]) + "/s"
-        t_speed_upl = bytes2human(torrent_info["upspeed"]) + "/s"
-        t_added = datetime.fromtimestamp(torrent_info["added_on"]).strftime(
-            "%Y-%m-%d %H:%M:%S"
-        )
-        t_completed = (
-            datetime.fromtimestamp(torrent_info["completion_on"]).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-            if torrent_info["completion_on"] > 0
-            else ""
-        )
-        torrents_data.append(
-            [
-                dmc.Checkbox(
-                    id={"type": "torrent-checkboxes", "id": t_hash}, checked=False
-                ),
-                t_name,
-                dmc.ProgressRoot(
-                    [
-                        dmc.ProgressSection(
-                            dmc.ProgressLabel(f"{str(t_progress)}%"),
-                            value=t_progress,
-                        ),
-                    ],
-                    size="xl",
-                ),
-                t_status,
-                t_seeds,
-                t_speed_down,
-                t_speed_upl,
-                t_added,
-                t_completed,
-            ]
-        )
-    return torrents_data
-    # except:
-    #     return None
-
-
 def verifyMagnetLink(magnet_link):
     pattern = re.compile(r"magnet:\?xt=urn:[a-z0-9]+:[a-zA-Z0-9]{32}")
     result = pattern.match(magnet_link)
@@ -220,3 +171,79 @@ def verifyMagnetLink(magnet_link):
         return True
     else:
         return False
+
+
+def getTorrentsDataDict(source_page):
+    conn = db_connection.getConn()
+    settings = file_manager.getSettings(conn)
+
+    qbt_ip = settings["apps.torrents.qbittorrent_ip"]
+    qbt_port = settings["apps.torrents.qbittorrent_port"]
+    qbt_login = settings["apps.torrents.qbittorrent_login"]
+    qbt_password = settings["apps.torrents.qbittorrent_password"]
+
+    qbt_client = qbittorrentapi.Client(
+        host=f"{qbt_ip}:{qbt_port}", username=qbt_login, password=qbt_password
+    )
+    
+    if source_page == "main_page":
+        return {
+            "all": len(qbt_client.torrents_info()),
+            "uploading": len(qbt_client.torrents_info(status_filter="seeding")),
+            "downloading": len(
+                qbt_client.torrents_info(status_filter="downloading")
+            ),
+        }
+    elif source_page == "torrents_page":
+        return [
+            {
+                "hash": torrent_info["hash"],
+                "name": torrent_info["name"],
+                "progress": int(torrent_info["progress"] * 100),
+                "status": decodeTorrentStatus(torrent_info["state"]),
+                "seeds": torrent_info["num_seeds"],
+                "download_speed": bytes2human(torrent_info["dlspeed"]) + "/s",
+                "upload_speed": bytes2human(torrent_info["upspeed"]) + "/s",
+                "added": datetime.fromtimestamp(torrent_info["added_on"]).strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                ),
+                "completed": (
+                    datetime.fromtimestamp(torrent_info["completion_on"]).strftime(
+                        "%Y-%m-%d %H:%M:%S"
+                    )
+                    if torrent_info["completion_on"] > 0
+                    else ""
+                ),
+            }
+            for torrent_info in qbt_client.torrents_info()
+        ]
+    else:
+        return ValueError("Некорректная страница.")
+
+
+def getTorrentsTableData(source_page="torrents_page"):
+    return [
+        [
+            dmc.Checkbox(
+                id={"type": "torrent-checkboxes", "id": torrent_dict["hash"]},
+                checked=False,
+            ),
+            torrent_dict["name"],
+            dmc.ProgressRoot(
+                [
+                    dmc.ProgressSection(
+                        dmc.ProgressLabel(f"{str(torrent_dict['progress'])}%"),
+                        value=torrent_dict["progress"],
+                    ),
+                ],
+                size="xl",
+            ),
+            torrent_dict["status"],
+            torrent_dict["seeds"],
+            torrent_dict["download_speed"],
+            torrent_dict["upload_speed"],
+            torrent_dict["added"],
+            torrent_dict["completed"],
+        ]
+        for torrent_dict in getTorrentsDataDict(source_page=source_page)
+    ]

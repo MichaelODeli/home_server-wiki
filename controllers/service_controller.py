@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, date
 import dash_mantine_components as dmc
+import dash_bootstrap_components as dbc
 from dash_iconify import DashIconify
 
 # import datetime
@@ -106,4 +107,23 @@ def getIcon(
         )
         if background == True
         else DashIconify(icon=icon, width=size, color=icon_color)
+    )
+
+
+def getButtonWithIcon(
+    button_icon, button_title, button_id, disabled=False, color="primary"
+):
+    return dbc.Button(
+        DashIconify(
+            icon=button_icon,
+            width=25,
+        ),
+        outline=True,
+        color=color,
+        id=button_id,
+        className="button-center-content p-2",
+        title=button_title,
+        disabled=disabled,
+        size="md",
+        n_clicks=0,
     )

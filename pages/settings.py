@@ -66,10 +66,10 @@ def layout(l="n", tab="server_info", **kwargs):
 
 @callback(Output("tabs-content", "children"), Input("tabs-settings", "value"))
 def renderContent(active, test=True):
+    conn = db_connection.getConn()
+    categories = file_manager.getCategories(conn)
+    settings = file_manager.getSettings(conn)
     if active == "files":
-        conn = db_connection.getConn()
-        categories = file_manager.getCategories(conn)
-        settings = file_manager.getSettings(conn)
         return dmc.Stack(
             [
                 html.H5("Каталоги"),
@@ -193,56 +193,82 @@ def renderContent(active, test=True):
         return dmc.Stack(
             [
                 html.H5("Погода"),
+                dmc.Switch(
+                    label="Включить",
+                    checked=bool(settings["apps.weather.enabled"]),
+                    disabled=True,
+                ),
                 dmc.TextInput(
                     label="Город, для которого нужно отображать погоду",
                     style={"width": 250},
                     id="widgets-weather-city",
-                    value="Среднеуральск",
+                    value=settings["apps.weather.city"],
                     disabled=True,
                 ),
-                dbc.Button("Сохранить", style={"width": "min-content"}),
+                dbc.Button(
+                    "Сохранить",
+                    style={"width": "min-content"},
+                    disabled=True,
+                ),
                 dmc.Divider(variant="solid"),
                 html.H5("Размеры разделов"),
-                dmc.MultiSelect(
-                    label="Выберите разделы, для которых будут отображаться их размеры на главном экране",
-                    value=[
-                        "/mnt/sdb1/",
-                        "/mnt/sdc1/",
-                        "/mnt/sdd1/",
-                    ],
-                    data=[
-                        "/mnt/sdb1/",
-                        "/mnt/sdc1/",
-                        "/mnt/sdd1/",
-                    ],
-                    style={"width": 400},
-                    id="widgets-partitions-selected",
+                # dmc.MultiSelect(
+                #     label="Выберите разделы, для которых будут отображаться их размеры на главном экране",
+                #     style={"width": 400},
+                #     id="widgets-partitions-selected",
+                #     disabled=True,
+                # ),
+                dmc.Switch(
+                    label="Включить",
+                    checked=bool(settings["apps.drives_monitor.enabled"]),
                     disabled=True,
                 ),
-                dbc.Button("Сохранить", style={"width": "min-content"}),
+                dbc.Button(
+                    "Сохранить",
+                    style={"width": "min-content"},
+                    disabled=True,
+                ),
                 dmc.Divider(variant="solid"),
                 html.H5("Системный монитор"),
+                dmc.Switch(
+                    label="Включить",
+                    checked=bool(settings["apps.system_monitor.enabled"]),
+                    disabled=True,
+                ),
                 dmc.Text(
                     "Выберите те параметры, которые будут отображаться на главном экране"
                 ),
                 dmc.Stack(
                     children=[
                         dmc.Checkbox(
-                            label="Загрузка CPU", checked=True, disabled=True, m=0
-                        ),
-                        dmc.Checkbox(
-                            label="Загрузка RAM", checked=True, disabled=True, m=0
-                        ),
-                        dmc.Checkbox(
-                            label="Загрузка SWAP", checked=True, disabled=True, m=0
-                        ),
-                        dmc.Checkbox(
-                            label="Текущая скорость подключения",
-                            checked=True,
+                            label="Загрузка CPU",
+                            checked=bool(settings["apps.system_monitor.cpu_monitor"]),
                             disabled=True,
                             m=0,
                         ),
-                        dbc.Button("Сохранить", style={"width": "min-content"}),
+                        dmc.Checkbox(
+                            label="Загрузка RAM",
+                            checked=bool(settings["apps.system_monitor.ram_monitor"]),
+                            disabled=True,
+                            m=0,
+                        ),
+                        dmc.Checkbox(
+                            label="Загрузка SWAP",
+                            checked=bool(settings["apps.system_monitor.swap_monitor"]),
+                            disabled=True,
+                            m=0,
+                        ),
+                        dmc.Checkbox(
+                            label="Текущая скорость подключения",
+                            checked=bool(settings["apps.system_monitor.network_speed"]),
+                            disabled=True,
+                            m=0,
+                        ),
+                        dbc.Button(
+                            "Сохранить",
+                            style={"width": "min-content"},
+                            disabled=True,
+                        ),
                     ],
                     mr="auto",
                     align="flex-start",
@@ -250,35 +276,48 @@ def renderContent(active, test=True):
                 dmc.Divider(variant="solid"),
                 html.H5("Мониторинг торрентов"),
                 dmc.Switch(
-                    # size="lg",
-                    # radius="sm",
                     label="Включить",
-                    checked=True,
+                    checked=bool(settings["apps.torrents.enabled"]),
                     disabled=True,
                 ),
                 dmc.TextInput(
                     label="IP адрес сервера qBittorrent",
                     style={"width": 250},
-                    value="192.168.3.33",
+                    value=settings["apps.torrents.qbittorrent_ip"],
                     disabled=True,
                 ),
                 dmc.TextInput(
                     label="Порт сервера qBittorrent",
                     style={"width": 250},
-                    value="8124",
+                    value=settings["apps.torrents.qbittorrent_port"],
                     disabled=True,
                 ),
                 dmc.TextInput(
                     label="Логин сервера qBittorrent",
                     style={"width": 250},
                     disabled=True,
+                    value=settings["apps.torrents.qbittorrent_login"],
                 ),
                 dmc.PasswordInput(
                     label="Пароль сервера qBittorrent",
                     style={"width": 250},
                     disabled=True,
+                    value=settings["apps.torrents.qbittorrent_password"],
                 ),
-                dbc.Button("Сохранить", style={"width": "min-content"}),
+                dmc.Group(
+                    [
+                        dbc.Button(
+                            "Тест подключения",
+                            style={"width": "max-content"},
+                            disabled=True,
+                        ),
+                        dbc.Button(
+                            "Сохранить",
+                            style={"width": "min-content"},
+                            disabled=True,
+                        ),
+                    ]
+                ),
                 dmc.Divider(variant="solid"),
             ],
             # w='100%'

@@ -5,6 +5,7 @@ from dash import (
 )
 import dash_mantine_components as dmc
 from controllers.cont_torrents import bytes2human
+from controllers import db_connection, cont_torrents, file_manager
 import dash_bootstrap_components as dbc
 from datetime import datetime, timedelta
 import calendar
@@ -17,55 +18,22 @@ import locale
 locale.setlocale(locale.LC_ALL, "ru_RU")
 
 
-def getTorrentStatus(BASE_URL):
+def getTorrentStatus():
     """
     Получает статус торрентов из qBittorrent API.
-
-    Параметры:
-    BASE_URL (str): Базовый URL для доступа к qBittorrent API.
-
-    Вывод:
-    tuple: Кортеж с тремя строками, представляющими информацию о статусе торрентов.
-           Первая строка - количество активных торрентов.
-           Вторая строка - количество торрентов, скачиваемых в данный момент.
-           Третья строка - количество торрентов, которые раздаются.
-
-    Примечание:
-    Если возникает ошибка при получении данных от qBittorrent API,
-    возвращается кортеж с тремя строками, содержащими сообщение "qbittorrent не отвечает.".
     """
     try:
-        response = requests.get(f"{BASE_URL}/api/v2/auth/login", timeout=10)
-        # print(response.json())
-        if response.status_code == 200:
-            count_all = len(
-                requests.get(f"{BASE_URL}/api/v2/torrents/info").json()
-            )  # всего
-            count_downloading = len(
-                requests.get(
-                    f"{BASE_URL}/api/v2/torrents/info?filter=downloading"
-                ).json()
-            )  # скачивается
-            count_down_av = len(
-                requests.get(
-                    f"{BASE_URL}/api/v2/torrents/info?filter=stalled_downloading"
-                ).json()
-            )  # доступны к раздаче
-            count_active = len(
-                requests.get(f"{BASE_URL}/api/v2/torrents/info?filter=active").json()
-            )  # активны
-            count_completed = len(
-                requests.get(f"{BASE_URL}/api/v2/torrents/info?filter=completed").json()
-            )  # активны
+        torrents_dict = cont_torrents.getTorrentsDataDict(source_page="main_page")
 
-            count_upl = count_active - count_downloading  # раздаются
-            return (
-                f"Активных: {count_all}",
-                f"Скачивается: {count_downloading}",
-                f"Раздается: {count_upl}",
-            )
-        else:
-            raise ConnectionError
+        count_all = torrents_dict["all"]
+        count_downloading = torrents_dict["downloading"]
+        count_uploading = torrents_dict["uploading"]
+
+        return (
+            f"Активных: {count_all}",
+            f"Скачивается: {count_downloading}",
+            f"Раздается: {count_uploading}",
+        )
     except:
         return ["qbittorrent не отвечает."] * 3
 
@@ -111,7 +79,7 @@ def getProgress(
                                 ),
                                 value=int(round(current_value / max_value, 2) * 100),
                                 color=getColorByValue(current_value, max_value),
-                                id=id
+                                id=id,
                             )
                         ],
                         size="xl",
@@ -282,16 +250,16 @@ def widgetWeather(**kwargs):
     )
 
 
-def widgetTorrents(qbittorrent_url):
+def widgetTorrents():
     """
     Функция создает карточку с информацией о торрентах.
-
-    Аргументы:
-    qbittorrent_url (str): URL-адрес qbittorrent.
-
-    Возвращает:
-    dbc.Card: карточка с информацией о торрентах.
     """
+    conn = db_connection.getConn()
+    settings = file_manager.getSettings(conn)
+
+    qbt_ip = settings["apps.torrents.qbittorrent_ip"]
+    qbt_port = settings["apps.torrents.qbittorrent_port"]
+
     return dbc.Card(
         [
             html.H5("Мониторинг торрентов", className="card-title"),
@@ -306,7 +274,11 @@ def widgetTorrents(qbittorrent_url):
                 gap="xs",
             ),
             dmc.Space(h=15),
-            html.A("Открыть qbittorrent", href=qbittorrent_url, target="_blank"),
+            html.A(
+                "Открыть qbittorrent",
+                href="http://" + qbt_ip + ":" + qbt_port,
+                target="_blank",
+            ),
             dmc.LoadingOverlay(
                 visible=False,
                 id="loading-overlay-widget-torrent",

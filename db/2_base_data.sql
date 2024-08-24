@@ -1031,6 +1031,19 @@ INSERT INTO config (parameter_name, parameter_value, test_value) VALUES ('filema
 INSERT INTO config (parameter_name, parameter_value) VALUES ('server.local_ip', '192.168.0.33');
 INSERT INTO config (parameter_name, parameter_value) VALUES ('filemanager.apache_storage_subdir', '/storage/');
 INSERT INTO config (parameter_name, parameter_value) VALUES ('filemanager.update_interval', '1');
+INSERT INTO config (parameter_name, parameter_value) VALUES ('apps.torrents.enabled', 'True');
+INSERT INTO config (parameter_name, parameter_value) VALUES ('apps.torrents.qbittorrent_ip', '192.168.0.33');
+INSERT INTO config (parameter_name, parameter_value) VALUES ('apps.torrents.qbittorrent_port', '8124');
+INSERT INTO config (parameter_name, parameter_value) VALUES ('apps.torrents.qbittorrent_login', NULL);
+INSERT INTO config (parameter_name, parameter_value) VALUES ('apps.torrents.qbittorrent_password', NULL);
+INSERT INTO config (parameter_name, parameter_value) VALUES ('apps.weather.enabled', 'True');
+INSERT INTO config (parameter_name, parameter_value) VALUES ('apps.weather.city', 'Екатеринбург');
+INSERT INTO config (parameter_name, parameter_value) VALUES ('apps.drives_monitor.enabled', 'True');
+INSERT INTO config (parameter_name, parameter_value) VALUES ('apps.system_monitor.enabled', 'True');
+INSERT INTO config (parameter_name, parameter_value) VALUES ('apps.system_monitor.cpu_monitor', 'True');
+INSERT INTO config (parameter_name, parameter_value) VALUES ('apps.system_monitor.ram_monitor', 'True');
+INSERT INTO config (parameter_name, parameter_value) VALUES ('apps.system_monitor.swap_monitor', 'True');
+INSERT INTO config (parameter_name, parameter_value) VALUES ('apps.system_monitor.network_speed', 'True');
 
 INSERT INTO
   header_links (header_group_name, header_group_content)
@@ -1052,10 +1065,6 @@ VALUES
         {
             "link_name": "qBittorrent",
             "link_href": "http://192.168.0.33:8124/"
-        },
-        {
-            "link_name": "Transmission (obsolete)",
-            "link_href": "http://192.168.0.33:12345/"
         }
     ],
     "Wiki-ресурсы": [
