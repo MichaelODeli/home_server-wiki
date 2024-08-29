@@ -18,3 +18,7 @@
 .td-none {
     text-decoration: none !important;
 }
+
+.no-box-shadow {
+    box-shadow: unset !important;
+}

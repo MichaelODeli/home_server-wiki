@@ -1028,6 +1028,7 @@ UPDATE mime_types_secondary SET (html_video_ready, html_audio_ready, primary_mim
 
 INSERT INTO config (parameter_name, parameter_value) VALUES ('filemanager.baseway', '/home/michael/server-side/storage/');
 INSERT INTO config (parameter_name, parameter_value, test_value) VALUES ('filemanager.baseway', 'Z:/', TRUE);
+INSERT INTO config (parameter_name, parameter_value) VALUES ('filemanager.depth', '3');
 INSERT INTO config (parameter_name, parameter_value) VALUES ('server.local_ip', '192.168.0.33');
 INSERT INTO config (parameter_name, parameter_value) VALUES ('filemanager.apache_storage_subdir', '/storage/');
 INSERT INTO config (parameter_name, parameter_value) VALUES ('filemanager.update_interval', '1');

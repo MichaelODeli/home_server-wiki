@@ -7,3 +7,16 @@
 .mantine-Switch-labelWrapper {
     justify-content: center;
 }
+
+.mantine-AppShell-header {
+    display: grid;
+}
+
+.mantine-AppShell-header>.mantine-Grid-root {
+    justify-self: center;
+	align-self: center;
+}
+
+.col-height {
+    height: min-content;
+}

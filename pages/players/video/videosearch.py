@@ -7,6 +7,8 @@ from dash.exceptions import PreventUpdate
 
 register_page(__name__, path="/players/video/search", icon="fa-solid:home")
 
+query_global = ""
+
 
 def layout(
     l="n",
@@ -20,12 +22,14 @@ def layout(
     if l == "n":
         return dmc.Container()
     else:
+        global query_global
+        query_global = query
+
         conn = db_connection.getConn()
 
         category_id, type_id = cont_search.formatCategoryType(category_id, type_id)
 
         category_select_data = cont_search.getCategoriesForMultiSelect(conn, video=True)
-
 
         if auto_search != "n" and (query != "" or category_id != []):
             search_clicks = 1
@@ -77,13 +81,17 @@ cont_search.getTypesAdditionFormatCallback(from_video=True)
     State("n_search_query_video", "value"),
 )
 def getVideoSearchResults(current_page, n_clicks, categories, types, query):
+
     if n_clicks == 0:
         return html.Center([html.H5("Пустой поисковый запрос. Повторите снова.")]), 1
     else:
+        global query_global
+        query_global = query
+
         conn = db_connection.getConn()
         current_page -= 1
 
-        page_limit = cont_search.PAGE_LIMIT
+        page_limit = cont_search.PAGE_LIMIT_VIDEO
         offset = current_page * page_limit
 
         counter, query_results = cont_search.getSearchResults(
@@ -119,7 +127,7 @@ def getVideoSearchResults(current_page, n_clicks, categories, types, query):
                             ),
                             videotype_name=cont_search.stringHider(video["type_name"]),
                             video_duration=video["video_duration"],
-                            date=service.get_date_difference(video['created_at']),
+                            date=service.get_date_difference(video["created_at"]),
                             category_id=video["category_id"],
                             type_id=video["type_id"],
                         )

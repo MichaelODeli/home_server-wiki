@@ -20,7 +20,7 @@ def layout(l="n", **other_unknown_query_strings):
             pt="20px",
             gap="xs",
             children=[
-                cont_video.createVideoSearchBar(page="main"),
+                # cont_video.createVideoSearchBar(page="main"),
                 cont_video.createVideoMiniaturesContainer(
                     children=[
                         cont_video.createVideoMiniatureContainer(

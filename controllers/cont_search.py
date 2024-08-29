@@ -3,7 +3,7 @@ import dash_mantine_components as dmc
 
 from controllers import file_manager, db_connection
 
-PAGE_LIMIT = 18
+PAGE_LIMIT_VIDEO = 14
 
 
 def stringHider(name, limiter=35):
