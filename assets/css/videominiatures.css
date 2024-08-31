@@ -10,10 +10,10 @@
     right:0;
 }
 
-.video-link {
+.video-link, .audio-link {
     color: gray;
 }
 
-.video-link:hover {
+.video-link:hover, .audio-link:hover {
     color: var(--bs-highlight-color);
 }

@@ -84,6 +84,7 @@ def layout(l="n", v=None, **other_unknown_query_strings):
         video_link = "http://" + file_data["file_fullway_forweb"]
 
         videoplayer_children = [
+            dmc.Space(),
             dp.DashPlayer(
                 id="player",
                 url=video_link,
@@ -97,6 +98,7 @@ def layout(l="n", v=None, **other_unknown_query_strings):
                     # "max-height": "80% !important",
                 },
             ),
+            dmc.Space(),
             html.H4(
                 video_name,
                 style={"width": "100%"},
@@ -204,7 +206,7 @@ def layout(l="n", v=None, **other_unknown_query_strings):
                         dmc.GridCol(
                             children=dmc.Stack(
                                 videoplayer_children,
-                                className="block-background border mih-100",
+                                className="mih-100",
                                 justify=elements_justify,
                                 # gap='xs'
                             ),
@@ -236,9 +238,9 @@ def layout(l="n", v=None, **other_unknown_query_strings):
                                     ],
                                 )
                             ],
-                            className="block-background border columns-margin adaptive-width",
+                            className="columns-margin adaptive-width",
                             span=3,
-                            style={"overflow": "auto", "height": "89dvh"},
+                            # style={"overflow": "auto", "height": "89dvh"},
                         ),
                     ],
                     # className="gx-3",

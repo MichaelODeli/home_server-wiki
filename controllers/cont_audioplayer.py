@@ -3,6 +3,22 @@ import dash_bootstrap_components as dbc
 from dash_iconify import DashIconify
 from dash import dcc, html
 import pandas as pd
+from psycopg2.extensions import AsIs
+
+
+def getAudioTypes(conn, type_id=None):
+    with conn.cursor() as cursor:
+        cursor.execute(
+            """select * from (select distinct(type_id) from filestorage_mediafiles_summary fms where html_audio_ready)
+                left join (select id as type_id, type_name from filestorage_types) ft using(type_id) %(addition)s;""",
+            {"addition": AsIs(f"WHERE type_id = {type_id}" if type_id else "")},
+        )
+
+        desc = cursor.description
+        column_names = [col[0] for col in desc]
+        data = [dict(zip(column_names, row)) for row in cursor.fetchall()]
+
+    return data
 
 
 def createTable(df):
@@ -16,36 +32,39 @@ def createTable(df):
     return table
 
 
+def getAudioIcon(icon_prefix):
+    audioplayer_icons = {
+        "playlist": "material-symbols:playlist-play",
+        "genre": "material-symbols:genres",
+        "artist": "material-symbols:artist",
+        "home": "material-symbols:home",
+        "search": "material-symbols:search",
+        "catalogs": "material-symbols:folder-open",
+    }
+
+    return DashIconify(
+        icon=audioplayer_icons[icon_prefix],
+        width=25,
+        style={"margin-right": "5px"},
+    )
+
+
 def getButtonGroupWithIcons(lst):
     """
     Вывод вертикальной группы с кнопками и иконками.
-    Формат вложенного списка: [[button_text, button_icon_name, button_id], ...]
+    Формат вложенного списка: [[button_text, button_icon_name, button_id, add_icon, disbled_button], ...]
     """
     buttons_list = []
     for element in lst:
         button_text = element[0]
         button_icon_name = element[1]
         button_id = element[2]
-        if button_icon_name == "playlist":
-            icon_name = "material-symbols:playlist-play"
-        elif button_icon_name == "genre":
-            icon_name = "material-symbols:genres"
-        elif button_icon_name == "artist":
-            icon_name = "material-symbols:artist"
-        elif button_icon_name == "home":
-            icon_name = "material-symbols:home"
-        elif button_icon_name == "search":
-            icon_name = "material-symbols:search"
-        elif button_icon_name == "catalogs":
-            icon_name = "material-symbols:folder-open"
+        add_icon = element[3]
+        disbled_button = element[4]
+        if add_icon:
+            icon = getAudioIcon(button_icon_name)
         else:
-            icon_name = None
-
-        icon = (
-            DashIconify(icon=icon_name, width=25, style={"margin-right": "5px"})
-            if icon_name != None
-            else None
-        )
+            icon = None
 
         buttons_list.append(
             dbc.Button(
@@ -54,13 +73,14 @@ def getButtonGroupWithIcons(lst):
                 color="secondary",
                 style={"display": "flex", "align-items": "start"},
                 id=button_id,
-                class_name='border white-primary-outline-button'
+                class_name="border white-primary-outline-button",
+                disabled=disbled_button,
             )
         )
     return dbc.ButtonGroup(buttons_list, vertical=True)
 
 
-def audioLeftColumn(source):
+def audioLeftColumn(source, conn):
     if source != "col" and source != "drawer":
         raise ValueError
 
@@ -68,22 +88,46 @@ def audioLeftColumn(source):
         [
             getButtonGroupWithIcons(
                 [
-                    ["Главная", "home", "audioplayer_mainpage"],
-                    ["Поиск музыки", "search", "audioplayer_search"],
-                    ["Каталоги музыки", "catalogs", "audioplayer_catalogs"],
+                    [
+                        "Главная",
+                        "home",
+                        {"type": f"audio-playlist-btn-home", "id": 1},
+                        True,
+                        False,
+                    ],
+                    [
+                        "Поиск музыки",
+                        "search",
+                        {"type": f"audio-playlist-btn-search", "id": 1},
+                        True,
+                        False,
+                    ],
                 ]
             ),
-            dmc.Divider(color="--bs-blue"),
             html.H5("Медиатека"),
-            getButtonGroupWithIcons(
-                [
-                    ["Любимые треки", "playlist", "id_1"],
-                    ["My favourite rock", "playlist", "id_2"],
-                    ["AC/DC", "artist", "id_3"],
-                    ["Rammstein", "artist", "id_4"],
-                    ["Рок", "genre", "id_5"],
-                    ["Хаус", "genre", "id_6"],
-                ]
+            dbc.ButtonGroup(
+                children=[
+                    dbc.Button(
+                        children=[
+                            DashIconify(
+                                icon="material-symbols:playlist-play",
+                                width=25,
+                                style={"margin-right": "5px"},
+                            ),
+                            audio_type["type_name"],
+                        ],
+                        outline=True,
+                        color="secondary",
+                        style={"display": "flex", "align-items": "start"},
+                        id={
+                            "type": f"audio-playlist-btn-{source}",
+                            "id": audio_type["type_id"],
+                        },
+                        class_name="border white-primary-outline-button",
+                    )
+                    for audio_type in getAudioTypes(conn)
+                ],
+                vertical=True,
             ),
         ]
     )
@@ -91,14 +135,14 @@ def audioLeftColumn(source):
     return content
 
 
-def getDrawer():
+def getDrawer(conn):
     return dmc.Drawer(
-        children=[audioLeftColumn(source="drawer")],
+        children=[audioLeftColumn(source="drawer", conn=conn)],
         title=html.H5("Аудиоплеер"),
         id="drawer-albums",
         padding="md",
         zIndex=10000,
-        style={'overflow-y': 'auto'}
+        style={"overflow-y": "auto"},
     )
 
 
@@ -113,7 +157,7 @@ def floatPlayer():
                                 DashIconify(
                                     icon="iconamoon:menu-burger-horizontal",
                                     width=35,
-                                    color="var(--bs-primary)",
+                                    # color="var(--bs-primary)",
                                 ),
                                 size="40px",
                                 radius="md",
@@ -130,7 +174,7 @@ def floatPlayer():
                                 html.P(
                                     "Название песни",
                                     className="text-default",
-                                    style={"margin-bottom": 0, 'font-weight': 'bold'},
+                                    style={"margin-bottom": 0, "font-weight": "bold"},
                                     id="song-name",
                                 ),
                                 html.P(
@@ -154,64 +198,64 @@ def floatPlayer():
                                             dbc.Button(
                                                 DashIconify(
                                                     icon="material-symbols:shuffle",
-                                                    width=30,
+                                                    width=25,
                                                 ),
                                                 size="20px",
                                                 color="secondary",
                                                 outline=True,
                                                 id="control-shuffle",
-                                                className='hided_element control-button',
+                                                className="hided_element control-button",
                                             ),
                                             dbc.Button(
                                                 DashIconify(
                                                     icon="material-symbols:skip-previous",
-                                                    width=30,
+                                                    width=25,
                                                 ),
                                                 size="20px",
                                                 color="secondary",
                                                 outline=True,
                                                 id="control-prev",
-                                                className='control-button',
+                                                className="control-button",
                                             ),
                                             dbc.Button(
                                                 DashIconify(
                                                     icon="material-symbols:play-pause",
-                                                    width=40,
-                                                    id='playpause-icon'
+                                                    width=25,
+                                                    id="playpause-icon",
                                                 ),
                                                 size="20px",
                                                 color="secondary",
                                                 outline=True,
                                                 id="control-playpause",
-                                                className='control-button',
+                                                className="control-button",
                                             ),
                                             dbc.Button(
                                                 DashIconify(
                                                     icon="material-symbols:skip-next",
-                                                    width=30,
+                                                    width=25,
                                                 ),
                                                 size="20px",
                                                 color="secondary",
                                                 outline=True,
                                                 id="control-next",
-                                                className='control-button',
+                                                className="control-button",
                                             ),
                                             dbc.Button(
                                                 DashIconify(
                                                     icon="material-symbols:repeat",
-                                                    width=30,
-                                                    id='loop-icon'
+                                                    width=25,
+                                                    id="loop-icon",
                                                 ),
                                                 size="20px",
                                                 color="secondary",
                                                 outline=True,
                                                 id="control-repeat",
-                                                className='hided_element control-button'
+                                                className="hided_element control-button",
                                             ),
                                         ],
-                                        align='center',
+                                        align="center",
                                         style={"justify-content": "center"},
-                                        gap='xs'
+                                        gap="xs",
                                     ),
                                     dmc.Group(
                                         [
@@ -226,12 +270,16 @@ def floatPlayer():
                                                 showLabelOnHover=False,
                                                 # disabled=True
                                             ),
-                                            html.P("59:59", id="audio-full-time", className='hided_element'),
+                                            html.P(
+                                                "59:59",
+                                                id="audio-full-time",
+                                                className="hided_element",
+                                            ),
                                         ],
                                         gap="sm",
-                                        align='center',
+                                        align="center",
                                         style={"justify-content": "center"},
-                                    )
+                                    ),
                                 ]
                             ),
                         ],
@@ -243,13 +291,13 @@ def floatPlayer():
                                 DashIconify(
                                     icon="material-symbols:volume-up",
                                     width=30,
-                                    id='muted-icon'
+                                    id="muted-icon",
                                 ),
                                 size="20px",
                                 color="secondary",
                                 outline=True,
                                 id="volume-muted",
-                                class_name='control-button border border-0'
+                                class_name="control-button border border-0 no-box-shadow",
                             ),
                             dmc.Slider(
                                 min=0,
@@ -259,7 +307,7 @@ def floatPlayer():
                                 w="120px",
                                 color="gray.7",
                                 thumbLabel="Громкость",
-                                updatemode='drag'
+                                updatemode="drag",
                             ),
                         ],
                         span="content",
@@ -268,11 +316,9 @@ def floatPlayer():
                     ),
                 ],
                 align="center",
-                justify='center'
+                justify="center",
             )
         ],
-        style={
-            "min-height": "70px",
-        },
+        style={"min-height": "70px", "background-color": "var(--bs-body-bg)"},
         className="block-background-float",
     )

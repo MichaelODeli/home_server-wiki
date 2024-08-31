@@ -64,13 +64,12 @@ def layout(l="n", **kwargs):
                                                     button_icon="material-symbols:sync",
                                                     button_title="Обновить список",
                                                     button_id="torrent-update",
-                                                    disabled=False,
                                                 ),
                                                 service.getButtonWithIcon(
                                                     button_icon="material-symbols:add",
                                                     button_title="Добавить торрент",
                                                     button_id="torrent-add",
-                                                    # disabled=True,
+                                                    disabled=True,
                                                 ),
                                                 service.getButtonWithIcon(
                                                     button_icon="material-symbols:play-pause",
