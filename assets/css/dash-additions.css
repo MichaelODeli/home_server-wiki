@@ -7,3 +7,7 @@
 .dash-debug-menu__outer, .dash-debug-menu {
     display: none !important;
 }
+
+:root[data-mantine-color-scheme='dark'] {
+    --mantine-color-body: var(--bs-body-bg);
+}

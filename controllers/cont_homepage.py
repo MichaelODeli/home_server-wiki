@@ -139,15 +139,11 @@ def widgetDiskSize(**kwargs):
     **kwargs: любое количество ключевых аргументов.
 
     Возвращает:
-    dbc.Card: карточка с информацией о свободном месте на дисках.
+    dmc.Card: карточка с информацией о свободном месте на дисках.
     """
-    return dbc.Card(
+    return dmc.Card(
         [
-            html.H5(
-                "Свободное место на разделах",
-                style={"text-align": "center"},
-                className="card-title",
-            ),
+            dmc.Text("Свободное место на разделах", size="xl", ta="center"),
             dmc.Space(h=10),
             html.Table([getDriveSize(part) for part in psutil.disk_partitions()]),
             dmc.Space(h=10),
@@ -222,15 +218,11 @@ def widgetWeather(**kwargs):
     **kwargs: любое количество ключевых аргументов.
 
     Возвращает:
-    dbc.Card: карточка с информацией о погоде.
+    dmc.Card: карточка с информацией о погоде.
     """
-    return dbc.Card(
+    return dmc.Card(
         [
-            html.H5(
-                "Погода в г. Среднеуральск",
-                style={"text-align": "center"},
-                className="card-title",
-            ),
+            dmc.Text("Погода в г. Екатеринбург", size="xl", ta="center"),
             dmc.Space(h=5),
             dmc.Group(
                 [
@@ -242,11 +234,9 @@ def widgetWeather(**kwargs):
                 ],
                 justify="center",
                 gap="xs",
-                # style={'display': 'inline-flex', 'flex-direction': 'column'}
             ),
         ],
         className="block-background mobile-block",
-        # style={"min-height": "100%"},
     )
 
 
@@ -260,9 +250,9 @@ def widgetTorrents():
     qbt_ip = settings["apps.torrents.qbittorrent_ip"]
     qbt_port = settings["apps.torrents.qbittorrent_port"]
 
-    return dbc.Card(
+    return dmc.Card(
         [
-            html.H5("Мониторинг торрентов", className="card-title"),
+            dmc.Text("Мониторинг торрентов", size="xl", ta="center"),
             dmc.Space(h=10),
             dmc.Stack(
                 [
@@ -299,19 +289,19 @@ def widgetSysteminfo():
     Нет аргументов.
 
     Возвращает:
-    dbc.Card: карточка с информацией о системе.
+    dmc.Card: карточка с информацией о системе.
     """
 
     cpu_usage = int(psutil.cpu_percent(interval=0.1))
-    return dbc.Card(
+    return dmc.Card(
         [
-            html.H5("Системный монитор", className="card-title"),
+            dmc.Text("Системный монитор", size="xl", ta="center"),
             dmc.Space(h=10),
             dmc.Group(
                 [
                     dmc.Stack(
                         [
-                            dmc.Text("CPU", ta="center", fw=700),
+                            dmc.Text("CPU", ta="center", fw=500),
                             dmc.RingProgress(
                                 sections=[
                                     {
@@ -333,7 +323,7 @@ def widgetSysteminfo():
                     ),
                     dmc.Stack(
                         [
-                            dmc.Text("RAM", ta="center", fw=700),
+                            dmc.Text("RAM", ta="center", fw=500),
                             dmc.RingProgress(
                                 sections=[
                                     {
@@ -357,7 +347,7 @@ def widgetSysteminfo():
                     ),
                     dmc.Stack(
                         [
-                            dmc.Text("SWAP", ta="center", fw=700),
+                            dmc.Text("SWAP", ta="center", fw=500),
                             dmc.RingProgress(
                                 sections=[
                                     {

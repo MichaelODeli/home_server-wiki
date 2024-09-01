@@ -142,15 +142,15 @@ def createVideoSearchBar(
 
     search_form = dmc.Group(
         [
-            dbc.Input(
+            dmc.TextInput(
                 placeholder="Введите запрос",
-                class_name="w-100",
+                className="w-100",
                 value=input_value,
                 id="n_search_query_video",
                 name="query",
             ),
-            dbc.Input(type="hidden", value="y", name="l"),
-            dbc.Input(type="hidden", value="y", name="auto_search"),
+            dmc.TextInput(display="none", value="y", name="l"),
+            dmc.TextInput(display="none", value="y", name="auto_search"),
             dbc.Button(
                 "Поиск",
                 id="n_search_button_video",

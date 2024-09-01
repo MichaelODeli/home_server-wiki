@@ -34,44 +34,54 @@ theme_switch = html.Div(
 # кнопки навбара
 navbar_items_dict = cont_header.getHeaderLinks(conn=db_connection.getConn())
 navbar_buttons = [
-    dbc.DropdownMenu(
-        label=header_group["header_group_name"],
-        nav=True,
-        in_navbar=True,
-        children=list(  # nested list for simple list
-            chain(
-                *[
-                    [dbc.DropdownMenuItem(key, header=True)]  # header
-                    + [
-                        dbc.DropdownMenuItem(
-                            data["link_name"],
-                            href=data["link_href"],
-                        )
-                        for data in header_group["header_group_content"][
-                            key
-                        ]  # data inside dict
-                    ]
-                    + [
-                        dbc.DropdownMenuItem(divider=True),
-                    ]
-                    for key in header_group["header_group_content"].keys()
-                ]
-            )
-        )[:-1],
+    dmc.Menu(
+        [
+            dmc.MenuTarget(
+                dmc.Button(
+                    dmc.Text(header_group["header_group_name"], fw=400),
+                    variant="subtle",
+                    rightSection=DashIconify(icon="gridicons:dropdown", width=20),
+                )
+            ),
+            dmc.MenuDropdown(
+                list(  # nested list for simple list
+                    chain(
+                        *[
+                            [
+                                dmc.MenuLabel(key),
+                            ]  # header
+                            + [
+                                dmc.MenuItem(
+                                    data["link_name"],
+                                    href=data["link_href"],
+                                )
+                                for data in header_group["header_group_content"][
+                                    key
+                                ]  # data inside dict
+                            ]
+                            + [
+                                dmc.MenuDivider(),
+                            ]
+                            for key in header_group["header_group_content"].keys()
+                        ]
+                    )
+                )[:-1]
+            ),
+        ],
+        trigger="hover",
     )
     for header_group in navbar_items_dict
 ]
 navbar_buttons_video = dmc.Menu(
     [
         dmc.MenuTarget(
-            dbc.Button(
-                "Ссылки ▾",
-                outline=True,
-                color="link",
-                class_name="dropdown nav-item td-none no-box-shadow m-0",
+            dmc.Button(
+                dmc.Text("Ссылки", fw=400),
+                variant="subtle",
+                rightSection=DashIconify(icon="gridicons:dropdown", width=20),
             )
         ),
-        dmc.MenuDropdown(dmc.Group(navbar_buttons), p="sm"),
+        dmc.MenuDropdown(dmc.Group(navbar_buttons, gap="xs"), p="sm"),
     ]
 )
 
@@ -81,20 +91,24 @@ def getSearchBar(search_target="/search", from_video=False):
     search_placeholder = "Поиск" if not from_video else "Поиск по видео"
     return html.Form(
         children=[
-            dbc.Row(
+            dmc.Grid(
                 [
-                    dbc.Col(
+                    dmc.GridCol(
                         [
-                            dbc.Input(
+                            dmc.TextInput(
                                 name="query",
                                 placeholder=search_placeholder,
-                                step="any",
                             ),
-                            dbc.Input(type="hidden", value="y", name="l"),
-                            dbc.Input(type="hidden", value="y", name="auto_search"),
-                        ]
+                            dmc.TextInput(display="none", value="y", name="l"),
+                            dmc.TextInput(
+                                display="none", value="y", name="auto_search"
+                            ),
+                        ],
+                        span="auto",
                     ),
-                    dbc.Col([dbc.Button("Найти", className="ms-2")], width="auto"),
+                    dmc.GridCol(
+                        [dbc.Button("Найти", className="ms-2")], span="content"
+                    ),
                 ],
             )
         ],
@@ -115,7 +129,7 @@ def renderNavbar(from_video=False, from_search=False):
         if not from_search
         else None
     )
-    navbar_items_mobile = dmc.Group(navbar_buttons + [search_bar])
+    navbar_items_mobile = dmc.Group(navbar_buttons + [search_bar], gap="xs")
 
     return [
         dmc.Grid(
@@ -127,7 +141,7 @@ def renderNavbar(from_video=False, from_search=False):
                 ),
                 dmc.GridCol(
                     None,
-                    span=2,
+                    span=1,
                     className="adaptive-hide",
                 ),
                 dmc.GridCol(
@@ -137,11 +151,15 @@ def renderNavbar(from_video=False, from_search=False):
                 ),
                 dmc.GridCol(
                     None,
-                    span=2,
+                    span=1,
                     className="adaptive-hide",
                 ),
                 dmc.GridCol(
-                    (navbar_buttons_video if from_video else dmc.Group(navbar_buttons)),
+                    (
+                        navbar_buttons_video
+                        if from_video
+                        else dmc.Group(navbar_buttons, gap=0)
+                    ),
                     span="content",
                     className="adaptive-hide",
                 ),
@@ -157,7 +175,6 @@ def renderNavbar(from_video=False, from_search=False):
                     id="navbar-collapse",
                     is_open=False,
                     navbar=True,
-                    # className="adaptive-show block-background rounded",
                     className="adaptive-show p-2",
                     style={"background-color": "var(--bs-body-bg) !important"},
                 ),

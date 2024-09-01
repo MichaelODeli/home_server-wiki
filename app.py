@@ -1,11 +1,9 @@
 import dash
 from dash import dcc, html, Output, Input, State, clientside_callback, no_update
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import dash_bootstrap_components as dbc
-from dash_extensions import Purify
 from dash_extensions.pages import setup_page_components
-from controllers import db_connection, cont_homepage
+from controllers import db_connection
 from views import header
 
 # from config import *
@@ -15,6 +13,7 @@ import os
 
 
 dash._dash_renderer._set_react_version("18.2.0")
+
 
 # css styles
 icons_link = [
@@ -57,7 +56,6 @@ app = dash.Dash(
     update_title=config["WEB_PAGE_LOADING_TITLE"],
     suppress_callback_exceptions=True,
 )
-app.config.suppress_callback_exceptions = True
 
 
 # Конструкция всего макета
@@ -67,12 +65,11 @@ app.layout = dmc.MantineProvider(
             [
                 dmc.AppShellHeader(
                     children="",
-                    # children=header.renderNavbar(),
-                    # className="rounded border-bottom",
                     id="navbar-children",
                     px=25,
                     py=10,
                     w="100dvw",
+                    zIndex=100,
                 ),
                 dmc.AppShellMain(
                     [
@@ -86,18 +83,18 @@ app.layout = dmc.MantineProvider(
                         ),
                     ],
                     className="pt-5",
+                    id="server-blocker",
                 ),
+                dmc.AppShellNavbar(zIndex=10, id='appshell-navbar', children=[]),
             ],
-            # miw="100%",
-            # mih="100%",
-            id="server-blocker",
-            # p=0,
-            # header={"height": 50},
+            header={"height": {"sm": None, "md": 60}},
+            id='appshell-props'
         ),
         dmc.NotificationProvider(position="bottom-right"),
         setup_page_components(),
         html.Div(id="notifications-container-search"),
         dcc.Store(id="server-avaliablity"),
+        dcc.Location(id="url-audio"),
         dcc.Location(id="url"),
         html.Div(id="dummy-1"),
     ],
@@ -175,7 +172,7 @@ def headerFormat(pathname):
             navbar_children = header.renderNavbar(from_video=True, from_search=True)
         else:
             navbar_children = header.renderNavbar(from_video=True)
-    elif pathname == '/search':
+    elif pathname == "/search":
         navbar_children = header.renderNavbar(from_search=True)
     else:
         navbar_children = header.renderNavbar()
@@ -187,8 +184,8 @@ dev = bool(config["APP_DEBUG_ENABLED"])
 
 if __name__ == "__main__":
     if dev:
-        app.run_server(
-            debug=True, host=config["APP_HOST"], port=int(config["APP_PORT"])
+        app.run(
+            debug=True, host=config["APP_HOST"], port=int(config["APP_PORT"]), dev_tools_props_check=False
         )
     else:
         from waitress import serve

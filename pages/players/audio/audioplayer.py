@@ -11,26 +11,28 @@ from dash import (
     no_update,
     ALL,
     ctx,
+    callback_context,
 )
 from dash.exceptions import PreventUpdate
 import dash_mantine_components as dmc
 import dash_bootstrap_components as dbc
-from dash_extensions import Purify
 from dash_iconify import DashIconify
 from flask import request
-from datetime import datetime
-import pandas as pd
-from controllers import cont_audioplayer as cont_a
-from controllers import service_controller as service
-from controllers import cont_search as cont_s
-from controllers import cont_media as cont_m
-from controllers import db_connection, file_manager
+from controllers import (
+    cont_audioplayer as cont_a,
+    service_controller as service,
+    cont_search as cont_s,
+    cont_media as cont_m,
+    db_connection,
+    file_manager,
+)
+from views import v_audioplayer
 import dash_player
 
 register_page(__name__, path="/players/audio", icon="fa-solid:home")
 
 
-def layout(l="n", selected_playlist_name="Главная", **kwargs):
+def layout(l="n", playlist_id=0, artist_id=0, album_id=0, **kwargs):
     # lazy load block
     if l == "n":
         return dmc.Container()
@@ -39,165 +41,79 @@ def layout(l="n", selected_playlist_name="Главная", **kwargs):
 
         conn = db_connection.getConn()
 
-        return dmc.Container(
+        if playlist_id == 0 and artist_id == 0 and album_id == 0:
+            page_name = "Главная"
+            page_content = v_audioplayer.renderMainPage()
+        else:
+            if playlist_id != 0 and artist_id == 0 and album_id == 0:
+                page_name = "Какой-то плейлист"
+                page_content = v_audioplayer.renderPlaylistPage()
+            elif artist_id != 0 and playlist_id == 0 and album_id == 0:
+                page_name = "Какой-то исполнитель"
+                page_content = v_audioplayer.renderArtistPage()
+            elif album_id != 0 and playlist_id == 0 and artist_id == 0:
+                page_name = "Какой-то альбом"
+                page_content = v_audioplayer.renderAlbumPage()
+            else:
+                page_name = ""
+                page_content = html.Center(html.H6("Ошибка идентификатора."))
+
+        return dmc.AppShell(
             children=[
-                dash_player.DashPlayer(
-                    id="audio-player",
-                    url="https://www.youtube.com/watch?v=4xnsmyI5KMQ&t=1s",
-                    width="0",
-                    height="0",
-                    style={"display": "none"},
-                    intervalCurrentTime=500,
-                    volume=20,
+                dmc.AppShellNavbar(
+                    cont_a.audioLeftColumn(source="col", conn=conn),
+                    className="border-end-0",
                 ),
-                dmc.Space(),
-                dbc.Row(
+                dmc.AppShellMain(
                     [
-                        dbc.Col(
+                        dash_player.DashPlayer(
+                            id="audio-player",
+                            url="https://www.youtube.com/watch?v=4xnsmyI5KMQ&t=1s",
+                            width="0",
+                            height="0",
+                            style={"display": "none"},
+                            intervalCurrentTime=500,
+                            volume=20,
+                        ),
+                        dmc.Space(),
+                        dmc.Stack(
                             [
-                                dmc.Stack(
-                                    [
-                                        cont_a.audioLeftColumn(source="col", conn=conn),
-                                    ],
-                                )
+                                html.H3(
+                                    page_name,
+                                    style={"margin-bottom": "0 !important"},
+                                    id="audioplayer-playlist-name",
+                                ),
+                                dmc.Space(),
+                                dmc.Group(id="audio-playlist-description"),
+                                dmc.ScrollArea(
+                                    children=page_content,
+                                    # className="w-100 overflow-auto",
+                                    id="audioplayer-children",
+                                    pb='sm',
+                                    h='70dvh',
+                                    offsetScrollbars=True
+                                ),
                             ],
-                            className="hided_column",
-                            width=3,
+                            gap="xs",
                         ),
-                        dbc.Col(
-                            [
-                                html.Div(
-                                    style={"height": "500px"},
-                                    children=[
-                                        dmc.Stack(
-                                            [
-                                                html.H3(
-                                                    selected_playlist_name,
-                                                    style={
-                                                        "margin-bottom": "0 !important"
-                                                    },
-                                                    id="audioplayer-playlist-name",
-                                                ),
-                                                dmc.Space(),
-                                                dmc.Group(
-                                                    id="audio-playlist-description"
-                                                ),
-                                                html.Div(
-                                                    dmc.Table(
-                                                        # hover=True,
-                                                        children=[
-                                                            dmc.TableThead(
-                                                                dmc.TableTr(
-                                                                    [
-                                                                        dmc.TableTh(
-                                                                            className="min-column-width px-2",
-                                                                        ),
-                                                                        dmc.TableTh(
-                                                                            className="min-column-width px-2",
-                                                                        ),
-                                                                        dmc.TableTh(
-                                                                            "Название",
-                                                                            className="px-2",
-                                                                        ),
-                                                                        dmc.TableTh(
-                                                                            "Альбом",
-                                                                            className="px-2 adaptive-hide",
-                                                                        ),
-                                                                        dmc.TableTh(
-                                                                            "Загружено",
-                                                                            className="min-column-width px-2 adaptive-hide",
-                                                                        ),
-                                                                        dmc.TableTh(
-                                                                            "🕑",
-                                                                            className="min-column-width px-2 center-content",
-                                                                        ),
-                                                                    ]
-                                                                ),
-                                                                className="sticky-th",
-                                                            ),
-                                                            dmc.TableTbody(
-                                                                className="audio-content",
-                                                                children=[
-                                                                    dmc.TableTr(
-                                                                        [
-                                                                            dmc.TableTd(
-                                                                                dmc.ActionIcon(
-                                                                                    radius="xl",
-                                                                                    children=DashIconify(
-                                                                                        icon="mdi:play"
-                                                                                    ),
-                                                                                ),
-                                                                                className="min-column-width p-2",
-                                                                            ),
-                                                                            dmc.TableTd(
-                                                                                dmc.Avatar(
-                                                                                    radius="sm"
-                                                                                ),
-                                                                                className="min-column-width p-2",
-                                                                            ),
-                                                                            dmc.TableTd(
-                                                                                dmc.Stack(
-                                                                                    [
-                                                                                        dmc.Text(
-                                                                                            "Название трека"
-                                                                                        ),
-                                                                                        html.A(
-                                                                                            "Исполнитель",
-                                                                                            className="audio-link w-content",
-                                                                                            href="#",
-                                                                                        ),
-                                                                                    ],
-                                                                                    gap=0,
-                                                                                ),
-                                                                                className="p-2",
-                                                                            ),
-                                                                            dmc.TableTd(
-                                                                                html.A(
-                                                                                    "Альбом",
-                                                                                    className="audio-link w-content",
-                                                                                    href="#",
-                                                                                ),
-                                                                                className="p-2 adaptive-hide",
-                                                                            ),
-                                                                            dmc.TableTd(
-                                                                                "Вчера",
-                                                                                className="min-column-width p-2 adaptive-hide",
-                                                                            ),
-                                                                            dmc.TableTd(
-                                                                                "3:15",
-                                                                                className="min-column-width p-2",
-                                                                            ),
-                                                                        ]
-                                                                    )
-                                                                ]
-                                                                * 20,
-                                                            ),
-                                                        ],
-                                                        className="w-100 no-box-shadow",
-                                                        highlightOnHover=True,
-                                                    ),
-                                                    className="w-100 overflow-auto pb-5",
-                                                    style={"max-height": "78dvh"},
-                                                ),
-                                            ],
-                                            gap="xs",
-                                        )
-                                    ],
-                                )
-                            ]
-                        ),
-                    ]
+                        cont_a.getDrawer(conn),
+                    ],
+                    className="ps-3 pt-1 border-start overflow-hidden no-border-mobile",
+                    mah='calc(100dvh - var(--app-shell-header-height) - 10px) !important',
+                    mih='calc(100dvh - var(--app-shell-header-height) - 10px) !important',
                 ),
-                dmc.Affix(
-                    children=[cont_a.floatPlayer()],
-                    style={"width": "100%"},
-                ),
-                cont_a.getDrawer(conn),
+                dmc.AppShellFooter(cont_a.floatPlayer()),
             ],
+            navbar={
+                "width": 300,
+                "breakpoint": "sm",
+                "collapsed": {"mobile": True},
+            },
+            footer={"height": "auto"},
             pt=20,
-            className="dmc-container adaptive-container",
+            className="adaptive-container",
             id="dummy-3",
-            mah="90dvh",
+            # mah="90dvh",
         )
 
 
@@ -291,24 +207,36 @@ def playerVolume(currentTime, duration):
     Output("audioplayer-playlist-name", "children"),
     Output("drawer-albums", "opened"),
     Output("audio-playlist-description", "children"),
+    Output("audioplayer-children", "children"),
     Input({"type": "audio-playlist-btn-col", "id": ALL}, "n_clicks"),
     Input({"type": "audio-playlist-btn-drawer", "id": ALL}, "n_clicks"),
     Input({"type": "audio-playlist-btn-home", "id": ALL}, "n_clicks"),
     Input({"type": "audio-playlist-btn-search", "id": ALL}, "n_clicks"),
-    State({"type": "audio-playlist-btn-drawer", "id": ALL}, "id"),
-    State("drawer-albums", "opened"),
+    State({"type": "audio-playlist-btn-col", "id": ALL}, "id"),
+    State("url", "pathname"),
     prevent_initial_call=True,
 )
-def buttonsVerify(
-    n_clicks_col, n_clicks_drawer, n_clicks_home, n_clicks_search, button_ids, opened
+def selectPlaylistFromLeftsideRow(
+    n_clicks_col, n_clicks_drawer, n_clicks_home, n_clicks_search, button_ids, pathname
 ):
+
     types_ids = [i["id"] for i in button_ids]
+
+    if (
+        n_clicks_col == [None] * len(n_clicks_col)
+        and n_clicks_drawer == [None] * len(n_clicks_drawer)
+        and n_clicks_home == [None] * len(n_clicks_home)
+        and n_clicks_search == [None] * len(n_clicks_search)
+    ):
+        raise PreventUpdate
 
     description = None
     if ctx.triggered_id["type"] == "audio-playlist-btn-home":
         page_name = "Главная"
+        player_children = [v_audioplayer.renderMainPage()]
     elif ctx.triggered_id["type"] == "audio-playlist-btn-search":
         page_name = "Поиск"
+        player_children = [v_audioplayer.renderSearchPage()]
     else:
         description = [
             dmc.Badge("1250 треков", variant="light"),
@@ -325,10 +253,13 @@ def buttonsVerify(
         conn = db_connection.getConn()
         page_name = cont_a.getAudioTypes(conn, type_id=selected_type)[0]["type_name"]
 
+        player_children = v_audioplayer.renderPlaylistPage()
+
     return (
         [None] * len(n_clicks_col),
         [None] * len(n_clicks_drawer),
         page_name,
         False,
         description,
+        player_children,
     )

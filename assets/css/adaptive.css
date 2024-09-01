@@ -33,6 +33,10 @@
   .adaptive-container {
     max-width: 100% !important;
   }
+
+  .no-border-mobile {
+    border: 0 !important;
+  }
 }
 
 /* show on mobile */
