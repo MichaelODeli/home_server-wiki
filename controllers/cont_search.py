@@ -1,7 +1,8 @@
 from dash import html, callback, Output, Input, State, no_update
 import dash_mantine_components as dmc
+from dash_iconify import DashIconify
 
-from controllers import file_manager, db_connection
+from controllers import file_manager, db_connection, service_controller
 
 PAGE_LIMIT_VIDEO = 14
 
@@ -40,7 +41,12 @@ def getLinkToFile(mode, file_dict):
     else:
         pass
 
-    return html.A(stringHider(file_dict["file_name"]), href=file_href, target="_blank")
+    return service_controller.dmcButtonLink(
+        button_label="Открыть",
+        href=file_href,
+        target="_blank",
+        button_right_icon="mdi:external-link",
+    )
 
 
 def formatSearchResults(query_results, mediafiles_links_format):
@@ -55,9 +61,16 @@ def formatSearchResults(query_results, mediafiles_links_format):
     rows = [
         dmc.TableTr(
             [
-                dmc.TableTd(element["category_name"]),
+                dmc.TableTd(element["category_name"], className="min-column-width"),
                 dmc.TableTd(element["type_name"]),
-                dmc.TableTd(getLinkToFile(mediafiles_links_format, element)),
+                dmc.TableTd(
+                    getLinkToFile(mediafiles_links_format, element),
+                    className="min-column-width",
+                ),
+                dmc.TableTd(
+                    stringHider(element["file_name"], limiter=80),
+                    className="text-truncate",
+                ),
             ]
         )
         for element in query_results
@@ -66,9 +79,10 @@ def formatSearchResults(query_results, mediafiles_links_format):
     head = dmc.TableThead(
         dmc.TableTr(
             [
-                dmc.TableTh("Категория", className="sticky-th"),
+                dmc.TableTh("Категория", className="sticky-th min-column-width"),
                 dmc.TableTh("Тип", className="sticky-th"),
-                dmc.TableTh("Файл", className="sticky-th"),
+                dmc.TableTh("", className="sticky-th min-column-width"),
+                dmc.TableTh("Имя файла", className="sticky-th"),
             ]
         )
     )
@@ -97,7 +111,6 @@ def getSearchAccordion(category_id, type_id, category_select_data, from_video=Fa
                     dmc.AccordionControl(
                         dmc.Text(
                             "Дополнительные параметры",
-                            c="var(--bs-body-color)",
                         )
                     ),
                     dmc.AccordionPanel(
@@ -366,7 +379,7 @@ def getCategoriesForMultiSelect(conn, video=False):
             "value": str(i["category_id"]),
         }
         for i in file_manager.getCategories(conn)
-        if i["main_mime_type_id"] == 9 and video
+        if (i["main_mime_type_id"] == 9 and video) or not video
     ]
 
     return category_select_data

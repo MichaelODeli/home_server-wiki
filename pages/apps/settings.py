@@ -35,14 +35,14 @@ def layout(l="n", tab="server_info", **kwargs):
                 [
                     dmc.TabsList(
                         [
-                            dmc.TabsTab(html.H6("Основные настройки"), value="main"),
-                            dmc.TabsTab(html.H6("Менеджер файлов"), value="files"),
+                            dmc.TabsTab(dmc.Title("Основные настройки", order=5), value="main"),
+                            dmc.TabsTab(dmc.Title("Менеджер файлов", order=5), value="files"),
                             dmc.TabsTab(
-                                html.H6("Настройка виджетов и приложений"),
+                                dmc.Title("Настройка виджетов и приложений", order=5),
                                 value="widgets",
                             ),
                             dmc.TabsTab(
-                                html.H6("Свойства системы"), value="server_info"
+                                dmc.Title("Свойства системы", order=5), value="server_info"
                             ),
                         ],
                         grow=True,
@@ -72,7 +72,7 @@ def renderContent(active, test=True):
     if active == "files":
         return dmc.Stack(
             [
-                html.H5("Каталоги"),
+                dmc.Title("Каталоги", order=4),
                 dmc.TextInput(
                     label="Родительский каталог с папками",
                     style={"width": 250},
@@ -92,9 +92,9 @@ def renderContent(active, test=True):
                     id="settings-catalog-depth",
                     disabled=True,
                 ),
-                dbc.Button("Сохранить", style={"width": "min-content"}, disabled=True),
+                dmc.Button("Сохранить", style={"width": "min-content"}, disabled=True),
                 dmc.Divider(variant="solid"),
-                html.H5("Обновление библиотеки"),
+                dmc.Title("Обновление библиотеки", order=4),
                 dmc.NumberInput(
                     label="Интервал обновления базы",
                     description="Указана периодичность в днях",
@@ -104,9 +104,9 @@ def renderContent(active, test=True):
                     id="settings-catalog-update_interval",
                     disabled=True,
                 ),
-                dbc.Button("Сохранить", style={"width": "min-content"}, disabled=True),
+                dmc.Button("Сохранить", style={"width": "min-content"}, disabled=True),
                 dmc.Divider(variant="solid"),
-                html.H5("Категории"),
+                dmc.Title("Категории", order=4),
                 dmc.MultiSelect(
                     label="Используемые категории файлов",
                     description="Категорией служит название подпапки в родительской папке с файлами. Обратите внимание, папки, у которых в начале стоит нижнее подчеркивание, не будут проанализированы.",
@@ -131,7 +131,7 @@ def renderContent(active, test=True):
                 ),
                 dmc.Group(
                     [
-                        dbc.Button(
+                        dmc.Button(
                             "Сохранить изменения",
                             id="settings-catalog-update_by_categories",
                             style={"width": "max-content"},
@@ -141,41 +141,42 @@ def renderContent(active, test=True):
                     style={"width": "max-content"},
                 ),
                 dmc.Divider(variant="solid"),
-                html.H5("Кнопки управления"),
+                dmc.Title("Кнопки управления", order=4),
                 dmc.Group(
                     [
-                        dbc.Button(
+                        dmc.Button(
                             "Пересканировать библиотеку файлов",
                             id="settings-catalog-manual_update",
                             style={"width": "max-content"},
                             disabled=True,
                         ),
-                        dbc.Button(
+                        dmc.Button(
                             "Пересканировать типы категорий",
                             style={"width": "max-content"},
                             disabled=True,
                         ),
-                        dbc.Button(
+                        dmc.Button(
                             "Пересканировать категории",
                             style={"width": "max-content"},
                             disabled=True,
                         ),
-                        dbc.Button(
+                        dmc.Button(
                             "Сброс базы файлового менеджера",
                             style={"width": "max-content"},
                             disabled=True,
                         ),
-                        dbc.Button(
+                        dmc.Button(
                             "Отключить файловый менеджер",
                             id="settings-catalog-disable_update",
                             style={"width": "max-content"},
                             disabled=True,
                         ),
-                    ]
+                    ],
+                    gap='xs'
                 ),
                 dmc.Divider(variant="solid"),
-                # html.H5("Лог обновления базы"),
-                # dbc.Button(
+                # dmc.Title("Лог обновления базы", order=4),
+                # dmc.Button(
                 #     "Получить лог",
                 #     id="settings-catalog-get_log",
                 #     style={"width": "max-content"},
@@ -185,9 +186,9 @@ def renderContent(active, test=True):
     elif active == "server_info":
         return [
             dmc.Space(h=5),
-            dbc.Table(
+            dmc.Table(
                 [
-                    html.Tbody(
+                    dmc.TableTbody(
                         cont_settings.getSystemInfoRows()
                         + cont_settings.getCPUInfoRows()
                         + cont_settings.getRAMSWARInfoRows()
@@ -195,12 +196,13 @@ def renderContent(active, test=True):
                     ),
                 ],
                 style={"table-layout": "auto", "width": "100%"},
+                className='no-box-shadow'
             ),
         ]
     elif active == "widgets":
         return dmc.Stack(
             [
-                html.H5("Погода"),
+                dmc.Title("Погода", order=4),
                 dmc.Switch(
                     label="Включить",
                     checked=bool(settings["apps.weather.enabled"]),
@@ -213,13 +215,13 @@ def renderContent(active, test=True):
                     value=settings["apps.weather.city"],
                     disabled=True,
                 ),
-                dbc.Button(
+                dmc.Button(
                     "Сохранить",
                     style={"width": "min-content"},
                     disabled=True,
                 ),
                 dmc.Divider(variant="solid"),
-                html.H5("Размеры разделов"),
+                dmc.Title("Размеры разделов", order=4),
                 # dmc.MultiSelect(
                 #     label="Выберите разделы, для которых будут отображаться их размеры на главном экране",
                 #     style={"width": 400},
@@ -231,13 +233,13 @@ def renderContent(active, test=True):
                     checked=bool(settings["apps.drives_monitor.enabled"]),
                     disabled=True,
                 ),
-                dbc.Button(
+                dmc.Button(
                     "Сохранить",
                     style={"width": "min-content"},
                     disabled=True,
                 ),
                 dmc.Divider(variant="solid"),
-                html.H5("Системный монитор"),
+                dmc.Title("Системный монитор", order=4),
                 dmc.Switch(
                     label="Включить",
                     checked=bool(settings["apps.system_monitor.enabled"]),
@@ -272,7 +274,7 @@ def renderContent(active, test=True):
                             disabled=True,
                             m=0,
                         ),
-                        dbc.Button(
+                        dmc.Button(
                             "Сохранить",
                             style={"width": "min-content"},
                             disabled=True,
@@ -282,7 +284,7 @@ def renderContent(active, test=True):
                     align="flex-start",
                 ),
                 dmc.Divider(variant="solid"),
-                html.H5("Мониторинг торрентов"),
+                dmc.Title("Мониторинг торрентов", order=4),
                 dmc.Switch(
                     label="Включить",
                     checked=bool(settings["apps.torrents.enabled"]),
@@ -314,12 +316,12 @@ def renderContent(active, test=True):
                 ),
                 dmc.Group(
                     [
-                        dbc.Button(
+                        dmc.Button(
                             "Тест подключения",
                             style={"width": "max-content"},
                             disabled=True,
                         ),
-                        dbc.Button(
+                        dmc.Button(
                             "Сохранить",
                             style={"width": "min-content"},
                             disabled=True,
@@ -357,7 +359,7 @@ def getCpuLoadRings(_):
                     sections=[
                         {
                             "value": percentage,
-                            "color": "var(--bs-blue)",
+                            "color": "custom-blue",
                             "tooltip": f"{percentage}%",
                         },
                     ],

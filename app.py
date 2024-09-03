@@ -43,15 +43,11 @@ app = dash.Dash(
     use_pages=True,
     external_stylesheets=[
         dbc.themes.ZEPHYR,
-        "assets/offline/bootstrap.min.css",
         dbc.icons.FONT_AWESOME,
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap"
     ]
     + mantine_stylesheets
     + icons_link,
-    # external_scripts=[
-    #     "https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js",
-    #     "https://cdnjs.cloudflare.com/ajax/libs/mediaelement/7.0.5/mediaelement-and-player.min.js",
-    # ],
     title=config["WEB_PAGE_TITLE"],
     update_title=config["WEB_PAGE_LOADING_TITLE"],
     suppress_callback_exceptions=True,
@@ -82,13 +78,12 @@ app.layout = dmc.MantineProvider(
                             loaderProps={"size": "lg"},
                         ),
                     ],
-                    className="pt-5",
                     id="server-blocker",
                 ),
-                dmc.AppShellNavbar(zIndex=10, id='appshell-navbar', children=[]),
             ],
-            header={"height": {"sm": None, "md": 60}},
-            id='appshell-props'
+            # header={"height": {"sm": None, "md": 60}},
+            header={"height": 60},
+            id="appshell-props",
         ),
         dmc.NotificationProvider(position="bottom-right"),
         setup_page_components(),
@@ -101,11 +96,31 @@ app.layout = dmc.MantineProvider(
     id="mantine_theme",
     defaultColorScheme="light",
     theme={
-        "primaryColor": "indigo",
-        "fontFamily": 'system-ui, -apple-system, "Segoe UI", Roboto,'
-        '"Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif,'
-        '"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",'
-        '"Noto Color Emoji"',
+        # "primaryColor": "indigo",
+        "primaryColor": "custom-blue",
+        "fontFamily": """Inter, -apple-system, BlinkMacSystemFont, 
+            "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, 
+            "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" """,
+        "headings": {
+            "fontFamily": """Inter, -apple-system, BlinkMacSystemFont, 
+                "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, 
+                "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" """,
+            "fontWeight": 500,
+        },
+        "colors": {
+            "custom-blue": [
+                '#eef3ff',
+                '#dce4f5',
+                '#b9c7e2',
+                '#94a8d0',
+                '#748dc1',
+                '#5f7cb8',
+                '#5474b4',
+                '#44639f',
+                '#39588f',
+                '#2d4b81'
+            ]
+        },
     },
 )
 
@@ -124,7 +139,7 @@ def serverBlocker(style):
         return True, no_update
     else:
         return False, html.Center(
-            [html.H5("Сервис недоступен. ")],
+            [dmc.Title("Сервис недоступен.", order=5)],
             style={"margin-top": "70px"},
         )
 
@@ -185,7 +200,10 @@ dev = bool(config["APP_DEBUG_ENABLED"])
 if __name__ == "__main__":
     if dev:
         app.run(
-            debug=True, host=config["APP_HOST"], port=int(config["APP_PORT"]), dev_tools_props_check=False
+            debug=True,
+            host=config["APP_HOST"],
+            port=int(config["APP_PORT"]),
+            dev_tools_props_check=False,
         )
     else:
         from waitress import serve

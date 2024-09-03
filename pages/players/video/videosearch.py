@@ -52,7 +52,7 @@ def layout(
                     search_clicks=search_clicks,
                 ),
                 html.Div(id="search_results_video"),
-                html.Center(
+                dmc.Center(
                     dmc.Pagination(
                         total=1,
                         value=1,
@@ -61,8 +61,8 @@ def layout(
                         withEdges=True,
                         id="search_pagination_video",
                     ),
-                    style={"width": "100%"},
-                    className="py-3",
+                    py='xs',
+                    w='100%'
                 ),
             ],
         )
@@ -83,7 +83,7 @@ cont_search.getTypesAdditionFormatCallback(from_video=True)
 def getVideoSearchResults(current_page, n_clicks, categories, types, query):
 
     if n_clicks == 0:
-        return html.Center([html.H5("Пустой поисковый запрос. Повторите снова.")]), 1
+        return html.Center([dmc.Title("Пустой поисковый запрос. Повторите снова.", order=4)]), 1
     else:
         global query_global
         query_global = query
@@ -109,7 +109,7 @@ def getVideoSearchResults(current_page, n_clicks, categories, types, query):
         elif counter == -2:
             return "Ошибочка", 1
         elif counter == 0:
-            return html.Center(html.H5("По Вашему запросу результатов нет")), 1
+            return html.Center(dmc.Title("По Вашему запросу результатов нет", order=4)), 1
         else:
             pages = (
                 int(counter / page_limit) + 1

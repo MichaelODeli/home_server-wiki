@@ -11,7 +11,7 @@ import signal
 
 def addTorrentModal():
     return dmc.Modal(
-        title=html.H5("Добавить торрент"),
+        title=dmc.Title("Добавить торрент", order=4),
         id="modal-add-torrent",
         centered=True,
         size="55%",

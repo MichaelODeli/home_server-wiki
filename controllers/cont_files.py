@@ -113,7 +113,7 @@ def blockFilesList():
             dmc.Grid(
                 [
                     dmc.GridCol(
-                        html.H5("Менеджер файлов", style={"margin": "0"}),
+                        dmc.Title("Менеджер файлов", style={"margin": "0"}, order=5),
                         span="content",
                     ),
                     dmc.GridCol(span="auto"),
@@ -250,7 +250,7 @@ def treeContent(source):
 def getDrawer():
     return dmc.Drawer(
         children=[treeContent(source="drawer")],
-        title=html.H5("Дерево папок"),
+        title=dmc.Title("Дерево папок", order=5),
         id="drawer-tree",
         padding="md",
         zIndex=10000,

@@ -42,7 +42,7 @@ def getColorByValue(current_value=None, max_value=None, percent=None):
     if percent == None:
         percent = (current_value / max_value) * 100
     return (
-        "var(--bs-primary)" if percent < 70 else ("orange" if percent < 90 else "red")
+        'custom-blue' if percent < 70 else ("orange" if percent < 90 else "red")
     )
 
 
@@ -149,7 +149,8 @@ def widgetDiskSize(**kwargs):
             dmc.Space(h=10),
             html.A("Подробные свойства", href="/settings?l=y&tab=server_info"),
         ],
-        className="block-background mobile-block",
+        className="mobile-block",
+        shadow='md'
         # style={"min-height": "100%"},
     )
 
@@ -182,16 +183,16 @@ def getWeatherLabel(selected_date: str, temperature: list, weather_type="sunny")
         [
             dmc.Text(
                 calendar.day_abbr[converted_date.weekday()].capitalize(),
-                c="var(--bs-blue)" if converted_date.weekday() < 5 else "red",
+                c="custom-blue" if converted_date.weekday() < 5 else "red",
             ),
             dmc.Text(
                 f"{converted_date.day} {calendar.month_abbr[converted_date.month]}",
-                c="var(--bs-gray)",
+                c="gray",
             ),
             dmc.Space(h=10),
             DashIconify(icon=weather_types[weather_type], width=40),
-            dmc.Text(temperature[0], c="var(--bs-blue)"),
-            dmc.Text(temperature[1], c="var(--bs-gray)"),
+            dmc.Text(temperature[0], c="custom-blue"),
+            dmc.Text(temperature[1], c="gray"), 
         ],
         align="center",
         gap=0,
@@ -236,7 +237,8 @@ def widgetWeather(**kwargs):
                 gap="xs",
             ),
         ],
-        className="block-background mobile-block",
+        className="mobile-block",
+        shadow='md'
     )
 
 
@@ -276,7 +278,8 @@ def widgetTorrents():
                 overlayProps={"radius": "sm", "blur": 2},
             ),
         ],
-        className="block-background mobile-block",
+        className="mobile-block",
+        shadow='md'
         # style={"min-height": "100%"},
     )
 
@@ -312,7 +315,6 @@ def widgetSysteminfo():
                                 ],
                                 label=dmc.Text(
                                     f"{round(psutil.cpu_freq().current/1000, 2)} GHz",
-                                    c="var(--bs-body-color)",
                                     ta="center",
                                 ),
                                 size=120,
@@ -336,7 +338,6 @@ def widgetSysteminfo():
                                 ],
                                 label=dmc.Text(
                                     bytes2human(psutil.virtual_memory().total),
-                                    c="var(--bs-body-color)",
                                     ta="center",
                                 ),
                                 size=120,
@@ -360,7 +361,6 @@ def widgetSysteminfo():
                                 ],
                                 label=dmc.Text(
                                     bytes2human(psutil.swap_memory().total),
-                                    c="var(--bs-body-color)",
                                     ta="center",
                                 ),
                                 size=120,
@@ -401,7 +401,8 @@ def widgetSysteminfo():
                 grow=True,
             ),
         ],
-        className="block-background mobile-block",
+        className="mobile-block",
+        shadow='md',
         style={"min-height": "100%", "width": "100%"},
     )
 

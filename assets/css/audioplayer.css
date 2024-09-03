@@ -24,3 +24,10 @@
 .w-content {
   width: fit-content;
 }
+
+.block-background-float {
+  background-color: var(--mantine-color-body);
+  padding: 10px;
+  min-height: 70px;
+  border: 0 !important;
+}

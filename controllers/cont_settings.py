@@ -6,24 +6,24 @@ import dash_bootstrap_components as dbc
 
 
 def generateTableRow(param_name, param_value="", head=False):
-    return html.Tr(
+    return dmc.TableTr(
         [
             (
-                html.Td(
+                dmc.TableTd(
                     param_name,
-                    className="min-column-width",
+                    className="min-column-width center-content-vertical",
                     style={"padding": "0.3rem" if param_value != "" else "1rem"},
                 )
                 if not head
-                else html.Th(param_name, className="min-column-width")
+                else dmc.TableTh(param_name, className="min-column-width")
             ),
             (
-                html.Td(
+                dmc.TableTd(
                     param_value,
                     style={"padding": "0.3rem" if param_value != "" else "1rem"},
                 )
                 if not head
-                else html.Th(param_value)
+                else dmc.TableTh(param_value)
             ),
         ]
     )
@@ -46,7 +46,7 @@ def getReadableBytes(bytes, suffix="B"):
 def getSystemInfoRows():
     uname = platform.uname()
     return [
-        generateTableRow(html.H6("Информация о системе")),
+        generateTableRow(dmc.Title("Информация о системе", order=5)),
         generateTableRow("Операционная система", f"{uname.system}"),
         generateTableRow("Идентификатор устройства", f"{uname.node}"),
         generateTableRow("Релиз", f"{uname.release}"),
@@ -59,7 +59,7 @@ def getSystemInfoRows():
 def getCPUInfoRows():
     cpufreq = psutil.cpu_freq()
     return [
-        generateTableRow(html.H6("Информация о процессоре")),
+        generateTableRow(dmc.Title("Информация о процессоре", order=5)),
         generateTableRow(
             "Физических/логических ядер",
             f"{psutil.cpu_count(logical=False)}/{psutil.cpu_count(logical=True)}",
@@ -72,7 +72,7 @@ def getCPUInfoRows():
             "Использование ядер процессора",
             html.Div(
                 [
-                    dbc.Button(
+                    dmc.Button(
                         "Показать",
                         id="show-cpu-load",
                     )
@@ -91,7 +91,7 @@ def getRAMSWARInfoRows():
     svmem = psutil.virtual_memory()
     swap = psutil.swap_memory()
     return [
-        generateTableRow(html.H6("ОЗУ")),
+        generateTableRow(dmc.Title("ОЗУ", order=5)),
         generateTableRow("Всего", f"{getReadableBytes(svmem.total)}"),
         generateTableRow(
             "Доступно",
@@ -99,7 +99,7 @@ def getRAMSWARInfoRows():
         ),
         generateTableRow("Использовано", f"{getReadableBytes(svmem.used)}"),
         generateTableRow("Процент использования", f"{svmem.percent}%"),
-        generateTableRow(html.H6("SWAP")),
+        generateTableRow(dmc.Title("SWAP", order=5)),
         generateTableRow("Всего", f"{getReadableBytes(swap.total)}"),
         generateTableRow("Свободно", f"{getReadableBytes(swap.free)}"),
         generateTableRow("Использовано", f"{getReadableBytes(swap.used)}"),
@@ -141,4 +141,4 @@ def getPartitionsInfoRows():
             generateTableRow(partition.device, dmc.Stack(partition_data, gap="xs"))
         )
 
-    return [generateTableRow(html.H6("Накопители и разделы"))] + parts_data
+    return [generateTableRow(dmc.Title("Накопители и разделы", order=5))] + parts_data

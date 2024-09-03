@@ -8,6 +8,6 @@
     display: none !important;
 }
 
-:root[data-mantine-color-scheme='dark'] {
-    --mantine-color-body: var(--bs-body-bg);
-}
+/* :root[data-mantine-color-scheme='dark'] {
+    --mantine-color-body: var(--mantine-color-body);
+} */

@@ -41,7 +41,7 @@ def layout(l="n", v=None, **other_unknown_query_strings):
     if len(file_data) == 0:
         videoplayer_children = dmc.Stack(
             [
-                html.H5("Ошибка идентификатора видео. Попробуйте еще раз."),
+                dmc.Title("Ошибка идентификатора видео. Попробуйте еще раз.", order=4),
                 html.A(
                     "Перейти на главную страницу",
                     href="/players/video?l=y",
@@ -58,7 +58,7 @@ def layout(l="n", v=None, **other_unknown_query_strings):
     elif not file_data[0]["html_video_ready"]:
         videoplayer_children = dmc.Stack(
             [
-                html.H5("Неподдерживаемый файл."),
+                dmc.Title("Неподдерживаемый файл.", order=4),
                 html.A(
                     "Перейти на главную страницу",
                     href="/players/video?l=y",
@@ -95,32 +95,27 @@ def layout(l="n", v=None, **other_unknown_query_strings):
                 volume=0.4,
                 style={
                     "width": "100% !important",
-                    # "max-height": "80% !important",
                 },
             ),
             dmc.Space(),
-            html.H4(
-                video_name,
-                style={"width": "100%"},
-                id="player_videoname",
+            dmc.Title(
+                video_name, style={"width": "100%"}, id="player_videoname", order=3
             ),
             dmc.Grid(
                 children=[
                     dmc.GridCol(
                         dmc.Tooltip(
-                            label=f'Показать все видео с типа "{video_type}"',
+                            label=f'Показать все видео "{video_type}"',
                             position="top",
                             offset=3,
                             withArrow=True,
                             children=[
-                                html.A(
+                                service.dmcButtonLink(
                                     video_type,
                                     href=cont_video.getSearchLink(
                                         video_category_id,
                                         video_type_id,
-                                    ),
-                                    className="btn btn-outline-primary btn-sm",
-                                    role="button",
+                                    )
                                 )
                             ],
                         ),
@@ -137,12 +132,10 @@ def layout(l="n", v=None, **other_unknown_query_strings):
                                     offset=3,
                                     withArrow=True,
                                     children=[
-                                        dbc.Button(
+                                        dmc.Button(
                                             Purify('<i class="bi bi-download"></i>'),
-                                            size="sm",
                                             id="player_download",
-                                            outline=True,
-                                            className="btn btn-outline-primary",
+                                            variant="outline",
                                         ),
                                     ],
                                 ),
@@ -152,15 +145,13 @@ def layout(l="n", v=None, **other_unknown_query_strings):
                                     offset=3,
                                     withArrow=True,
                                     children=[
-                                        dbc.Button(
+                                        dmc.Button(
                                             Purify(
                                                 '<i class="bi bi-collection-play"></i>'
                                             ),
-                                            size="sm",
                                             id="player_addtoplaylist",
                                             disabled=True,
-                                            outline=True,
-                                            className="btn btn-outline-primary",
+                                            variant="outline",
                                         ),
                                     ],
                                 ),
@@ -170,13 +161,11 @@ def layout(l="n", v=None, **other_unknown_query_strings):
                                     offset=3,
                                     withArrow=True,
                                     children=[
-                                        dbc.Button(
+                                        dmc.Button(
                                             Purify('<i class="bi bi-flag"></i>'),
-                                            size="sm",
                                             id="player_report",
                                             disabled=True,
-                                            outline=True,
-                                            className="btn btn-outline-primary",
+                                            variant="outline",
                                         ),
                                     ],
                                 ),
@@ -240,7 +229,6 @@ def layout(l="n", v=None, **other_unknown_query_strings):
                             ],
                             className="columns-margin adaptive-width",
                             span=3,
-                            # style={"overflow": "auto", "height": "89dvh"},
                         ),
                     ],
                     # className="gx-3",

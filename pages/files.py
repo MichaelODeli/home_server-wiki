@@ -35,7 +35,7 @@ def layout(l="n", **kwargs):
                             [
                                 dmc.Stack(
                                     [
-                                        html.H5("Дерево папок"),
+                                        dmc.Title("Дерево папок", order=4),
                                         cont_f.treeContent(source="col")
                                     ],
                                     className="block-background",

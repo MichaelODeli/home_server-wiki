@@ -2,17 +2,17 @@ from dash import html
 import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
-from controllers import db_connection, cont_header
+from controllers import db_connection, cont_header, service_controller
 from itertools import chain
 
 # независимые компоненты
 navbar_brand = html.A(
-    "HomeServer",
+    dmc.Title("MediaServer", order=3),
     href="/",
     style={
         "textDecoration": "none",
         "height": "min-content",
-        "color": "var(--bs-emphasis-color)",
+        "color": "var(--mantine-color-text)",
     },
     # className='navbar navbar-brand p-0 m-0'
 )
@@ -23,7 +23,6 @@ theme_switch = html.Div(
         size="lg",
         id="color-mode-switch",
         className="nav-item",
-        color="var(--bs-primary)",
         persistence_type="session",
         persistence=True,
     ),
@@ -41,6 +40,7 @@ navbar_buttons = [
                     dmc.Text(header_group["header_group_name"], fw=400),
                     variant="subtle",
                     rightSection=DashIconify(icon="gridicons:dropdown", width=20),
+                    size='compact-sm'
                 )
             ),
             dmc.MenuDropdown(
@@ -79,6 +79,7 @@ navbar_buttons_video = dmc.Menu(
                 dmc.Text("Ссылки", fw=400),
                 variant="subtle",
                 rightSection=DashIconify(icon="gridicons:dropdown", width=20),
+                size='compact-sm'
             )
         ),
         dmc.MenuDropdown(dmc.Group(navbar_buttons, gap="xs"), p="sm"),
@@ -98,6 +99,11 @@ def getSearchBar(search_target="/search", from_video=False):
                             dmc.TextInput(
                                 name="query",
                                 placeholder=search_placeholder,
+                                rightSection=[
+                                    service_controller.dmcButtonFromHTML("Поиск", height='100%')
+                                ],
+                                rightSectionWidth='max-content',
+                                required=True
                             ),
                             dmc.TextInput(display="none", value="y", name="l"),
                             dmc.TextInput(
@@ -105,9 +111,6 @@ def getSearchBar(search_target="/search", from_video=False):
                             ),
                         ],
                         span="auto",
-                    ),
-                    dmc.GridCol(
-                        [dbc.Button("Найти", className="ms-2")], span="content"
                     ),
                 ],
             )
@@ -158,7 +161,7 @@ def renderNavbar(from_video=False, from_search=False):
                     (
                         navbar_buttons_video
                         if from_video
-                        else dmc.Group(navbar_buttons, gap=0)
+                        else dmc.Group(navbar_buttons, gap='xs')
                     ),
                     span="content",
                     className="adaptive-hide",
@@ -176,7 +179,7 @@ def renderNavbar(from_video=False, from_search=False):
                     is_open=False,
                     navbar=True,
                     className="adaptive-show p-2",
-                    style={"background-color": "var(--bs-body-bg) !important"},
+                    # style={"background-color": "var(--mantine-color-body) !important"},
                 ),
             ],
             w="100%",

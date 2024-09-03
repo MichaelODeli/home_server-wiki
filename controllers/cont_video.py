@@ -73,7 +73,7 @@ def createVideoMiniatureContainer(
                                         td="none",
                                         fw=500,
                                         mb="5px",
-                                        c="var(--bs-emphasis-color)",
+                                        c="var(--mantine-color-text)",
                                         size="sm",
                                     ),
                                     dmc.Text(
@@ -148,14 +148,17 @@ def createVideoSearchBar(
                 value=input_value,
                 id="n_search_query_video",
                 name="query",
+                rightSection=[
+                    dmc.Button(
+                        "Поиск",
+                        id="n_search_button_video",
+                        n_clicks=search_clicks,
+                    )
+                ],
+                rightSectionWidth='max-content'
             ),
             dmc.TextInput(display="none", value="y", name="l"),
             dmc.TextInput(display="none", value="y", name="auto_search"),
-            dbc.Button(
-                "Поиск",
-                id="n_search_button_video",
-                n_clicks=search_clicks,
-            ),
         ],
         className="mx-2 mx-sm-0",
         justify="center",

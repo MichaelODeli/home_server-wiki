@@ -58,7 +58,7 @@ def layout(
                         dmc.GridCol(span="auto", className="hided_element"),
                         dmc.GridCol(
                             [
-                                html.Div(
+                                dmc.Card(
                                     children=[
                                         dmc.TextInput(
                                             label="Поисковый запрос",
@@ -76,16 +76,14 @@ def layout(
                                             fullWidth=True,
                                         ),
                                     ],
-                                    className="block-background",
-                                    style={"width": "100%"},
+                                    shadow="sm",
+                                    w='100%'
                                 ),
                                 dmc.Space(h=15),
-                                html.Div(
+                                dmc.Card(
                                     dmc.Stack(
                                         children=[
-                                            html.H3(
-                                                "Результаты поиска", className="p-0 m-0"
-                                            ),
+                                            dmc.Title("Результаты поиска", order=3),
                                             dmc.Space(h=10),
                                             html.Div(
                                                 id="n_search_results",
@@ -102,10 +100,10 @@ def layout(
                                             ),
                                         ],
                                         id="results_loader",
-                                        className="block-background",
                                         style={"width": "100%", "min-height": "100px"},
                                         gap="xs",
                                     ),
+                                    shadow="sm",
                                 ),
                             ],
                             span=10,
@@ -166,7 +164,7 @@ def search(
     elif counter == -2:
         return "Ошибочка", no_update, 1
     elif counter == 0:
-        return html.H6("По Вашему запросу результатов нет"), no_update, 1
+        return dmc.Title("По Вашему запросу результатов нет", order=5), no_update, 1
     else:
         pages = (
             int(counter / PAGE_LIMIT) + 1

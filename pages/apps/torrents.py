@@ -44,21 +44,23 @@ def layout(l="n", **kwargs):
         # all workers must be here!
         return dmc.Container(
             children=[
+                # dcc.Location(id='torrent-link', title='_blank', href='#'),
                 html.Div(
                     [
-                        html.Div(
+                        dmc.Card(
                             [
                                 dmc.Grid(
                                     [
                                         dmc.GridCol(
-                                            html.H5(
+                                            dmc.Title(
                                                 "Управление торрентами",
                                                 style={"margin": "0"},
+                                                order=4,
                                             ),
                                             span="content",
                                         ),
                                         dmc.GridCol(span="auto"),
-                                        dbc.ButtonGroup(
+                                        dmc.ButtonGroup(
                                             [
                                                 service.getButtonWithIcon(
                                                     button_icon="material-symbols:sync",
@@ -87,25 +89,14 @@ def layout(l="n", **kwargs):
                                                     button_icon="material-symbols:delete",
                                                     button_title="Удалить торрент",
                                                     button_id="torrent-delete",
-                                                    color="danger",
+                                                    color="red",
                                                     disabled=True,
                                                 ),
-                                                dbc.Button(
-                                                    dmc.Group(
-                                                        [
-                                                            service.getIcon(
-                                                                "mdi:external-link",
-                                                                background=False,
-                                                                icon_color=None,
-                                                                size=25,
-                                                            ),
-                                                            "Открыть qbittorrent",
-                                                        ],
-                                                        gap="xs",
-                                                    ),
+                                                service.dmcButtonLink(
+                                                    "Открыть qBittorrent",
                                                     href=f"http://{qbt_ip}:{qbt_port}",
-                                                    outline=True,
-                                                    color="primary",
+                                                    button_right_icon="mdi:external-link",
+                                                    height='100%',
                                                     target="_blank",
                                                 ),
                                             ],
@@ -118,10 +109,11 @@ def layout(l="n", **kwargs):
                                 dmc.Space(h=15),
                                 html.Div(id="torrents-table-container"),
                             ],
-                            className="block-background",
+                            # className="block-background",
+                            shadow="md",
                         ),
                         dmc.Modal(
-                            title=html.H5("Добавить торрент"),
+                            title=dmc.Title("Добавить торрент", order=5),
                             id="modal-add-torrent",
                             centered=True,
                             size="55%",
@@ -225,7 +217,7 @@ def parceTorrentFile(
 
     # add properties of file/url
     properties = [
-        html.H6("Информация"),
+        dmc.Title("Информация", order=5),
         dmc.Stack(
             gap="xs",
             children=[
@@ -237,7 +229,7 @@ def parceTorrentFile(
             ],
         ),
         dmc.Space(h=7),
-        html.H6("Выберите категорию загружаемого файла"),
+        dmc.Title("Выберите категорию загружаемого файла", order=5),
         dmc.Select(
             placeholder="Выберите",
             id="torrent-category-select",
@@ -251,7 +243,7 @@ def parceTorrentFile(
             ],
             style={"width": "100%", "margin": "auto"},
         ),
-        dbc.Button("Начать загрузку", id="torrent-start-download", disabled=True),
+        dmc.Button("Начать загрузку", id="torrent-start-download", disabled=True),
     ]
 
     # if not download - return properties
@@ -306,7 +298,7 @@ def returnTorrentsData(n):
             highlightOnHover=True,
         )
         if datatable != None
-        else html.H5("Ошибка получения данных", style={"text-align": "center"})
+        else dmc.Title("Ошибка получения данных", style={"text-align": "center"}, order=4)
     )
 
 
@@ -327,3 +319,18 @@ def test(checkboxes_input, checkboxes_ids):
 
         print(torrent_ids)
         return no_update
+
+# @callback(
+#     Output("torrent-link", 'url'),
+#     Input('open-qbittorrent', 'n_clicks'),
+#     prevent_initial_call=True
+# )
+# def qbit_opener(n_clicks):
+#     conn = db_connection.getConn()
+#     settings = file_manager.getSettings(conn)
+#     qbt_ip = settings["apps.torrents.qbittorrent_ip"]
+#     qbt_port = settings["apps.torrents.qbittorrent_port"]
+
+
+#     if n_clicks is not None:
+#         return f"http://{qbt_ip}:{qbt_port}"

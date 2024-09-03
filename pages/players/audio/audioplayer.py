@@ -47,21 +47,21 @@ def layout(l="n", playlist_id=0, artist_id=0, album_id=0, **kwargs):
         else:
             if playlist_id != 0 and artist_id == 0 and album_id == 0:
                 page_name = "Какой-то плейлист"
-                page_content = v_audioplayer.renderPlaylistPage()
+                page_content = v_audioplayer.renderPlaylistPage(playlist_id)
             elif artist_id != 0 and playlist_id == 0 and album_id == 0:
                 page_name = "Какой-то исполнитель"
-                page_content = v_audioplayer.renderArtistPage()
+                page_content = v_audioplayer.renderArtistPage(artist_id)
             elif album_id != 0 and playlist_id == 0 and artist_id == 0:
                 page_name = "Какой-то альбом"
-                page_content = v_audioplayer.renderAlbumPage()
+                page_content = v_audioplayer.renderAlbumPage(album_id)
             else:
                 page_name = ""
-                page_content = html.Center(html.H6("Ошибка идентификатора."))
+                page_content = html.Center(dmc.Title("Ошибка идентификатора.", order=4))
 
         return dmc.AppShell(
             children=[
                 dmc.AppShellNavbar(
-                    cont_a.audioLeftColumn(source="col", conn=conn),
+                    v_audioplayer.renderAudioNavbar(source="col", conn=conn),
                     className="border-end-0",
                 ),
                 dmc.AppShellMain(
@@ -78,9 +78,9 @@ def layout(l="n", playlist_id=0, artist_id=0, album_id=0, **kwargs):
                         dmc.Space(),
                         dmc.Stack(
                             [
-                                html.H3(
+                                dmc.Title(
                                     page_name,
-                                    style={"margin-bottom": "0 !important"},
+                                    order=3,
                                     id="audioplayer-playlist-name",
                                 ),
                                 dmc.Space(),
@@ -89,20 +89,20 @@ def layout(l="n", playlist_id=0, artist_id=0, album_id=0, **kwargs):
                                     children=page_content,
                                     # className="w-100 overflow-auto",
                                     id="audioplayer-children",
-                                    pb='sm',
-                                    h='70dvh',
-                                    offsetScrollbars=True
+                                    pb="sm",
+                                    h="70dvh",
+                                    offsetScrollbars=True,
                                 ),
                             ],
                             gap="xs",
                         ),
-                        cont_a.getDrawer(conn),
+                        v_audioplayer.renderAudioNavbarDrawer(conn),
                     ],
                     className="ps-3 pt-1 border-start overflow-hidden no-border-mobile",
-                    mah='calc(100dvh - var(--app-shell-header-height) - 10px) !important',
-                    mih='calc(100dvh - var(--app-shell-header-height) - 10px) !important',
+                    mah="calc(100dvh - var(--app-shell-header-height) - 10px) !important",
+                    mih="calc(100dvh - var(--app-shell-header-height) - 10px) !important",
                 ),
-                dmc.AppShellFooter(cont_a.floatPlayer()),
+                dmc.AppShellFooter(v_audioplayer.renderAudioFooter()),
             ],
             navbar={
                 "width": 300,
@@ -216,7 +216,7 @@ def playerVolume(currentTime, duration):
     State("url", "pathname"),
     prevent_initial_call=True,
 )
-def selectPlaylistFromLeftsideRow(
+def selectPageFromLeftsideRow(
     n_clicks_col, n_clicks_drawer, n_clicks_home, n_clicks_search, button_ids, pathname
 ):
 
@@ -238,10 +238,6 @@ def selectPlaylistFromLeftsideRow(
         page_name = "Поиск"
         player_children = [v_audioplayer.renderSearchPage()]
     else:
-        description = [
-            dmc.Badge("1250 треков", variant="light"),
-            dmc.Badge("500 минут", variant="light"),
-        ]
 
         if ctx.triggered_id["type"] == "audio-playlist-btn-col":
             selected_type = types_ids[n_clicks_col.index(1)]
@@ -253,7 +249,11 @@ def selectPlaylistFromLeftsideRow(
         conn = db_connection.getConn()
         page_name = cont_a.getAudioTypes(conn, type_id=selected_type)[0]["type_name"]
 
-        player_children = v_audioplayer.renderPlaylistPage()
+        player_children = v_audioplayer.renderPlaylistPage(conn, selected_type)
+
+        description = [
+            dmc.Badge("Много треков", variant="light"),
+        ]
 
     return (
         [None] * len(n_clicks_col),

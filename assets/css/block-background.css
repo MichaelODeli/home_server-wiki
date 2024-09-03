@@ -8,12 +8,7 @@
     box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
 }
 
-.block-background-float {
-    background-color: var(--bs-body-bg);
-    padding: 10px;
-    min-height: 70px;
-    border: 0 !important;
-}
+
 
 @media (max-width: 768px) {
     .block-background-audio {
