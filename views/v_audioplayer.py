@@ -8,9 +8,9 @@ from dash_iconify import DashIconify
 def renderMainPage(conn=None):
     return dmc.Stack(
         [
-            html.A("Страница исполнителя", href="/players/audio?l=y&artist_id=90"),
-            html.A("Страница плейлиста", href="/players/audio?l=y&playlist_id=90"),
-            html.A("Страница альбома", href="/players/audio?l=y&album_id=90"),
+            html.A("Страница исполнителя", href="/players/audio?l=y&artist_id=90", className='a-color'),
+            html.A("Страница плейлиста", href="/players/audio?l=y&playlist_id=90", className='a-color'),
+            html.A("Страница альбома", href="/players/audio?l=y&album_id=90", className='a-color'),
         ]
     )
 

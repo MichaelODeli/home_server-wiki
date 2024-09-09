@@ -28,6 +28,34 @@ theme_switch = html.Div(
     ),
     className="pt-sm-0",
 )
+navbar_user_dropdown = [
+    dmc.Menu(
+        [
+            dmc.MenuTarget(
+                dmc.Button(
+                    dmc.Text("Привет, {nickname}!", fw=400),
+                    variant="subtle",
+                    rightSection=DashIconify(icon="gridicons:dropdown", width=20),
+                    size="compact-sm",
+                )
+            ),
+            dmc.MenuDropdown(
+                [
+                    dmc.MenuItem(
+                        "Личный кабинет",
+                        href="/account",
+                    ),
+                    dmc.MenuItem(
+                        "Выйти",
+                        href="/logout",
+                    ),
+                ],
+                p="sm",
+            ),
+        ],
+        trigger="hover",
+    )
+]
 
 
 # кнопки навбара
@@ -40,7 +68,7 @@ navbar_buttons = [
                     dmc.Text(header_group["header_group_name"], fw=400),
                     variant="subtle",
                     rightSection=DashIconify(icon="gridicons:dropdown", width=20),
-                    size='compact-sm'
+                    size="compact-sm",
                 )
             ),
             dmc.MenuDropdown(
@@ -71,7 +99,8 @@ navbar_buttons = [
         trigger="hover",
     )
     for header_group in navbar_items_dict
-]
+] + navbar_user_dropdown
+
 navbar_buttons_video = dmc.Menu(
     [
         dmc.MenuTarget(
@@ -79,7 +108,7 @@ navbar_buttons_video = dmc.Menu(
                 dmc.Text("Ссылки", fw=400),
                 variant="subtle",
                 rightSection=DashIconify(icon="gridicons:dropdown", width=20),
-                size='compact-sm'
+                size="compact-sm",
             )
         ),
         dmc.MenuDropdown(dmc.Group(navbar_buttons, gap="xs"), p="sm"),
@@ -100,10 +129,12 @@ def getSearchBar(search_target="/search", from_video=False):
                                 name="query",
                                 placeholder=search_placeholder,
                                 rightSection=[
-                                    service_controller.dmcButtonFromHTML("Поиск", height='100%')
+                                    service_controller.dmcButtonFromHTML(
+                                        "Поиск", height="100%"
+                                    )
                                 ],
-                                rightSectionWidth='max-content',
-                                required=True
+                                rightSectionWidth="max-content",
+                                required=True,
                             ),
                             dmc.TextInput(display="none", value="y", name="l"),
                             dmc.TextInput(
@@ -161,7 +192,7 @@ def renderNavbar(from_video=False, from_search=False):
                     (
                         navbar_buttons_video
                         if from_video
-                        else dmc.Group(navbar_buttons, gap='xs')
+                        else dmc.Group(navbar_buttons, gap="xs")
                     ),
                     span="content",
                     className="adaptive-hide",

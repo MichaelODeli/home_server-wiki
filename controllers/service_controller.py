@@ -96,7 +96,7 @@ def getIcon(
     """
 
     if icon_color == "primary":
-        icon_color = "custom-blue"
+        icon_color = "custom-primary-color"
     return (
         dmc.ThemeIcon(
             DashIconify(icon=icon, width=size, color=icon_color),

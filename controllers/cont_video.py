@@ -16,7 +16,8 @@ def createVideoMiniatureContainer(
     video_title,
     videotype_name,
     date="недавно",
-    img_video="/assets/img/image-not-found.jpg",
+    # img_video="/assets/img/image-not-found.jpg",
+    img_video=f"https://placehold.co/250x140",
     img_channel=None,
     video_duration=0,
     category_id=None,
@@ -26,12 +27,14 @@ def createVideoMiniatureContainer(
     Функция createVideoMiniaturesContainer создает контейнер для видео миниатюр.
 
     :param href (str): ссылка на видео.
-    :param img_video (str): ссылка на изображение видео.
-    :param img_channel (str): ссылка на изображение канала.
     :param video_title (str): заголовок видео.
     :param videotype_name (str): тип видео.
-    :param views (str): количество просмотров.
     :param date (str): дата публикации.
+    :param img_video (str): ссылка на изображение видео.
+    :param img_channel (str): ссылка на изображение канала.
+    :param video_duration (int): длительность видео (сек).
+    :param category_id (int): категория видео.
+    :param type_id (int): тип видео.
     :return html.A: миниатюры видео.
     """
     return html.A(
@@ -77,10 +80,11 @@ def createVideoMiniatureContainer(
                                         size="sm",
                                     ),
                                     dmc.Text(
-                                        html.A(
+                                        dmc.Anchor(
                                             videotype_name,
                                             href=getSearchLink(category_id, type_id),
                                             className="video-link",
+                                            underline='always'
                                         ),
                                         c="gray",
                                         td="none",

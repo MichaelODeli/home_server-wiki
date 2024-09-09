@@ -1,6 +1,7 @@
 body {
     box-shadow: unset;
     font-family: var(--mantine-font-family) !important;
+    color: var(--mantine-color-text) !important;
 }
 
 .navbar-collapse {

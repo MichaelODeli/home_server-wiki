@@ -62,3 +62,5 @@ _filemanager_test.ipynb
 _PLANS.md
 *.sql_backup
 db_backup/
+
+bs-mantine-integration.css

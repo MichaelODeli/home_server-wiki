@@ -2,8 +2,9 @@ create table
   "users" (
     "id" serial primary key,
     "username" varchar(70) not null,
-    "email" varchar(150) not null,
-    "password" varchar(64) not null,
+    "nickname" varchar(128) not null,
+    "email" varchar(150),
+    "password" bytea not null,
     "active" BOOLEAN DEFAULT TRUE,
     "admin_access" BOOLEAN DEFAULT FALSE,
     "created_at" timestamp not null default NOW(),

@@ -23,7 +23,6 @@
 
 header {
     height: auto !important;
-    /* min-height: 60px; */
 }
 
 .mantine-Button-label {
@@ -37,6 +36,6 @@ header {
     --button-color: var(--mantine-color-white);
 }
 
-body {
-    background-color: var(--mantine-color-body) !important;
+.m_92253aa5, .m_8fdc1311 {
+    color: var(--mantine-color-text)
 }

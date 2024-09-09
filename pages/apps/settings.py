@@ -359,7 +359,7 @@ def getCpuLoadRings(_):
                     sections=[
                         {
                             "value": percentage,
-                            "color": "custom-blue",
+                            "color": "custom-primary-color",
                             "tooltip": f"{percentage}%",
                         },
                     ],

@@ -1,5 +1,6 @@
 from dash import html, callback, Output, Input, State, no_update
 import dash_mantine_components as dmc
+import dash_bootstrap_components as dbc
 from dash_iconify import DashIconify
 
 from controllers import file_manager, db_connection, service_controller

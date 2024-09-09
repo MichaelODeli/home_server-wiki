@@ -42,11 +42,9 @@ def layout(l="n", v=None, **other_unknown_query_strings):
         videoplayer_children = dmc.Stack(
             [
                 dmc.Title("Ошибка идентификатора видео. Попробуйте еще раз.", order=4),
-                html.A(
+                dmc.Anchor(
                     "Перейти на главную страницу",
                     href="/players/video?l=y",
-                    className="btn btn-outline-primary btn-sm",
-                    role="button",
                 ),
             ],
             w="100%",
@@ -83,104 +81,110 @@ def layout(l="n", v=None, **other_unknown_query_strings):
         video_category_id = file_data["category_id"]
         video_link = "http://" + file_data["file_fullway_forweb"]
 
-        videoplayer_children = [
-            dmc.Space(),
-            dp.DashPlayer(
-                id="player",
-                url=video_link,
-                controls=True,
-                width="unset",
-                height="max-content",
-                className="video_container",
-                volume=0.4,
-                style={
-                    "width": "100% !important",
-                },
-            ),
-            dmc.Space(),
-            dmc.Title(
-                video_name, style={"width": "100%"}, id="player_videoname", order=3
-            ),
-            dmc.Grid(
-                children=[
-                    dmc.GridCol(
-                        dmc.Tooltip(
-                            label=f'Показать все видео "{video_type}"',
-                            position="top",
-                            offset=3,
-                            withArrow=True,
-                            children=[
-                                service.dmcButtonLink(
-                                    video_type,
-                                    href=cont_video.getSearchLink(
-                                        video_category_id,
-                                        video_type_id,
+        videoplayer_children = dmc.Stack(
+            [
+                dmc.Space(),
+                dp.DashPlayer(
+                    id="player",
+                    url=video_link,
+                    controls=True,
+                    width="unset",
+                    height="max-content",
+                    className="video_container",
+                    volume=0.4,
+                    style={
+                        "width": "100% !important",
+                    },
+                ),
+                dmc.Space(),
+                dmc.Title(
+                    video_name, style={"width": "100%"}, id="player_videoname", order=3
+                ),
+                dmc.Grid(
+                    children=[
+                        dmc.GridCol(
+                            dmc.Tooltip(
+                                label=f'Показать все видео "{video_type}"',
+                                position="top",
+                                offset=3,
+                                withArrow=True,
+                                children=[
+                                    service.dmcButtonLink(
+                                        video_type,
+                                        href=cont_video.getSearchLink(
+                                            video_category_id,
+                                            video_type_id,
+                                        ),
                                     )
-                                )
-                            ],
+                                ],
+                            ),
+                            span="content",
+                            w="max-content",
                         ),
-                        span="content",
-                        w="max-content",
-                    ),
-                    dmc.GridCol(span="auto", className="adaptive-hide"),
-                    dmc.GridCol(
-                        dmc.Group(
-                            children=[
-                                dmc.Tooltip(
-                                    label="Скачать видео",
-                                    position="bottom",
-                                    offset=3,
-                                    withArrow=True,
-                                    children=[
-                                        dmc.Button(
-                                            Purify('<i class="bi bi-download"></i>'),
-                                            id="player_download",
-                                            variant="outline",
-                                        ),
-                                    ],
-                                ),
-                                dmc.Tooltip(
-                                    label="Добавить в плейлист",
-                                    position="bottom",
-                                    offset=3,
-                                    withArrow=True,
-                                    children=[
-                                        dmc.Button(
-                                            Purify(
-                                                '<i class="bi bi-collection-play"></i>'
+                        dmc.GridCol(span="auto", className="adaptive-hide"),
+                        dmc.GridCol(
+                            dmc.Group(
+                                children=[
+                                    dmc.Tooltip(
+                                        label="Скачать видео",
+                                        position="bottom",
+                                        offset=3,
+                                        withArrow=True,
+                                        children=[
+                                            dmc.Button(
+                                                Purify(
+                                                    '<i class="bi bi-download"></i>'
+                                                ),
+                                                id="player_download",
+                                                variant="outline",
                                             ),
-                                            id="player_addtoplaylist",
-                                            disabled=True,
-                                            variant="outline",
-                                        ),
-                                    ],
-                                ),
-                                dmc.Tooltip(
-                                    label="Пожаловаться",
-                                    position="bottom",
-                                    offset=3,
-                                    withArrow=True,
-                                    children=[
-                                        dmc.Button(
-                                            Purify('<i class="bi bi-flag"></i>'),
-                                            id="player_report",
-                                            disabled=True,
-                                            variant="outline",
-                                        ),
-                                    ],
-                                ),
-                            ],
-                            gap="xs",
+                                        ],
+                                    ),
+                                    dmc.Tooltip(
+                                        label="Добавить в плейлист",
+                                        position="bottom",
+                                        offset=3,
+                                        withArrow=True,
+                                        children=[
+                                            dmc.Button(
+                                                Purify(
+                                                    '<i class="bi bi-collection-play"></i>'
+                                                ),
+                                                id="player_addtoplaylist",
+                                                disabled=True,
+                                                variant="outline",
+                                            ),
+                                        ],
+                                    ),
+                                    dmc.Tooltip(
+                                        label="Пожаловаться",
+                                        position="bottom",
+                                        offset=3,
+                                        withArrow=True,
+                                        children=[
+                                            dmc.Button(
+                                                Purify('<i class="bi bi-flag"></i>'),
+                                                id="player_report",
+                                                disabled=True,
+                                                variant="outline",
+                                            ),
+                                        ],
+                                    ),
+                                ],
+                                gap="xs",
+                            ),
+                            span="content",
+                            w="max-content",
                         ),
-                        span="content",
-                        w="max-content",
-                    ),
-                ],
-                align="center",
-                style={"width": "100%"},
-                # className="adaptive-block",
-            ),
-        ]
+                    ],
+                    align="center",
+                    style={"width": "100%"},
+                    # className="adaptive-block",
+                ),
+            ],
+            className="mih-100",
+            justify=elements_justify,
+        )
 
     service.logPrinter(request.remote_addr, "videoplayer", f'v_id "{v}"')
 
@@ -193,12 +197,7 @@ def layout(l="n", v=None, **other_unknown_query_strings):
                 dmc.Grid(
                     children=[
                         dmc.GridCol(
-                            children=dmc.Stack(
-                                videoplayer_children,
-                                className="mih-100",
-                                justify=elements_justify,
-                                # gap='xs'
-                            ),
+                            children=videoplayer_children,
                             className="columns-margin adaptive-width p-0",
                             span="auto",
                         ),

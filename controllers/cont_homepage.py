@@ -42,7 +42,7 @@ def getColorByValue(current_value=None, max_value=None, percent=None):
     if percent == None:
         percent = (current_value / max_value) * 100
     return (
-        'custom-blue' if percent < 70 else ("orange" if percent < 90 else "red")
+        'custom-primary-color' if percent < 70 else ("orange" if percent < 90 else "red")
     )
 
 
@@ -147,7 +147,7 @@ def widgetDiskSize(**kwargs):
             dmc.Space(h=10),
             html.Table([getDriveSize(part) for part in psutil.disk_partitions()]),
             dmc.Space(h=10),
-            html.A("Подробные свойства", href="/settings?l=y&tab=server_info"),
+            dmc.Anchor("Подробные свойства", href="/settings?l=y&tab=server_info"),
         ],
         className="mobile-block",
         shadow='md'
@@ -183,7 +183,7 @@ def getWeatherLabel(selected_date: str, temperature: list, weather_type="sunny")
         [
             dmc.Text(
                 calendar.day_abbr[converted_date.weekday()].capitalize(),
-                c="custom-blue" if converted_date.weekday() < 5 else "red",
+                c="custom-primary-color" if converted_date.weekday() < 5 else "red",
             ),
             dmc.Text(
                 f"{converted_date.day} {calendar.month_abbr[converted_date.month]}",
@@ -191,7 +191,7 @@ def getWeatherLabel(selected_date: str, temperature: list, weather_type="sunny")
             ),
             dmc.Space(h=10),
             DashIconify(icon=weather_types[weather_type], width=40),
-            dmc.Text(temperature[0], c="custom-blue"),
+            dmc.Text(temperature[0], c="custom-primary-color"),
             dmc.Text(temperature[1], c="gray"), 
         ],
         align="center",
@@ -266,7 +266,7 @@ def widgetTorrents():
                 gap="xs",
             ),
             dmc.Space(h=15),
-            html.A(
+            dmc.Anchor(
                 "Открыть qbittorrent",
                 href="http://" + qbt_ip + ":" + qbt_port,
                 target="_blank",
@@ -274,7 +274,7 @@ def widgetTorrents():
             dmc.LoadingOverlay(
                 visible=False,
                 id="loading-overlay-widget-torrent",
-                zIndex=1000,
+                zIndex=200,
                 overlayProps={"radius": "sm", "blur": 2},
             ),
         ],
@@ -392,7 +392,7 @@ def widgetSysteminfo():
                                 dmc.Text("NaN b/s"),
                             ],
                             justify="center",
-                            c="blue",
+                            c="custom-primary-color",
                         ),
                         span="content",
                     ),
