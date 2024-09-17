@@ -28,6 +28,12 @@ from controllers import cont_files as cont_f
 
 register_page(__name__, path="/torrents", icon="fa-solid:home")
 
+conn = db_connection.getConn()
+settings = file_manager.getSettings(conn)
+qbt_ip = settings["apps.torrents.qbittorrent_ip"]
+qbt_port = settings["apps.torrents.qbittorrent_port"]
+qbt_link = f"http://{qbt_ip}:{qbt_port}"
+
 
 def layout(l="n", **kwargs):
     # lazy load block
@@ -60,7 +66,7 @@ def layout(l="n", **kwargs):
                                             span="content",
                                         ),
                                         dmc.GridCol(span="auto"),
-                                        dmc.ButtonGroup(
+                                        dmc.Group(
                                             [
                                                 service.getButtonWithIcon(
                                                     button_icon="material-symbols:sync",
@@ -71,7 +77,6 @@ def layout(l="n", **kwargs):
                                                     button_icon="material-symbols:add",
                                                     button_title="Добавить торрент",
                                                     button_id="torrent-add",
-                                                    disabled=True,
                                                 ),
                                                 service.getButtonWithIcon(
                                                     button_icon="material-symbols:play-pause",
@@ -92,15 +97,20 @@ def layout(l="n", **kwargs):
                                                     color="red",
                                                     disabled=True,
                                                 ),
-                                                service.dmcButtonLink(
-                                                    "Открыть qBittorrent",
-                                                    href=f"http://{qbt_ip}:{qbt_port}",
-                                                    button_right_icon="mdi:external-link",
-                                                    height='100%',
+                                                dmc.Anchor(
+                                                    dmc.Button(
+                                                        "Открыть qbittorrent",
+                                                        rightSection=DashIconify(
+                                                            icon="mdi:external-link"
+                                                        ),
+                                                    ),
+                                                    href=qbt_link,
                                                     target="_blank",
                                                 ),
                                             ],
                                             style={"margin": "5px"},
+                                            gap="xs",
+                                            id="dummy-4",
                                         ),
                                     ],
                                     align="stretch",
@@ -125,7 +135,8 @@ def layout(l="n", **kwargs):
             ],
             pt=20,
             # style={"paddingTop": 20},
-            className="dmc-container",
+            # className="dmc-container",
+            miw="90%",
         )
 
 
@@ -298,7 +309,9 @@ def returnTorrentsData(n):
             highlightOnHover=True,
         )
         if datatable != None
-        else dmc.Title("Ошибка получения данных", style={"text-align": "center"}, order=4)
+        else dmc.Title(
+            "Ошибка получения данных", style={"text-align": "center"}, order=4
+        )
     )
 
 
@@ -319,18 +332,3 @@ def test(checkboxes_input, checkboxes_ids):
 
         print(torrent_ids)
         return no_update
-
-# @callback(
-#     Output("torrent-link", 'url'),
-#     Input('open-qbittorrent', 'n_clicks'),
-#     prevent_initial_call=True
-# )
-# def qbit_opener(n_clicks):
-#     conn = db_connection.getConn()
-#     settings = file_manager.getSettings(conn)
-#     qbt_ip = settings["apps.torrents.qbittorrent_ip"]
-#     qbt_port = settings["apps.torrents.qbittorrent_port"]
-
-
-#     if n_clicks is not None:
-#         return f"http://{qbt_ip}:{qbt_port}"

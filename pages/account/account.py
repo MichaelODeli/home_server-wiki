@@ -61,4 +61,5 @@ def layout(l="y", **kwargs):
         ],
         style={"paddingTop": "6dvh"},
         className="adaptive-block",
+        maw='99%'
     )

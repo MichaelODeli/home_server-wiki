@@ -53,14 +53,14 @@ def generateHTMLTable(
     html.Div: HTML-элемент div, содержащий таблицу.
     """
     header = [
-        html.Thead(
-            html.Tr(
-                [html.Th(header[0], style={"max-width": "20px"})]
+        dmc.TableThead(
+            dmc.TableTr(
+                [dmc.TableTh(header[0], style={"max-width": "20px"})]
                 + [
-                    html.Th(
+                    dmc.TableTh(
                         header_element,
                         style={
-                            # "text-align": align
+                            "text-align": 'center'
                         },
                     )
                     for header_element in header[1:]
@@ -69,16 +69,16 @@ def generateHTMLTable(
         )
     ]
     body = [
-        html.Tbody(
+        dmc.TableTbody(
             [
-                html.Tr(
+                dmc.TableTr(
                     [
-                        html.Td(
+                        dmc.TableTd(
                             value,
                             style={
                                 "align-content": 'center',
                                 "padding": (
-                                    "0 5px 0 5px" if variant == "compact" else "unset"
+                                    "5px" if variant == "compact" else "unset"
                                 ),
                             },
                         )
@@ -92,10 +92,10 @@ def generateHTMLTable(
 
     return html.Div(
         [
-            dbc.Table(
+            dmc.Table(
                 header + body,
                 striped=striped,
-                hover=highlightOnHover,
+                highlightOnHover=highlightOnHover,
                 style={"box-shadow": "unset", "text-align": align},
             )
         ],

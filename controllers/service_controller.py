@@ -154,7 +154,7 @@ def dmcColor(color_name: str, color_id: int):
 
 
 def dmcButtonLink(
-    button_label, href, target=None, button_left_icon=None, button_right_icon=None, height='max-content'
+    button_label, href, target=None, button_left_icon=None, button_right_icon=None, height='max-content', className = ''
 ):
     return html.A(
         children=dmc.Group(
@@ -176,7 +176,7 @@ def dmcButtonLink(
         ),
         href=href,
         target=target,
-        className="mantine-focus-auto mantine-active m_77c9d27d mantine-Button-root m_87cf2631 mantine-UnstyledButton-root center-content mantine-sm-button",
+        className="mantine-focus-auto mantine-active m_77c9d27d mantine-Button-root m_87cf2631 mantine-UnstyledButton-root center-content mantine-sm-button"+' '+className,
         style={"width": "max-content", "height": height},
     )
 

@@ -77,3 +77,32 @@ VALUES
     ]
 }'
   );
+
+INSERT INTO
+  header_links (header_group_name, header_group_content)
+VALUES
+  (
+    'Ведение учета',
+    '{
+    "Календари": [
+        {
+            "link_name": "Календарь",
+            "link_href": "/calendar?l=y"
+        },
+        {
+            "link_name": "To-do",
+            "link_href": "/calendar/to-do?l=y"
+        }
+    ],
+    "Финансы": [
+        {
+            "link_name": "Бюджет",
+            "link_href": "/bugdet?l=y"
+        },
+        {
+            "link_name": "Контроль подписок",
+            "link_href": "/budget/subscriptions?l=y"
+        }
+    ]
+}'
+  );

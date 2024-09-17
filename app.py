@@ -93,10 +93,8 @@ if __name__ == "__main__":
         app.run(
             debug=True,
             host=config["APP_HOST"],
-            port=int(config["APP_PORT"]),
-            dev_tools_props_check=False,
+            port=int(config["APP_PORT"])
         )
     else:
         from waitress import serve
-
         serve(app.server, host=config["APP_HOST"], port=int(config["APP_PORT"]))
