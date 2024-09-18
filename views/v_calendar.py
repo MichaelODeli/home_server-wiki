@@ -1,9 +1,14 @@
 import calendar
 from datetime import datetime
+
 import dash_mantine_components as dmc
 
 
-def renderMiniCalendar():
+def render_mini_calendar():
+    """
+
+    :return:
+    """
     cal = calendar.Calendar()
     week_days_name = calendar.weekheader(2).split(" ")
 
@@ -79,7 +84,11 @@ def renderMiniCalendar():
     return mini_calendar
 
 
-def renderPlansNavbar():
+def render_plans_navbar():
+    """
+
+    :return:
+    """
     plans_timeline = dmc.Timeline(
         ps="md",
         active=-1,
@@ -110,7 +119,11 @@ def renderPlansNavbar():
     return plans_timeline
 
 
-def renderMaxiCalendar():
+def render_maxi_calendar():
+    """
+
+    :return:
+    """
     cal = calendar.Calendar()
     week_days_name = calendar.weekheader(2).split(" ")
 

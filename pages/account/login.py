@@ -1,7 +1,7 @@
-from dash import html, dcc, register_page, callback, Output, Input
+import dash_mantine_components as dmc
+from dash import Input, Output, callback, dcc, html, register_page
 from dash.exceptions import PreventUpdate
 from dash_iconify import DashIconify
-import dash_mantine_components as dmc
 
 register_page(
     __name__,
@@ -10,6 +10,11 @@ register_page(
 
 
 def layout(**kwargs):
+    """
+
+    :param kwargs:
+    :return:
+    """
     return (
         dmc.Stack(
             align="center",
@@ -52,7 +57,12 @@ def layout(**kwargs):
 
 
 @callback(Output("passwd-field", "children"), Input("passwd-type", "value"))
-def formatPasswdField(value):
+def format_passwd_field(value):
+    """
+
+    :param value:
+    :return:
+    """
     if value == "pin":
         return dmc.PinInput(
             w="100%",

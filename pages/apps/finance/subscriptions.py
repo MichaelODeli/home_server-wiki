@@ -1,26 +1,17 @@
-from dash import (
-    dcc,
-    html,
-    Input,
-    Output,
-    callback,
-    register_page,
-    State,
-    Input,
-    Output,
-    no_update,
-    MATCH,
-    ALL,
-    callback_context,
-)
 import dash_mantine_components as dmc
-import dash_bootstrap_components as dbc
+from dash import (ALL, Input, Output, State, callback, register_page)
 from dash_iconify import DashIconify
 
-register_page(__name__, path="/budget/subscriptions", icon="fa-solid:home") 
+register_page(__name__, path="/budget/subscriptions", icon="fa-solid:home")
 
 
-def layout(l="n", **kwargs):
+def layout(l="n", **kwargs):  # noqa: E741
+    """
+
+    :param l:
+    :param kwargs:
+    :return:
+    """
     if l == "n":
         return dmc.Container()
     else:
@@ -203,7 +194,14 @@ def layout(l="n", **kwargs):
     prevent_initial_call=True,
 )
 def modal_add_sub(nc1, opened):
+    """
+
+    :param nc1:
+    :param opened:
+    :return:
+    """
     return not opened
+
 
 @callback(
     Output("modal-sub-properties", "opened"),
@@ -212,7 +210,14 @@ def modal_add_sub(nc1, opened):
     prevent_initial_call=True,
 )
 def modal_edit_sub(nc1, opened):
+    """
+
+    :param nc1:
+    :param opened:
+    :return:
+    """
     return not opened
+
 
 @callback(
     Output("modal-remove-confirm-sub", "opened"),
@@ -221,4 +226,10 @@ def modal_edit_sub(nc1, opened):
     prevent_initial_call=True,
 )
 def modal_remove_sub(nc1, opened):
+    """
+
+    :param nc1:
+    :param opened:
+    :return:
+    """
     return not opened

@@ -1,33 +1,25 @@
-from dash import (
-    dcc,
-    html,
-    Input,
-    Output,
-    callback,
-    register_page,
-    State,
-    Input,
-    Output,
-    no_update,
-)
 import dash_mantine_components as dmc
-import dash_bootstrap_components as dbc
-from dash_extensions import Purify
-from flask import request
-from datetime import datetime
-from controllers import service_controller as service
-from controllers import db_connection, file_manager
 import psutil
-import platform
-from controllers import cont_settings
+from dash import (Input, Output, callback, html, register_page)
+from flask import request
+
+from controllers import cont_settings, db_connection, file_manager
+from controllers import service_controller as service
 
 register_page(__name__, path="/settings", icon="fa-solid:home")
 
 
-def layout(l="n", tab="server_info", **kwargs):
+def layout(l="n", tab="server_info", **kwargs):  # noqa: E741
+    """
+
+    :param l:
+    :param tab:
+    :param kwargs:
+    :return:
+    """
     if l == "n":
         return dmc.Container()
-    service.logPrinter(request.remote_addr, "settings", "page opened")
+    service.log_printer(request.remote_addr, "settings", "page opened")
 
     return dmc.Container(
         children=[
@@ -65,10 +57,16 @@ def layout(l="n", tab="server_info", **kwargs):
 
 
 @callback(Output("tabs-content", "children"), Input("tabs-settings", "value"))
-def renderContent(active, test=True):
-    conn = db_connection.getConn()
-    categories = file_manager.getCategories(conn)
-    settings = file_manager.getSettings(conn)
+def render_settings_content(active, test=True):
+    """
+
+    :param active:
+    :param test:
+    :return:
+    """
+    conn = db_connection.get_conn()
+    categories = file_manager.get_categories(conn)
+    settings = file_manager.get_settings(conn)
     if active == "files":
         return dmc.Stack(
             [
@@ -189,10 +187,10 @@ def renderContent(active, test=True):
             dmc.Table(
                 [
                     dmc.TableTbody(
-                        cont_settings.getSystemInfoRows()
-                        + cont_settings.getCPUInfoRows()
-                        + cont_settings.getRAMSWARInfoRows()
-                        + cont_settings.getPartitionsInfoRows()
+                        cont_settings.get_system_info_rows()
+                        + cont_settings.get_cpu_info_rows()
+                        + cont_settings.get_ram_swap_info_rows()
+                        + cont_settings.get_partitions_info_rows()
                     ),
                 ],
                 style={"table-layout": "auto", "width": "100%"},
@@ -351,7 +349,12 @@ def renderContent(active, test=True):
     [Input("show-cpu-load", "n_clicks")],
     prevent_initial_call=True,
 )
-def getCpuLoadRings(_):
+def get_cpu_load_rings(_):
+    """
+
+    :param _:
+    :return:
+    """
     return [
         dmc.Group(
             [

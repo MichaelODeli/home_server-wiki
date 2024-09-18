@@ -1,4 +1,9 @@
-def getHeaderLinks(conn):
+def get_header_links(conn):
+    """
+
+    :param conn:
+    :return:
+    """
     with conn.cursor() as cursor:
         cursor.execute("select * from header_links;")
         desc = cursor.description

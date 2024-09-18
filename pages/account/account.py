@@ -1,17 +1,6 @@
-from dash import (
-    html,
-    register_page,
-    callback,
-    Input,
-    Output,
-    no_update,
-    dash_table,
-    State,
-)
 import dash_mantine_components as dmc
-import dash_bootstrap_components as dbc
+from dash import (register_page)
 # from flask_login import current_user
-from dash_iconify import DashIconify
 
 register_page(
     __name__,
@@ -21,7 +10,13 @@ register_page(
 # USERDATA = ""
 
 
-def layout(l="y", **kwargs):
+def layout(l="y", **kwargs):  # noqa: E741
+    """
+
+    :param l:
+    :param kwargs:
+    :return:
+    """
     # global USERDATA
 
     # if not current_user.is_authenticated or l == "y" or not db_connection.test_conn():

@@ -1,13 +1,13 @@
-import dash_mantine_components as dmc
-import dash_bootstrap_components as dbc
-from dash_iconify import DashIconify
-from dash import dcc, html
-import pandas as pd
 from psycopg2.extensions import AsIs
-from random import randint
 
 
-def getAudioTypes(conn, type_id=None):
+def get_audio_types(conn, type_id=None):
+    """
+
+    :param conn:
+    :param type_id:
+    :return:
+    """
     with conn.cursor() as cursor:
         cursor.execute(
             """select * from (select distinct(type_id) from filestorage_mediafiles_summary fms where html_audio_ready)
@@ -22,7 +22,13 @@ def getAudioTypes(conn, type_id=None):
     return data
 
 
-def getAudioDict(conn, type_id):
+def get_audio_dict(conn, type_id):
+    """
+
+    :param conn:
+    :param type_id:
+    :return:
+    """
     with conn.cursor() as cursor:
         cursor.execute(
             """select * from filestorage_mediafiles_summary fms WHERE html_audio_ready and type_id = %(type_id)s order by artist, audio_title;""",
@@ -34,5 +40,3 @@ def getAudioDict(conn, type_id):
         data = [dict(zip(column_names, row)) for row in cursor.fetchall()]
 
     return data
-
-

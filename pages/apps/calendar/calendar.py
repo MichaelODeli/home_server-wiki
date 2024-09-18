@@ -1,27 +1,19 @@
-from dash import (
-    dcc,
-    html,
-    Input,
-    Output,
-    callback,
-    register_page,
-    State,
-    Input,
-    Output,
-    no_update,
-    MATCH,
-    ALL,
-    callback_context,
-)
 import dash_mantine_components as dmc
-import dash_bootstrap_components as dbc
+from dash import (register_page)
 from dash_iconify import DashIconify
+
 from views import v_calendar
 
 register_page(__name__, path="/calendar", icon="fa-solid:home")
 
 
-def layout(l="n", **kwargs):
+def layout(l="n", **kwargs):  # noqa: E741
+    """
+
+    :param l:
+    :param kwargs:
+    :return:
+    """
     if l == "n":
         return dmc.Container()
     else:
@@ -31,10 +23,10 @@ def layout(l="n", **kwargs):
                 dmc.AppShellNavbar(
                     dmc.Stack(
                         [
-                            v_calendar.renderMiniCalendar(),
+                            v_calendar.render_mini_calendar(),
                             dmc.Divider(),
                             dmc.Title("Ближайшие задачи", order=3, ps="xs"),
-                            v_calendar.renderPlansNavbar(),
+                            v_calendar.render_plans_navbar(),
                         ],
                         h="100%",
                         pt="xs",
@@ -49,12 +41,12 @@ def layout(l="n", **kwargs):
                                     dmc.ActionIcon(
                                         DashIconify(icon="ic:baseline-arrow-back-ios-new", height=25),
                                         variant='light'
-                                    ), 
+                                    ),
                                     dmc.Title("Сентябрь 2024", order=3),
                                     dmc.ActionIcon(
                                         DashIconify(icon="ic:baseline-arrow-forward-ios", height=25),
                                         variant='light'
-                                    ), 
+                                    ),
                                     dmc.ActionIcon(
                                         DashIconify(icon="ic:sharp-plus", height=25),
                                         color="green.8",
@@ -64,7 +56,7 @@ def layout(l="n", **kwargs):
                                     ),
                                 ]
                             ),
-                            v_calendar.renderMaxiCalendar(),
+                            v_calendar.render_maxi_calendar(),
                         ],
                         mah="95%",
                         h="95%",

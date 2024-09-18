@@ -1,54 +1,59 @@
-from dash import (
-    dcc,
-    html,
-    Input,
-    Output,
-    callback,
-    register_page,
-    State,
-    Input,
-    Output,
-    no_update,
-)
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
-import time
-import dash_bootstrap_components as dbc
-from flask import request
-from controllers import db_connection
-from controllers import file_manager
-from controllers import service_controller as service
-from controllers import cont_search
-from dash.exceptions import PreventUpdate
 import time
 
+import dash_mantine_components as dmc
+from dash import (Input, Output, State, callback, html, no_update,
+                  register_page)
+from dash.exceptions import PreventUpdate
+from dash_iconify import DashIconify
+from flask import request
+
+from controllers import cont_search, db_connection
+from controllers import service_controller as service
+
 register_page(__name__, path="/search", icon="fa-solid:home")
+
+PAGE_LIMIT = 20
 
 
 def layout(
     l="n",
     query="",
-    category_id=[],
-    type_id=[],
+    category_id=None,
+    type_id=None,
     auto_search="n",
     from_video="n",
     **other_unknown_query_strings,
 ):
+    """
+
+    :param l:
+    :param query:
+    :param category_id:
+    :param type_id:
+    :param auto_search:
+    :param from_video:
+    :param other_unknown_query_strings:
+    :return:
+    """
+    if category_id is None:
+        category_id = []
+    if type_id is None:
+        type_id = []
     if l == "n":
         return dmc.Container()
     else:
-        service.logPrinter(request.remote_addr, "search", "page opened")
+        service.log_printer(request.remote_addr, "search", "page opened")
 
-        category_id, type_id = cont_search.formatCategoryType(category_id, type_id)
+        category_id, type_id = cont_search.format_category_type(category_id, type_id)
 
         if auto_search != "n" and (query != "" or category_id != []):
             search_clicks = 1
         else:
             search_clicks = 0
 
-        conn = db_connection.getConn()
+        conn = db_connection.get_conn()
 
-        category_select_data = cont_search.getCategoriesForMultiSelect(conn)
+        category_select_data = cont_search.get_categories_for_multi_select(conn)
 
         return dmc.Container(
             children=[
@@ -68,7 +73,7 @@ def layout(
                                             pe="md",
                                         ),
                                         dmc.Space(h=10),
-                                        cont_search.getSearchAccordion(
+                                        cont_search.get_search_accordion(
                                             category_id,
                                             type_id,
                                             category_select_data,
@@ -124,7 +129,7 @@ def layout(
         )
 
 
-cont_search.getTypesAdditionFormatCallback()
+cont_search.get_types_addition_format_callback()
 
 
 @callback(
@@ -142,7 +147,17 @@ cont_search.getTypesAdditionFormatCallback()
 def search(
     current_page, n_clicks, categories, types, query, mediafiles_links_format, test=True
 ):
+    """
 
+    :param current_page:
+    :param n_clicks:
+    :param categories:
+    :param types:
+    :param query:
+    :param mediafiles_links_format:
+    :param test:
+    :return:
+    """
     if n_clicks == 0:
         raise PreventUpdate
 
@@ -156,16 +171,15 @@ def search(
     )
 
     start_time = time.time()
-    conn = db_connection.getConn()
+    conn = db_connection.get_conn()
 
     current_page -= 1
 
-    PAGE_LIMIT = 20
-    OFFSET = current_page * PAGE_LIMIT
+    offset = current_page * PAGE_LIMIT
 
     # check inputs and get results
-    counter, query_results = cont_search.getSearchResults(
-        conn, query, categories, types, limit=PAGE_LIMIT, offset=OFFSET
+    counter, query_results = cont_search.get_search_results(
+        conn, query, categories, types, limit=PAGE_LIMIT, offset=offset
     )
 
     if counter == -1:
@@ -188,14 +202,14 @@ def search(
             message=f"Результаты получены за {round(time.time() - start_time, 3)} секунд. Результатов: {counter}.",
             icon=DashIconify(icon="ep:success-filled"),
         )
-        service.logPrinter(
+        service.log_printer(
             request.remote_addr,
             "search",
             f'category {str(categories)} | type {str(types)} | query "{query}" | results {counter} | page {current_page} | time {round(time.time() - start_time, 3)}',
         )
 
         return (
-            cont_search.formatSearchResults(
+            cont_search.format_search_results(
                 query_results=query_results,
                 mediafiles_links_format=mediafiles_links_format,
             ),

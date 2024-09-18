@@ -1,6 +1,7 @@
 import time
 
-def getDuration(seconds_data):
+
+def get_duration(seconds_data):
     """
     Преобразует количество секунд в формат времени HH:MM:SS.
 

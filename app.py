@@ -1,14 +1,16 @@
-import dash
-from dash import dcc, html
-import dash_mantine_components as dmc
-from dash_extensions.pages import setup_page_components
-from callbacks import call_app
-from variables import styles
-from dotenv import dotenv_values
-import flask
 import os
 
+import dash
+import dash_mantine_components as dmc
+import flask
+from dash import dcc, html
+from dash_extensions.pages import setup_page_components
+from dotenv import dotenv_values
 
+from callbacks import call_app
+from variables import styles
+
+# noinspection PyProtectedMember
 dash._dash_renderer._set_react_version("18.2.0")
 
 
@@ -80,10 +82,10 @@ app.layout = dmc.MantineProvider(
 )
 
 
-call_app.getServerBlockerCallback(app)
-call_app.getNavbarCallbacks(app)
-call_app.getNavbarSearchBarCallbacks(app)
-call_app.getColorSwitchCallbacks(app)
+call_app.get_server_blocker_callback(app)
+call_app.get_navbar_callbacks(app)
+call_app.get_navbar_search_bar_callbacks(app)
+call_app.get_color_switch_callbacks(app)
 
 
 dev = bool(config["APP_DEBUG_ENABLED"])
@@ -97,4 +99,5 @@ if __name__ == "__main__":
         )
     else:
         from waitress import serve
-        serve(app.server, host=config["APP_HOST"], port=int(config["APP_PORT"]))
+        serve(app.server, host=config["APP_HOST"],
+              port=int(config["APP_PORT"]))

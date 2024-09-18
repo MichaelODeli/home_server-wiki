@@ -1,29 +1,25 @@
-import requests
-from dash import (
-    dcc,
-    html,
-)
-import dash_mantine_components as dmc
-from controllers.cont_torrents import bytes2human
-from controllers import db_connection, cont_torrents, file_manager
-import dash_bootstrap_components as dbc
-from datetime import datetime, timedelta
 import calendar
+import locale
 import shutil
+from datetime import datetime, timedelta
+
+import dash_mantine_components as dmc
 import psutil
+from dash import html
 from dash_iconify import DashIconify
 
-import locale
+from controllers import cont_torrents, db_connection, file_manager
+from controllers.cont_torrents import bytes2human
 
 locale.setlocale(locale.LC_ALL, "ru_RU")
 
 
-def getTorrentStatus():
+def get_torrent_status():
     """
     Получает статус торрентов из qBittorrent API.
     """
     try:
-        torrents_dict = cont_torrents.getTorrentsDataDict(source_page="main_page")
+        torrents_dict = cont_torrents.get_torrents_data_dict(source_page="main_page")
 
         count_all = torrents_dict["all"]
         count_downloading = torrents_dict["downloading"]
@@ -34,23 +30,30 @@ def getTorrentStatus():
             f"Скачивается: {count_downloading}",
             f"Раздается: {count_uploading}",
         )
-    except:
+    except Exception:
         return ["qbittorrent не отвечает."] * 3
 
 
-def getColorByValue(current_value=None, max_value=None, percent=None):
-    if percent == None:
+def get_color_by_value(current_value=None, max_value=None, percent=None):
+    """
+
+    :param current_value:
+    :param max_value:
+    :param percent:
+    :return:
+    """
+    if percent is None:
         percent = (current_value / max_value) * 100
     return (
         'custom-primary-color' if percent < 70 else ("orange" if percent < 90 else "red")
     )
 
 
-def getProgress(
+def get_progress(
     drive: str,
     current_value: float,
     max_value: float,
-    id: str,
+    component_id: str,
     valid: bool,
     readable=None,
 ):
@@ -66,7 +69,7 @@ def getProgress(
 
     """
 
-    if valid == True:
+    if valid:
         return html.Tr(
             [
                 html.Td(drive),
@@ -78,8 +81,8 @@ def getProgress(
                                     f"{bytes2human(current_value)} | {bytes2human(max_value)}"
                                 ),
                                 value=int(round(current_value / max_value, 2) * 100),
-                                color=getColorByValue(current_value, max_value),
-                                id=id,
+                                color=get_color_by_value(current_value, max_value),
+                                id=component_id,
                             )
                         ],
                         size="xl",
@@ -99,7 +102,7 @@ def getProgress(
                                 dmc.ProgressLabel("Диск не обнаружен"),
                                 value=100,
                                 color="#cc0000",
-                                id=id,
+                                id=component_id,
                             )
                         ],
                         size="xl",
@@ -110,7 +113,7 @@ def getProgress(
         )
 
 
-def getDriveSize(partition):
+def get_drive_size(partition):
     """
     Получить размер диска/раздела в виде кольцевого прогресс-бара.
 
@@ -125,13 +128,14 @@ def getDriveSize(partition):
         total = 1
         used = 1
         valid = False
+        mountpoint = None
 
-    return getProgress(
+    return get_progress(
         mountpoint, int(used), int(total), f"ring-{mountpoint}", valid=valid
     )
 
 
-def widgetDiskSize(**kwargs):
+def widget_disk_size(**kwargs):
     """
     Функция создает карточку с информацией о свободном месте на дисках.
 
@@ -145,7 +149,7 @@ def widgetDiskSize(**kwargs):
         [
             dmc.Text("Свободное место на разделах", size="xl", ta="center"),
             dmc.Space(h=10),
-            html.Table([getDriveSize(part) for part in psutil.disk_partitions()]),
+            html.Table([get_drive_size(part) for part in psutil.disk_partitions()]),
             dmc.Space(h=10),
             dmc.Anchor("Подробные свойства", href="/settings?l=y&tab=server_info"),
         ],
@@ -155,7 +159,7 @@ def widgetDiskSize(**kwargs):
     )
 
 
-def getWeatherLabel(selected_date: str, temperature: list, weather_type="sunny"):
+def get_weather_label(selected_date: str, temperature: list, weather_type="sunny"):
     """
     Функция создает метку с информацией о погоде.
 
@@ -192,14 +196,14 @@ def getWeatherLabel(selected_date: str, temperature: list, weather_type="sunny")
             dmc.Space(h=10),
             DashIconify(icon=weather_types[weather_type], width=40),
             dmc.Text(temperature[0], c="custom-primary-color"),
-            dmc.Text(temperature[1], c="gray"), 
+            dmc.Text(temperature[1], c="gray"),
         ],
         align="center",
         gap=0,
     )
 
 
-def getDateString(plus=0, pattern="%d%m%Y"):
+def get_date_string(plus=0, pattern="%d%m%Y"):
     """
     Вывод сегодняшней даты с опцией добавление определенного числа дней к числу.
 
@@ -211,7 +215,7 @@ def getDateString(plus=0, pattern="%d%m%Y"):
     return needed_date.strftime(pattern)
 
 
-def widgetWeather(**kwargs):
+def widget_weather(**kwargs):
     """
     Функция создает карточку с информацией о погоде.
 
@@ -227,11 +231,11 @@ def widgetWeather(**kwargs):
             dmc.Space(h=5),
             dmc.Group(
                 [
-                    getWeatherLabel(getDateString(0), ["+1", "-4"], "cloudy"),
-                    getWeatherLabel(getDateString(1), ["+10", "-4"], "sunny"),
-                    getWeatherLabel(getDateString(2), ["+1", "-4"], "partly-cloudy"),
-                    getWeatherLabel(getDateString(3), ["+10", "-4"], "thunderstorm"),
-                    getWeatherLabel(getDateString(4), ["+1", "-40"], "rain"),
+                    get_weather_label(get_date_string(0), ["+1", "-4"], "cloudy"),
+                    get_weather_label(get_date_string(1), ["+10", "-4"], "sunny"),
+                    get_weather_label(get_date_string(2), ["+1", "-4"], "partly-cloudy"),
+                    get_weather_label(get_date_string(3), ["+10", "-4"], "thunderstorm"),
+                    get_weather_label(get_date_string(4), ["+1", "-40"], "rain"),
                 ],
                 justify="center",
                 gap="xs",
@@ -242,12 +246,12 @@ def widgetWeather(**kwargs):
     )
 
 
-def widgetTorrents():
+def widget_torrents():
     """
     Функция создает карточку с информацией о торрентах.
     """
-    conn = db_connection.getConn()
-    settings = file_manager.getSettings(conn)
+    conn = db_connection.get_conn()
+    settings = file_manager.get_settings(conn)
 
     qbt_ip = settings["apps.torrents.qbittorrent_ip"]
     qbt_port = settings["apps.torrents.qbittorrent_port"]
@@ -284,7 +288,7 @@ def widgetTorrents():
     )
 
 
-def widgetSysteminfo():
+def widget_systeminfo():
     """
     Функция создает карточку с информацией о системе.
 
@@ -309,12 +313,12 @@ def widgetSysteminfo():
                                 sections=[
                                     {
                                         "value": cpu_usage,
-                                        "color": getColorByValue(percent=cpu_usage),
+                                        "color": get_color_by_value(percent=cpu_usage),
                                         "tooltip": f"Используется: {cpu_usage}%",
                                     },
                                 ],
                                 label=dmc.Text(
-                                    f"{round(psutil.cpu_freq().current/1000, 2)} GHz",
+                                    f"{round(psutil.cpu_freq().current / 1000, 2)} GHz",
                                     ta="center",
                                 ),
                                 size=120,
@@ -330,7 +334,7 @@ def widgetSysteminfo():
                                 sections=[
                                     {
                                         "value": psutil.virtual_memory().percent,
-                                        "color": getColorByValue(
+                                        "color": get_color_by_value(
                                             percent=psutil.virtual_memory().percent
                                         ),
                                         "tooltip": f"Занято: {bytes2human(psutil.virtual_memory().used)}",
@@ -353,7 +357,7 @@ def widgetSysteminfo():
                                 sections=[
                                     {
                                         "value": psutil.swap_memory().percent,
-                                        "color": getColorByValue(
+                                        "color": get_color_by_value(
                                             percent=psutil.swap_memory().percent
                                         ),
                                         "tooltip": f"Занято: {bytes2human(psutil.swap_memory().used)}",
@@ -407,6 +411,10 @@ def widgetSysteminfo():
     )
 
 
-def widgetFileManagerLog():
+def widget_file_manager_log():
+    """
+
+    :return:
+    """
     # статистика по добавленным файлам
     return None

@@ -1,9 +1,11 @@
-from dash import html
+from itertools import chain
+
 import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
+from dash import html
 from dash_iconify import DashIconify
-from controllers import db_connection, cont_header, service_controller
-from itertools import chain
+
+from controllers import cont_header, db_connection, service_controller
 
 # независимые компоненты
 navbar_brand = html.A(
@@ -59,7 +61,7 @@ navbar_user_dropdown = [
 
 
 # кнопки навбара
-navbar_items_dict = cont_header.getHeaderLinks(conn=db_connection.getConn())
+navbar_items_dict = cont_header.get_header_links(conn=db_connection.get_conn())
 navbar_buttons = [
     dmc.Menu(
         [
@@ -117,7 +119,13 @@ navbar_buttons_video = dmc.Menu(
 
 
 # Блок для поисковой строки
-def getSearchBar(search_target="/search", from_video=False):
+def get_search_bar(search_target="/search", from_video=False):
+    """
+
+    :param search_target:
+    :param from_video:
+    :return:
+    """
     search_placeholder = "Поиск" if not from_video else "Поиск по видео"
     return html.Form(
         children=[
@@ -129,7 +137,7 @@ def getSearchBar(search_target="/search", from_video=False):
                                 name="query",
                                 placeholder=search_placeholder,
                                 rightSection=[
-                                    service_controller.dmcButtonFromHTML(
+                                    service_controller.dmc_button_from_html(
                                         "Поиск", height="100%"
                                     )
                                 ],
@@ -153,12 +161,18 @@ def getSearchBar(search_target="/search", from_video=False):
 
 
 # формирование навбаров для разных страниц сайта
-def renderNavbar(from_video=False, from_search=False):
+def render_navbar(from_video=False, from_search=False):
+    """
+
+    :param from_video:
+    :param from_search:
+    :return:
+    """
     search_bar = (
         (
-            getSearchBar(search_target="/players/video/search", from_video=True)
+            get_search_bar(search_target="/players/video/search", from_video=True)
             if from_video
-            else getSearchBar()
+            else get_search_bar()
         )
         if not from_search
         else None
@@ -179,7 +193,7 @@ def renderNavbar(from_video=False, from_search=False):
                     className="adaptive-hide",
                 ),
                 dmc.GridCol(
-                    (search_bar),
+                    search_bar,
                     span="auto",
                     className="adaptive-hide px-3",
                 ),

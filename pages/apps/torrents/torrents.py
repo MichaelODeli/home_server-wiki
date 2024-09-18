@@ -1,51 +1,34 @@
-from dash import (
-    dcc,
-    html,
-    Input,
-    Output,
-    callback,
-    register_page,
-    State,
-    Input,
-    Output,
-    no_update,
-    MATCH,
-    ALL,
-    callback_context,
-)
 import dash_mantine_components as dmc
-import dash_bootstrap_components as dbc
-from dash_extensions import Purify
-from flask import request
-from datetime import datetime
-from controllers import service_controller as service, file_manager, db_connection
+from dash import (ALL, Input, Output, State, callback, dcc, html, no_update, register_page)
 from dash_iconify import DashIconify
-import re
-import base64
+from flask import request
 
-from controllers import cont_torrents as cont_t
 from controllers import cont_files as cont_f
+from controllers import cont_torrents as cont_t
+from controllers import db_connection, file_manager
+from controllers import service_controller as service
 
 register_page(__name__, path="/torrents", icon="fa-solid:home")
 
-conn = db_connection.getConn()
-settings = file_manager.getSettings(conn)
+conn = db_connection.get_conn()
+settings = file_manager.get_settings(conn)
 qbt_ip = settings["apps.torrents.qbittorrent_ip"]
 qbt_port = settings["apps.torrents.qbittorrent_port"]
 qbt_link = f"http://{qbt_ip}:{qbt_port}"
 
 
-def layout(l="n", **kwargs):
+def layout(l="n", **kwargs):  # noqa: E741
+    """
+
+    :param l:
+    :param kwargs:
+    :return:
+    """
     # lazy load block
     if l == "n":
         return dmc.Container()
     else:
-        service.logPrinter(request.remote_addr, "torrents", "page opened")
-
-        conn = db_connection.getConn()
-        settings = file_manager.getSettings(conn)
-        qbt_ip = settings["apps.torrents.qbittorrent_ip"]
-        qbt_port = settings["apps.torrents.qbittorrent_port"]
+        service.log_printer(request.remote_addr, "torrents", "page opened")
 
         # all workers must be here!
         return dmc.Container(
@@ -68,29 +51,29 @@ def layout(l="n", **kwargs):
                                         dmc.GridCol(span="auto"),
                                         dmc.Group(
                                             [
-                                                service.getButtonWithIcon(
+                                                service.get_button_with_icon(
                                                     button_icon="material-symbols:sync",
                                                     button_title="Обновить список",
                                                     button_id="torrent-update",
                                                 ),
-                                                service.getButtonWithIcon(
+                                                service.get_button_with_icon(
                                                     button_icon="material-symbols:add",
                                                     button_title="Добавить торрент",
                                                     button_id="torrent-add",
                                                 ),
-                                                service.getButtonWithIcon(
+                                                service.get_button_with_icon(
                                                     button_icon="material-symbols:play-pause",
                                                     button_title="Запустить/остановить торрент",
                                                     button_id="torrent-startstop",
                                                     disabled=True,
                                                 ),
-                                                service.getButtonWithIcon(
+                                                service.get_button_with_icon(
                                                     button_icon="material-symbols:info-outline",
                                                     button_title="Информация о торренте",
                                                     button_id="torrent-info",
                                                     disabled=True,
                                                 ),
-                                                service.getButtonWithIcon(
+                                                service.get_button_with_icon(
                                                     button_icon="material-symbols:delete",
                                                     button_title="Удалить торрент",
                                                     button_id="torrent-delete",
@@ -147,7 +130,13 @@ def layout(l="n", **kwargs):
     State("modal-add-torrent", "opened"),
     prevent_initial_call=True,
 )
-def toggleModal(nc1, opened):
+def toggle_torrent_modal(nc1, opened):
+    """
+
+    :param nc1:
+    :param opened:
+    :return:
+    """
     modal_children = [
         dmc.Stack(
             [
@@ -205,24 +194,33 @@ def toggleModal(nc1, opened):
     State("torrent-magnet", "value"),
     prevent_initial_call=True,
 )
-def parceTorrentFile(
+def parce_torrent_file(
     file_content, n_clicks_magnet, n_clicks_start, file_name, magnet_link=None
 ):
+    """
+
+    :param file_content:
+    :param n_clicks_magnet:
+    :param n_clicks_start:
+    :param file_name:
+    :param magnet_link:
+    :return:
+    """
     dis_upload = True
     dis_magnet_btn = True
     dis_magnet_input = True
 
     # check link and file
-    if n_clicks_magnet != None and magnet_link != "" and magnet_link != None:
+    if n_clicks_magnet is not None and magnet_link != "" and magnet_link is not None:
         prop_source = "magnet"
-        if cont_t.verifyMagnetLink(magnet_link):
+        if cont_t.verify_magnet_link(magnet_link):
             magnet_link = magnet_link
         else:
             return [no_update] * 5 + ["Неверная ссылка"]
-    elif file_content != None:
+    elif file_content is not None:
         prop_source = "file"
-        for torrent_file in file_content:
-            torrent_bytes = base64.b64decode(torrent_file.split(",")[1])
+        # for torrent_file in file_content:
+        #     torrent_bytes = base64.b64decode(torrent_file.split(",")[1])
     else:
         return [no_update] * 6
 
@@ -234,7 +232,7 @@ def parceTorrentFile(
             children=[
                 dmc.Text(
                     f"Для загрузки выбрано {len(file_name)} торрент-файла(ов)."
-                    if magnet_link == None or magnet_link == ""
+                    if magnet_link is None or magnet_link == ""
                     else "Для загрузки используется magnet-ссылка."
                 ),
             ],
@@ -258,7 +256,7 @@ def parceTorrentFile(
     ]
 
     # if not download - return properties
-    if n_clicks_start == None:
+    if n_clicks_start is None:
         return (
             no_update,
             properties,
@@ -284,13 +282,18 @@ def parceTorrentFile(
 @callback(
     Output("torrents-table-container", "children"), Input("torrent-update", "n_clicks")
 )
-def returnTorrentsData(n):
-    service.logPrinter(request.remote_addr, "torrents", "toggle update")
+def return_torrents_data(n):
+    """
 
-    datatable = cont_t.getTorrentsTableData()
+    :param n:
+    :return:
+    """
+    service.log_printer(request.remote_addr, "torrents", "toggle update")
+
+    datatable = cont_t.get_torrents_table_data()
     # datatable = None
     return (
-        cont_f.generateHTMLTable(
+        cont_f.generate_html_table(
             header=[
                 "",
                 "Название файла",
@@ -306,9 +309,9 @@ def returnTorrentsData(n):
             align="center",
             variant="compact",
             striped=True,
-            highlightOnHover=True,
+            highlight_on_hover=True,
         )
-        if datatable != None
+        if datatable is not None
         else dmc.Title(
             "Ошибка получения данных", style={"text-align": "center"}, order=4
         )
