@@ -1,13 +1,14 @@
-from dash_bootstrap_components.icons import FONT_AWESOME, BOOTSTRAP as BOOTSTRAP_ICONS
+from dash_bootstrap_components.icons import BOOTSTRAP as BOOTSTRAP_ICONS
+from dash_bootstrap_components.icons import FONT_AWESOME
 from dash_bootstrap_components.themes import ZEPHYR
 
 PRIMARY_COLOR = "custom-primary-color"
-FONT_FAMILY = """Inter, -apple-system, BlinkMacSystemFont, 
-            "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, 
+FONT_FAMILY = """Inter, -apple-system, BlinkMacSystemFont,
+            "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif,
             "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" """
 HEADINGS = {
-    "fontFamily": """Inter, -apple-system, BlinkMacSystemFont, 
-                "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, 
+    "fontFamily": """Inter, -apple-system, BlinkMacSystemFont,
+                "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif,
                 "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" """,
     "fontWeight": 500,
 }
@@ -33,5 +34,4 @@ STYLESHEETS = [
     ZEPHYR,
     "https://unpkg.com/@mantine/notifications@7.11.0/styles.css",
     "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap"
-
 ]

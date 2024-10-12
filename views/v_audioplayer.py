@@ -1,11 +1,17 @@
-from dash import html
 import dash_mantine_components as dmc
-from controllers.cont_audioplayer import getAudioTypes, getAudioDict
-from controllers.cont_media import getDuration
+from dash import html
 from dash_iconify import DashIconify
 
+from controllers.cont_audioplayer import get_audio_dict, get_audio_types
+from controllers.cont_media import get_duration
 
-def renderMainPage(conn=None):
+
+def render_main_page(conn=None):
+    """
+
+    :param conn: db connection to PostgreSQL
+    :return:
+    """
     return dmc.Stack(
         [
             html.A("Страница исполнителя", href="/players/audio?l=y&artist_id=90", className='a-color'),
@@ -15,11 +21,22 @@ def renderMainPage(conn=None):
     )
 
 
-def renderSearchPage(conn=None):
+def render_search_page(conn=None):
+    """
+
+    :param conn: db connection to PostgreSQL
+    :return:
+    """
     return "Поиск"
 
 
-def renderPlaylistPage(conn, playlist_id):
+def render_playlist_page(conn, playlist_id):
+    """
+
+    :param conn: db connection to PostgreSQL
+    :param playlist_id:
+    :return:
+    """
     return dmc.Table(
         # hover=True,
         children=[
@@ -45,7 +62,7 @@ def renderPlaylistPage(conn, playlist_id):
                         ),
                         dmc.TableTh(
                             "Загружено",
-                            className="min-column-width center-content adaptive-hide", 
+                            className="min-column-width center-content adaptive-hide",
                             px='sm'
                         ),
                         dmc.TableTh(
@@ -115,7 +132,7 @@ def renderPlaylistPage(conn, playlist_id):
                             ),
                             dmc.TableTd(
                                 (
-                                    getDuration(audio_data["audio_duration"])
+                                    get_duration(audio_data["audio_duration"])
                                     if (
                                         audio_data["audio_duration"] is not None
                                     )
@@ -125,7 +142,7 @@ def renderPlaylistPage(conn, playlist_id):
                             ),
                         ]
                     )
-                    for audio_data in getAudioDict(conn, playlist_id)
+                    for audio_data in get_audio_dict(conn, playlist_id)
                 ],
             ),
         ],
@@ -134,15 +151,31 @@ def renderPlaylistPage(conn, playlist_id):
     )
 
 
-def renderArtistPage(artist_id=0):
+def render_artist_page(artist_id=0):
+    """
+
+    :param artist_id:
+    :return:
+    """
     return "Какой-то артист"
 
 
-def renderAlbumPage(album_id=0):
+def render_album_page(album_id=0):
+    """
+
+    :param album_id:
+    :return:
+    """
     return "Какой-то альбом"
 
 
-def renderAudioNavbar(source, conn):
+def render_audio_navbar(source, conn):
+    """
+
+    :param source:
+    :param conn: db connection to PostgreSQL
+    :return:
+    """
     if source != "col" and source != "drawer":
         raise ValueError
 
@@ -193,7 +226,7 @@ def renderAudioNavbar(source, conn):
                             "id": audio_type["type_id"],
                         },
                     )
-                    for audio_type in getAudioTypes(conn)
+                    for audio_type in get_audio_types(conn)
                 ],
             ),
         ],
@@ -204,9 +237,14 @@ def renderAudioNavbar(source, conn):
     return content
 
 
-def renderAudioNavbarDrawer(conn):
+def render_audio_navbar_drawer(conn):
+    """
+
+    :param conn: db connection to PostgreSQL
+    :return:
+    """
     return dmc.Drawer(
-        children=[renderAudioNavbar(source="drawer", conn=conn)],
+        children=[render_audio_navbar(source="drawer", conn=conn)],
         title=dmc.Title("Аудиоплеер", order=4),
         id="drawer-albums",
         padding="md",
@@ -215,7 +253,11 @@ def renderAudioNavbarDrawer(conn):
     )
 
 
-def renderAudioFooter():
+def render_audio_footer():
+    """
+
+    :return:
+    """
     return dmc.Grid(
         [
             dmc.GridCol(

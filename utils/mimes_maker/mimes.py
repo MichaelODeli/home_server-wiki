@@ -1,3 +1,4 @@
+# flake8: noqa: E121
 mimes_dict = {
   "application/1d-interleaved-parityfec": {
     "source": "iana"

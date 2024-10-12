@@ -1,23 +1,26 @@
-from dash import (
-    html,
-)
 import dash_mantine_components as dmc
-import dash_player as dp
-import dash_bootstrap_components as dbc
+from dash import html
+
 from controllers import cont_media
 
 
-def getSearchLink(category_id, type_id):
+def get_search_link(category_id, type_id):
+    """
+
+    :param category_id:
+    :param type_id:
+    :return:
+    """
     return f"/players/video/search?l=y&auto_search=y&category_id={category_id}&type_id={type_id}&from_video=y"
 
 
-def createVideoMiniatureContainer(
+def create_video_miniature_container(
     href,
     video_title,
     videotype_name,
     date="недавно",
     # img_video="/assets/img/image-not-found.jpg",
-    img_video=f"https://placehold.co/250x140",
+    img_video="https://placehold.co/250x140",
     img_channel=None,
     video_duration=0,
     category_id=None,
@@ -26,15 +29,15 @@ def createVideoMiniatureContainer(
     """
     Функция createVideoMiniaturesContainer создает контейнер для видео миниатюр.
 
-    :param href (str): ссылка на видео.
-    :param video_title (str): заголовок видео.
-    :param videotype_name (str): тип видео.
-    :param date (str): дата публикации.
-    :param img_video (str): ссылка на изображение видео.
-    :param img_channel (str): ссылка на изображение канала.
-    :param video_duration (int): длительность видео (сек).
-    :param category_id (int): категория видео.
-    :param type_id (int): тип видео.
+    :param href:
+    :param video_title:
+    :param videotype_name:
+    :param date:
+    :param img_video:
+    :param img_channel:
+    :param video_duration:
+    :param category_id:
+    :param type_id:
     :return html.A: миниатюры видео.
     """
     return html.A(
@@ -50,7 +53,7 @@ def createVideoMiniatureContainer(
                     dmc.AspectRatio(
                         html.Div(
                             dmc.Text(
-                                cont_media.getDuration(video_duration),
+                                cont_media.get_duration(video_duration),
                                 c="white",
                                 bg="black",
                                 w="max-content",
@@ -82,7 +85,7 @@ def createVideoMiniatureContainer(
                                     dmc.Text(
                                         dmc.Anchor(
                                             videotype_name,
-                                            href=getSearchLink(category_id, type_id),
+                                            href=get_search_link(category_id, type_id),
                                             className="video-link",
                                             underline='always'
                                         ),
@@ -114,11 +117,11 @@ def createVideoMiniatureContainer(
     )
 
 
-def createVideoMiniaturesContainer(children):
+def create_video_miniatures_container(children):
     """
     Функция createVideoMiniaturesContainer создает контейнер для видео миниатюр.
 
-    :param children (tuple): наполнение контейнера
+    :param children:
     :return dmc.Flex:
     """
     return dmc.Flex(
@@ -130,20 +133,21 @@ def createVideoMiniaturesContainer(children):
     )
 
 
-def createVideoSearchBar(
-    page, search_clicks=0, input_value=None, additional_children=[html.Div()]
+def create_video_search_bar(
+    page, search_clicks=0, input_value=None, additional_children=None
 ):
     """
     Функция createVideoSearchBar создает строку поиска видео.
 
-    :param page (object): экземпляр класса page.
-    :param search_clicks (int): количество кликов по кнопке поиска.
-    :param input_value (str): значение поля ввода.
-    :param additional_children (list): список дополнительных дочерних элементов.
-
+    :param page:
+    :param search_clicks:
+    :param input_value:
+    :param additional_children:
     :return dmc.Grid: экземпляр класса dmc.Grid с заданными параметрами и дочерними элементами.
     """
 
+    if additional_children is None:
+        additional_children = [html.Div()]
     search_form = dmc.Group(
         [
             dmc.TextInput(
@@ -181,8 +185,8 @@ def createVideoSearchBar(
                             if page == "main"
                             else search_form
                         )
-                    ]
-                    + additional_children,
+                    ] +
+                    additional_children,
                     gap="xs",
                 ),
             ),
@@ -193,8 +197,15 @@ def createVideoSearchBar(
     )
 
 
-def getRandomVideos(conn, counter=28, type_id=None):
-    if type_id != None:
+def get_random_videos(conn, counter=28, type_id=None):
+    """
+
+    :param conn: db connection to PostgreSQL
+    :param counter:
+    :param type_id:
+    :return:
+    """
+    if type_id is not None:
         query = "select * from filestorage_mediafiles_summary where html_video_ready and type_id = %(type_id)s order by random() limit %(counter)s;"
     else:
         query = "select * from filestorage_mediafiles_summary where html_video_ready order by random() limit %(counter)s;"

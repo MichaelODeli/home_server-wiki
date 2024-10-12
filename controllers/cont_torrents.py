@@ -1,15 +1,18 @@
-import dash_mantine_components as dmc
-import dash_bootstrap_components as dbc
-from dash_iconify import DashIconify
-from dash import dcc, html
-from controllers import cont_files as cont_f, db_connection, file_manager
-import qbittorrentapi
-from datetime import datetime
 import re
-import signal
+from datetime import datetime
+
+import dash_mantine_components as dmc
+import qbittorrentapi
+from dash import dcc, html
+
+from controllers import db_connection, file_manager
 
 
-def addTorrentModal():
+def add_torrent_modal():
+    """
+
+    :return:
+    """
     return dmc.Modal(
         title=dmc.Title("Добавить торрент", order=4),
         id="modal-add-torrent",
@@ -59,7 +62,7 @@ def addTorrentModal():
     )
 
 
-def bytes2human(n, format="%(value).1f %(symbol)s", symbols="customary"):
+def bytes2human(n, formatting="%(value).1f %(symbol)s", symbols="customary"):
     """
     Convert n bytes into a human readable string based on format.
     symbols can be either "customary", "customary_ext", "iec" or "iec_ext",
@@ -96,7 +99,7 @@ def bytes2human(n, format="%(value).1f %(symbol)s", symbols="customary"):
       >>> bytes2human(10000, format="%(value).5f %(symbol)s")
       '9.76562 K'
     """
-    SYMBOLS = {
+    symbols_dict = {
         "customary": ("B", "Kb", "Mb", "Gb", "Tb", "Pb", "Eb", "Zb", "Yb"),
         "customary_ext": (
             "byte",
@@ -125,7 +128,7 @@ def bytes2human(n, format="%(value).1f %(symbol)s", symbols="customary"):
     n = int(n)
     if n < 0:
         raise ValueError("n < 0")
-    symbols = SYMBOLS[symbols]
+    symbols = symbols_dict[symbols]
     prefix = {}
     for i, s in enumerate(symbols[1:]):
         prefix[s] = 1 << (i + 1) * 10
@@ -136,7 +139,12 @@ def bytes2human(n, format="%(value).1f %(symbol)s", symbols="customary"):
     return format % dict(symbol=symbols[0], value=n)
 
 
-def decodeTorrentStatus(name):
+def decode_torrent_status(name):
+    """
+
+    :param name:
+    :return:
+    """
     status_dict = {
         "error": "Ошибка",
         "missingFiles": "Нет файлов",
@@ -164,18 +172,28 @@ def decodeTorrentStatus(name):
         return "Неизвестно"
 
 
-def verifyMagnetLink(magnet_link):
+def verify_magnet_link(magnet_link):
+    """
+
+    :param magnet_link:
+    :return:
+    """
     pattern = re.compile(r"magnet:\?xt=urn:[a-z0-9]+:[a-zA-Z0-9]{32}")
     result = pattern.match(magnet_link)
-    if result != None:
+    if result is not None:
         return True
     else:
         return False
 
 
-def getTorrentsDataDict(source_page):
-    conn = db_connection.getConn()
-    settings = file_manager.getSettings(conn)
+def get_torrents_data_dict(source_page):
+    """
+
+    :param source_page:
+    :return:
+    """
+    conn = db_connection.get_conn()
+    settings = file_manager.get_settings(conn)
 
     qbt_ip = settings["apps.torrents.qbittorrent_ip"]
     qbt_port = settings["apps.torrents.qbittorrent_port"]
@@ -185,7 +203,7 @@ def getTorrentsDataDict(source_page):
     qbt_client = qbittorrentapi.Client(
         host=f"{qbt_ip}:{qbt_port}", username=qbt_login, password=qbt_password
     )
-    
+
     if source_page == "main_page":
         return {
             "all": len(qbt_client.torrents_info()),
@@ -200,7 +218,7 @@ def getTorrentsDataDict(source_page):
                 "hash": torrent_info["hash"],
                 "name": torrent_info["name"],
                 "progress": int(torrent_info["progress"] * 100),
-                "status": decodeTorrentStatus(torrent_info["state"]),
+                "status": decode_torrent_status(torrent_info["state"]),
                 "seeds": torrent_info["num_seeds"],
                 "download_speed": bytes2human(torrent_info["dlspeed"]) + "/s",
                 "upload_speed": bytes2human(torrent_info["upspeed"]) + "/s",
@@ -221,7 +239,12 @@ def getTorrentsDataDict(source_page):
         return ValueError("Некорректная страница.")
 
 
-def getTorrentsTableData(source_page="torrents_page"):
+def get_torrents_table_data(source_page="torrents_page"):
+    """
+
+    :param source_page:
+    :return:
+    """
     return [
         [
             dmc.Checkbox(
@@ -245,5 +268,5 @@ def getTorrentsTableData(source_page="torrents_page"):
             torrent_dict["added"],
             torrent_dict["completed"],
         ]
-        for torrent_dict in getTorrentsDataDict(source_page=source_page)
+        for torrent_dict in get_torrents_data_dict(source_page=source_page)
     ]

@@ -1,59 +1,50 @@
-from dash import (
-    dcc,
-    html,
-    Input,
-    Output,
-    callback,
-    register_page,
-    State,
-    Input,
-    Output,
-    no_update,
-    ALL,
-    ctx,
-    callback_context,
-)
-from dash.exceptions import PreventUpdate
 import dash_mantine_components as dmc
-import dash_bootstrap_components as dbc
-from dash_iconify import DashIconify
-from flask import request
-from controllers import (
-    cont_audioplayer as cont_a,
-    service_controller as service,
-    cont_search as cont_s,
-    cont_media as cont_m,
-    db_connection,
-    file_manager,
-)
-from views import v_audioplayer
 import dash_player
+from dash import (ALL, Input, Output, State, callback, ctx,
+                  html, register_page)
+from dash.exceptions import PreventUpdate
+from flask import request
+
+from controllers import cont_audioplayer as cont_a
+from controllers import cont_media as cont_m
+from controllers import db_connection
+from controllers import service_controller as service
+from views import v_audioplayer
 
 register_page(__name__, path="/players/audio", icon="fa-solid:home")
 
 
-def layout(l="n", playlist_id=0, artist_id=0, album_id=0, **kwargs):
+def layout(l="n", playlist_id=0, artist_id=0, album_id=0, **kwargs):  # noqa: E741
+    """
+
+    :param l:
+    :param playlist_id:
+    :param artist_id:
+    :param album_id:
+    :param kwargs:
+    :return:
+    """
     # lazy load block
     if l == "n":
         return dmc.Container()
     else:
-        service.logPrinter(request.remote_addr, "audioplayer", "page opened")
+        service.log_printer(request.remote_addr, "audioplayer", "page opened")
 
-        conn = db_connection.getConn()
+        conn = db_connection.get_conn()
 
         if playlist_id == 0 and artist_id == 0 and album_id == 0:
             page_name = "Главная"
-            page_content = v_audioplayer.renderMainPage()
+            page_content = v_audioplayer.render_main_page()
         else:
             if playlist_id != 0 and artist_id == 0 and album_id == 0:
                 page_name = "Какой-то плейлист"
-                page_content = v_audioplayer.renderPlaylistPage(playlist_id)
+                page_content = v_audioplayer.render_playlist_page(conn, playlist_id)
             elif artist_id != 0 and playlist_id == 0 and album_id == 0:
                 page_name = "Какой-то исполнитель"
-                page_content = v_audioplayer.renderArtistPage(artist_id)
+                page_content = v_audioplayer.render_artist_page(artist_id)
             elif album_id != 0 and playlist_id == 0 and artist_id == 0:
                 page_name = "Какой-то альбом"
-                page_content = v_audioplayer.renderAlbumPage(album_id)
+                page_content = v_audioplayer.render_album_page(album_id)
             else:
                 page_name = ""
                 page_content = html.Center(dmc.Title("Ошибка идентификатора.", order=4))
@@ -61,7 +52,7 @@ def layout(l="n", playlist_id=0, artist_id=0, album_id=0, **kwargs):
         return dmc.AppShell(
             children=[
                 dmc.AppShellNavbar(
-                    v_audioplayer.renderAudioNavbar(source="col", conn=conn),
+                    v_audioplayer.render_audio_navbar(source="col", conn=conn),
                     className="border-end-0",
                 ),
                 dmc.AppShellMain(
@@ -96,13 +87,13 @@ def layout(l="n", playlist_id=0, artist_id=0, album_id=0, **kwargs):
                             ],
                             gap="xs",
                         ),
-                        v_audioplayer.renderAudioNavbarDrawer(conn),
+                        v_audioplayer.render_audio_navbar_drawer(conn),
                     ],
                     className="ps-3 pt-1 border-start overflow-hidden no-border-mobile",
                     mah="calc(100dvh - var(--app-shell-header-height) - 10px) !important",
                     mih="calc(100dvh - var(--app-shell-header-height) - 10px) !important",
                 ),
-                dmc.AppShellFooter(v_audioplayer.renderAudioFooter()),
+                dmc.AppShellFooter(v_audioplayer.render_audio_footer()),
             ],
             navbar={
                 "width": 300,
@@ -122,7 +113,12 @@ def layout(l="n", playlist_id=0, artist_id=0, album_id=0, **kwargs):
     Input("open-drawer-albums", "n_clicks"),
     prevent_initial_call=True,
 )
-def drawerWithAlbums(n_clicks):
+def drawer_with_albums(n_clicks):
+    """
+
+    :param n_clicks:
+    :return:
+    """
     return True
 
 
@@ -132,8 +128,14 @@ def drawerWithAlbums(n_clicks):
     State("audio-player", "playing"),
     prevent_initial_call=True,
 )
-def playerPlayPause(n_clicks, playing):
-    if not playing == True:
+def player_play_pause(n_clicks, playing):
+    """
+
+    :param n_clicks:
+    :param playing:
+    :return:
+    """
+    if not playing:
         icon = "material-symbols:pause"
     else:
         icon = "material-symbols:play-arrow"
@@ -146,8 +148,14 @@ def playerPlayPause(n_clicks, playing):
     State("audio-player", "loop"),
     prevent_initial_call=True,
 )
-def playerLoop(n_clicks, loop):
-    if not loop == True:
+def player_loop(n_clicks, loop):
+    """
+
+    :param n_clicks:
+    :param loop:
+    :return:
+    """
+    if not loop:
         icon = "material-symbols:repeat-on"
     else:
         icon = "material-symbols:repeat"
@@ -160,8 +168,14 @@ def playerLoop(n_clicks, loop):
     State("audio-player", "muted"),
     prevent_initial_call=True,
 )
-def playerDisableSound(n_clicks, muted):
-    if not muted == True:
+def player_disable_sound(n_clicks, muted):
+    """
+
+    :param n_clicks:
+    :param muted:
+    :return:
+    """
+    if not muted:
         icon = "material-symbols:volume-off"
     else:
         icon = "material-symbols:volume-up"
@@ -174,7 +188,13 @@ def playerDisableSound(n_clicks, muted):
     State("audio-player", "volume"),
     # prevent_initial_call=True,
 )
-def playerVolumeSlider(volume_value, current_vol):
+def player_volume_slider(volume_value, current_vol):
+    """
+
+    :param volume_value:
+    :param current_vol:
+    :return:
+    """
     return volume_value / 100
 
 
@@ -189,15 +209,21 @@ def playerVolumeSlider(volume_value, current_vol):
     State("audio-player", "duration"),
     prevent_initial_call=True,
 )
-def playerVolume(currentTime, duration):
-    currentTime = int(currentTime) if currentTime != None else 0
-    duration = int(duration) if duration != None else 0
+def player_volume(current_time, duration):
+    """
+
+    :param current_time:
+    :param duration:
+    :return:
+    """
+    current_time = int(current_time) if current_time is not None else 0
+    duration = int(duration) if duration is not None else 0
 
     return (
-        currentTime,
+        current_time,
         duration,
-        cont_m.getDuration(currentTime),
-        cont_m.getDuration(duration),
+        cont_m.get_duration(current_time),
+        cont_m.get_duration(duration),
     )
 
 
@@ -216,10 +242,19 @@ def playerVolume(currentTime, duration):
     State("url", "pathname"),
     prevent_initial_call=True,
 )
-def selectPageFromLeftsideRow(
+def select_page_from_leftside_row(
     n_clicks_col, n_clicks_drawer, n_clicks_home, n_clicks_search, button_ids, pathname
 ):
+    """
 
+    :param n_clicks_col:
+    :param n_clicks_drawer:
+    :param n_clicks_home:
+    :param n_clicks_search:
+    :param button_ids:
+    :param pathname:
+    :return:
+    """
     types_ids = [i["id"] for i in button_ids]
 
     if (
@@ -233,10 +268,10 @@ def selectPageFromLeftsideRow(
     description = None
     if ctx.triggered_id["type"] == "audio-playlist-btn-home":
         page_name = "Главная"
-        player_children = [v_audioplayer.renderMainPage()]
+        player_children = [v_audioplayer.render_main_page()]
     elif ctx.triggered_id["type"] == "audio-playlist-btn-search":
         page_name = "Поиск"
-        player_children = [v_audioplayer.renderSearchPage()]
+        player_children = [v_audioplayer.render_search_page()]
     else:
 
         if ctx.triggered_id["type"] == "audio-playlist-btn-col":
@@ -246,10 +281,10 @@ def selectPageFromLeftsideRow(
         else:
             raise PreventUpdate
 
-        conn = db_connection.getConn()
-        page_name = cont_a.getAudioTypes(conn, type_id=selected_type)[0]["type_name"]
+        conn = db_connection.get_conn()
+        page_name = cont_a.get_audio_types(conn, type_id=selected_type)[0]["type_name"]
 
-        player_children = v_audioplayer.renderPlaylistPage(conn, selected_type)
+        player_children = v_audioplayer.render_playlist_page(conn, selected_type)
 
         description = [
             dmc.Badge("Много треков", variant="light"),

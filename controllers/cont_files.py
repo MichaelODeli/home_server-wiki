@@ -1,28 +1,25 @@
-import dash_mantine_components as dmc
-import dash_bootstrap_components as dbc
-from dash_iconify import DashIconify
-from dash import dcc, html
 from random import randint as r
+
+import dash_bootstrap_components as dbc
+import dash_mantine_components as dmc
+from dash import html
 from dash_extensions import Purify
-from controllers import service_controller as service
+from dash_iconify import DashIconify
 
 
-def nestedListToHTML(lst):
+def nested_list_to_html(lst):
     """
     Рекурсивно преобразует вложенный список в маркированный список HTML.
 
-    Параметры:
-    lst (list): Вложенный список, который нужно преобразовать.
-
-    Вывод:
-    str: Строка, содержащая HTML-код маркированного списка.
+    :param lst (list): Вложенный список, который нужно преобразовать.
+    :return (str): Строка, содержащая HTML-код маркированного списка.
 
     Для выделения текста жирным шрифтом, оберните текст в звездочки: *text*.
     """
     html = "<ul>\n"
     for item in lst:
         if isinstance(item, list):
-            html += nestedListToHTML(item)
+            html += nested_list_to_html(item)
         else:
             if str(item)[0] == "*" and str(item)[-1] == "*":
                 html += "<li><b>" + str(item)[1:-1] + "</b></li>\n"
@@ -32,31 +29,29 @@ def nestedListToHTML(lst):
     return html.replace("\n", "")
 
 
-def generateHTMLTable(
+def generate_html_table(
     header: list,
     data: list,
     align="right",
     variant="full",
     striped=False,
-    highlightOnHover=False,
+    highlight_on_hover=False,
 ):
     """
     Генерирует HTML-таблицу на основе переданных заголовков и данных.
 
-    Параметры:
-    header (list): Список заголовков столбцов таблицы.
-    data (list): Список списков, представляющих строки данных таблицы.
-    align (str): Выравнивание элементов таблицы
-    variant (str): full/compact
+    :param header (list): Список заголовков столбцов таблицы.
+    :param data (list): Список списков, представляющих строки данных таблицы.
+    :param align (str): Выравнивание элементов таблицы
+    :param variant (str): full/compact
 
-    Вывод:
-    html.Div: HTML-элемент div, содержащий таблицу.
+    :return html.Div: HTML-элемент div, содержащий таблицу.
     """
     header = [
         dmc.TableThead(
             dmc.TableTr(
-                [dmc.TableTh(header[0], style={"max-width": "20px"})]
-                + [
+                [dmc.TableTh(header[0], style={"max-width": "20px"})] +
+                [
                     dmc.TableTh(
                         header_element,
                         style={
@@ -95,7 +90,7 @@ def generateHTMLTable(
             dmc.Table(
                 header + body,
                 striped=striped,
-                highlightOnHover=highlightOnHover,
+                highlightOnHover=highlight_on_hover,
                 style={"box-shadow": "unset", "text-align": align},
             )
         ],
@@ -107,7 +102,11 @@ def generateHTMLTable(
     )
 
 
-def blockFilesList():
+def block_files_list():
+    """
+
+    :return html.Div:
+    """
     return html.Div(
         [
             dmc.Grid(
@@ -161,7 +160,7 @@ def blockFilesList():
                 justify="center",
             ),
             dmc.Space(h=15),
-            generateHTMLTable(
+            generate_html_table(
                 ["Маркер", "Название файла", "Размер", "Дата добавления", "Действия"],
                 [
                     [
@@ -219,7 +218,12 @@ def blockFilesList():
     )
 
 
-def treeContent(source):
+def tree_content(source):
+    """
+
+    :param source: col/drawer
+    :return (dmc.Stack):
+    """
     if source == "col":
         label = "Hello! This is on column!"
     elif source == "drawer":
@@ -229,9 +233,9 @@ def treeContent(source):
 
     return dmc.Stack(
         [
-            # label,
+            label,
             Purify(
-                nestedListToHTML(
+                nested_list_to_html(
                     [
                         "C:/",
                         [
@@ -247,9 +251,13 @@ def treeContent(source):
     )
 
 
-def getDrawer():
+def get_drawer():
+    """
+
+    :return:
+    """
     return dmc.Drawer(
-        children=[treeContent(source="drawer")],
+        children=[tree_content(source="drawer")],
         title=dmc.Title("Дерево папок", order=5),
         id="drawer-tree",
         padding="md",

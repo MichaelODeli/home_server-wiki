@@ -1,9 +1,9 @@
-from dash import register_page, html, callback, Input, Output, State, no_update
-from controllers import service_controller as service
-from flask import request
 import dash_mantine_components as dmc
-from controllers import cont_video, cont_search, db_connection, file_manager
-from dash.exceptions import PreventUpdate
+from dash import Input, Output, State, callback, html, no_update, register_page
+from flask import request
+
+from controllers import cont_search, cont_video, db_connection
+from controllers import service_controller as service
 
 register_page(__name__, path="/players/video/search", icon="fa-solid:home")
 
@@ -13,23 +13,37 @@ query_global = ""
 def layout(
     l="n",
     query="",
-    category_id=[],
-    type_id=[],
+    category_id=None,
+    type_id=None,
     auto_search="n",
     **other_unknown_query_strings,
 ):
-    service.logPrinter(request.remote_addr, "videosearch", "page opened")
+    """
+
+    :param l:
+    :param query:
+    :param category_id:
+    :param type_id:
+    :param auto_search:
+    :param other_unknown_query_strings:
+    :return:
+    """
+    if category_id is None:
+        category_id = []
+    if type_id is None:
+        type_id = []
+    service.log_printer(request.remote_addr, "videosearch", "page opened")
     if l == "n":
         return dmc.Container()
     else:
         global query_global
         query_global = query
 
-        conn = db_connection.getConn()
+        conn = db_connection.get_conn()
 
-        category_id, type_id = cont_search.formatCategoryType(category_id, type_id)
+        category_id, type_id = cont_search.format_category_type(category_id, type_id)
 
-        category_select_data = cont_search.getCategoriesForMultiSelect(conn, video=True)
+        category_select_data = cont_search.get_categories_for_multi_select(conn, video=True)
 
         if auto_search != "n" and (query != "" or category_id != []):
             search_clicks = 1
@@ -41,11 +55,11 @@ def layout(
             pt="20px",
             gap="xs",
             children=[
-                cont_video.createVideoSearchBar(
+                cont_video.create_video_search_bar(
                     page="search",
                     input_value=query,
                     additional_children=[
-                        cont_search.getSearchAccordion(
+                        cont_search.get_search_accordion(
                             category_id, type_id, category_select_data, from_video=True
                         )
                     ],
@@ -68,7 +82,7 @@ def layout(
         )
 
 
-cont_search.getTypesAdditionFormatCallback(from_video=True)
+cont_search.get_types_addition_format_callback(from_video=True)
 
 
 @callback(
@@ -80,21 +94,29 @@ cont_search.getTypesAdditionFormatCallback(from_video=True)
     State("n_search_in_types_video", "value"),
     State("n_search_query_video", "value"),
 )
-def getVideoSearchResults(current_page, n_clicks, categories, types, query):
+def get_video_search_results(current_page, n_clicks, categories, types, query):
+    """
 
+    :param current_page:
+    :param n_clicks:
+    :param categories:
+    :param types:
+    :param query:
+    :return:
+    """
     if n_clicks == 0:
         return html.Center([dmc.Title("Пустой поисковый запрос. Повторите снова.", order=4)]), 1
     else:
         global query_global
         query_global = query
 
-        conn = db_connection.getConn()
+        conn = db_connection.get_conn()
         current_page -= 1
 
         page_limit = cont_search.PAGE_LIMIT_VIDEO
         offset = current_page * page_limit
 
-        counter, query_results = cont_search.getSearchResults(
+        counter, query_results = cont_search.get_search_results(
             conn,
             query,
             categories,
@@ -118,14 +140,14 @@ def getVideoSearchResults(current_page, n_clicks, categories, types, query):
             )
 
             return (
-                cont_video.createVideoMiniaturesContainer(
+                cont_video.create_video_miniatures_container(
                     children=[
-                        cont_video.createVideoMiniatureContainer(
+                        cont_video.create_video_miniature_container(
                             href=f"/players/video/watch?v={video['file_id']}&l=y",
-                            video_title=cont_search.stringHider(
+                            video_title=cont_search.string_hider(
                                 ".".join(video["file_name"].split(".")[:-1])
                             ),
-                            videotype_name=cont_search.stringHider(video["type_name"]),
+                            videotype_name=cont_search.string_hider(video["type_name"]),
                             video_duration=video["video_duration"],
                             date=service.get_date_difference(video["created_at"]),
                             category_id=video["category_id"],

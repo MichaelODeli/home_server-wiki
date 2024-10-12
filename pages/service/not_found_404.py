@@ -1,10 +1,15 @@
-from dash import html, register_page
 import dash_mantine_components as dmc
+from dash import register_page
 
 register_page(__name__)
 
 
 def layout(**kwargs):
+    """
+
+    :param kwargs:
+    :return:
+    """
     return dmc.Container(
         children=[
             dmc.Stack(

@@ -1,14 +1,12 @@
-from dash import html, callback, Output, Input, State, no_update
 import dash_mantine_components as dmc
-import dash_bootstrap_components as dbc
-from dash_iconify import DashIconify
+from dash import Input, Output, State, callback, html, no_update
 
-from controllers import file_manager, db_connection, service_controller
+from controllers import db_connection, file_manager, service_controller
 
 PAGE_LIMIT_VIDEO = 14
 
 
-def stringHider(name, limiter=35):
+def string_hider(name, limiter=35):
     """
     Функция stringHider сокращает строку до заданного лимита символов.
 
@@ -22,7 +20,7 @@ def stringHider(name, limiter=35):
         return name[0:limiter] + "..."
 
 
-def getLinkToFile(mode, file_dict):
+def get_link_to_file(mode, file_dict):
     """
     Функция getLinkToFile создает ссылку на файл в зависимости от заданного режима.
 
@@ -42,7 +40,7 @@ def getLinkToFile(mode, file_dict):
     else:
         pass
 
-    return service_controller.dmcButtonLink(
+    return service_controller.dmc_button_link(
         button_label="Открыть",
         href=file_href,
         target="_blank",
@@ -50,13 +48,12 @@ def getLinkToFile(mode, file_dict):
     )
 
 
-def formatSearchResults(query_results, mediafiles_links_format):
+def format_search_results(query_results, mediafiles_links_format):
     """
     Функция formatSearchResults форматирует результаты поиска.
 
-    :param query_results (list): список результатов поиска.
-    :param mediafiles_links_format (str): формат ссылки на медиафайл.
-
+    :param query_results:
+    :param mediafiles_links_format:
     :return dmc.Table: экземпляр класса dmc.Table с заданными параметрами и дочерними элементами.
     """
     rows = [
@@ -65,11 +62,11 @@ def formatSearchResults(query_results, mediafiles_links_format):
                 dmc.TableTd(element["category_name"], className="min-column-width"),
                 dmc.TableTd(element["type_name"]),
                 dmc.TableTd(
-                    getLinkToFile(mediafiles_links_format, element),
+                    get_link_to_file(mediafiles_links_format, element),
                     className="min-column-width",
                 ),
                 dmc.TableTd(
-                    stringHider(element["file_name"], limiter=80),
+                    string_hider(element["file_name"], limiter=80),
                     className="text-truncate",
                 ),
             ]
@@ -92,15 +89,14 @@ def formatSearchResults(query_results, mediafiles_links_format):
     return dmc.Table([head, body])
 
 
-def getSearchAccordion(category_id, type_id, category_select_data, from_video=False):
+def get_search_accordion(category_id, type_id, category_select_data, from_video=False):
     """
     Функция getSearchAccordion создает аккордеон для поиска.
 
-    :param category_id (list): идентификатор категории.
-    :param type_id (list): идентификатор типа.
-    :param category_select_data (list_of_dicts): список данных для выбора категории.
-    :param from_video (bool): флаг, указывающий на запуск со страницы с видео.
-
+    :param category_id:
+    :param type_id:
+    :param category_select_data:
+    :param from_video:
     :return dmc.Accordion: экземпляр класса dmc.Accordion с заданными параметрами и дочерними элементами.
     """
     return dmc.Accordion(
@@ -215,13 +211,12 @@ def getSearchAccordion(category_id, type_id, category_select_data, from_video=Fa
     )
 
 
-def formatCategoryType(category_id, type_id):
+def format_category_type(category_id, type_id):
     """
     Функция formatCategoryType форматирует идентификаторы категории и типа.
 
-    :param category_id (list): список идентификаторов категории.
-    :param type_id (list): список идентификаторов типа.
-
+    :param category_id:
+    :param type_id:
     :return tuple: кортеж из двух списков идентификаторов категории и типа.
     """
     category_id = [category_id] if category_id != [] else category_id
@@ -229,7 +224,12 @@ def formatCategoryType(category_id, type_id):
     return category_id, type_id
 
 
-def getTypesAdditionFormatCallback(from_video=False):
+def get_types_addition_format_callback(from_video=False):
+    """
+
+    :param from_video:
+    :return: dash.callback
+    """
     @callback(
         Output("n_search_in_types" + ("_video" if from_video else ""), "data"),
         Output("n_search_in_types" + ("_video" if from_video else ""), "disabled"),
@@ -240,17 +240,23 @@ def getTypesAdditionFormatCallback(from_video=False):
         Input("n_search_in_category" + ("_video" if from_video else ""), "value"),
         State("n_search_in_types" + ("_video" if from_video else ""), "value"),
     )
-    def addTypesInSearch(category_id, selected_types):
-        if category_id == None or category_id == []:
+    def add_types_in_search(category_id, selected_types):
+        """
+
+        :param category_id:
+        :param selected_types:
+        :return:
+        """
+        if category_id is None or category_id == []:
             return no_update, True, "Поиск по всем категориям", "Поиск по всем типам"
         else:
-            conn = db_connection.getConn()
+            conn = db_connection.get_conn()
 
             types_select_data = []
 
             for single_c_id in category_id:
                 single_c_id = int(single_c_id)
-                found_category = file_manager.getCategories(
+                found_category = file_manager.get_categories(
                     conn, category_id=single_c_id
                 )
 
@@ -258,19 +264,19 @@ def getTypesAdditionFormatCallback(from_video=False):
 
                 if len(found_category) > 0:
                     found_types = len(
-                        file_manager.getTypes(conn, category_id=single_c_id)
+                        file_manager.get_types(conn, category_id=single_c_id)
                     )
                     if found_types > 0:
                         c_data += [
                             {
                                 "label": (
                                     i["type_pseudonym"]
-                                    if i["type_pseudonym"] != None
+                                    if i["type_pseudonym"] is not None
                                     else i["type_name"]
                                 ),
                                 "value": str(i["type_id"]),
                             }
-                            for i in file_manager.getTypes(
+                            for i in file_manager.get_types(
                                 conn, category_id=single_c_id
                             )
                         ]
@@ -294,27 +300,26 @@ def getTypesAdditionFormatCallback(from_video=False):
             )
 
 
-def getSearchResults(conn, query, categories, types, limit, offset, from_video=False):
+def get_search_results(conn, query: str, categories: tuple, types: tuple, limit: int, offset: int, from_video=False):
     """
     Функция getSearchResults получает результаты поиска.
 
-    :param conn (object): соединение с базой данных.
-    :param query (str): запрос поиска.
-    :param categories (list): список идентификаторов категории.
-    :param types (list): список идентификаторов типа.
-    :param limit (int): ограничение на количество результатов.
-    :param offset (int): смещение для пагинации.
-    :param from_video (bool): флаг, указывающий на видео.
-
+    :param conn: db connection to PostgreSQL
+    :param query:
+    :param categories:
+    :param types:
+    :param limit:
+    :param offset:
+    :param from_video:
     :return tuple: кортеж из двух элементов - счетчика результатов и списка результатов поиска.
     """
-    if (query == None or query == "") and (
+    if (query is None or query == "") and (
         categories == [] or (categories == [] and types == [])
     ):
         counter = -1
         query_results = -1
-    elif (query != None and query != "") and (categories == [] and types == []):
-        counter, query_results = file_manager.getFilesearchResult(
+    elif (query is not None and query != "") and (categories == [] and types == []):
+        counter, query_results = file_manager.get_filesearch_result(
             conn,
             mode="all",
             query=query,
@@ -322,8 +327,8 @@ def getSearchResults(conn, query, categories, types, limit, offset, from_video=F
             offset=offset,
             from_video=from_video,
         )
-    elif (query != None and query != "") and (categories != [] and types == []):
-        counter, query_results = file_manager.getFilesearchResult(
+    elif (query is not None and query != "") and (categories != [] and types == []):
+        counter, query_results = file_manager.get_filesearch_result(
             conn,
             mode="by_category",
             query=query,
@@ -332,8 +337,8 @@ def getSearchResults(conn, query, categories, types, limit, offset, from_video=F
             offset=offset,
             from_video=from_video,
         )
-    elif (query == None or query == "") and (categories != [] and types == []):
-        counter, query_results = file_manager.getFilesearchResult(
+    elif (query is None or query == "") and (categories != [] and types == []):
+        counter, query_results = file_manager.get_filesearch_result(
             conn,
             mode="all_from_category",
             categories=categories,
@@ -341,8 +346,8 @@ def getSearchResults(conn, query, categories, types, limit, offset, from_video=F
             offset=offset,
             from_video=from_video,
         )
-    elif (query == None or query == "") and (categories != [] and types != []):
-        counter, query_results = file_manager.getFilesearchResult(
+    elif (query is None or query == "") and (categories != [] and types != []):
+        counter, query_results = file_manager.get_filesearch_result(
             conn,
             mode="all_from_category_type",
             categories=categories,
@@ -351,8 +356,8 @@ def getSearchResults(conn, query, categories, types, limit, offset, from_video=F
             offset=offset,
             from_video=from_video,
         )
-    elif (query != None and query != "") and (categories != [] and types != []):
-        counter, query_results = file_manager.getFilesearchResult(
+    elif (query is not None and query != "") and (categories != [] and types != []):
+        counter, query_results = file_manager.get_filesearch_result(
             conn,
             mode="by_category_type_query",
             query=query,
@@ -369,17 +374,23 @@ def getSearchResults(conn, query, categories, types, limit, offset, from_video=F
     return counter, query_results
 
 
-def getCategoriesForMultiSelect(conn, video=False):
+def get_categories_for_multi_select(conn, video=False):
+    """
+
+    :param conn: db connection to PostgreSQL
+    :param video:
+    :return (dict):
+    """
     category_select_data = [
         {
             "label": (
                 i["category_pseudonym"]
-                if i["category_pseudonym"] != None
+                if i["category_pseudonym"] is not None
                 else i["category_name"]
             ),
             "value": str(i["category_id"]),
         }
-        for i in file_manager.getCategories(conn)
+        for i in file_manager.get_categories(conn)
         if (i["main_mime_type_id"] == 9 and video) or not video
     ]
 
