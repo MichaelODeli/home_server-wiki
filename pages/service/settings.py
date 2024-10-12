@@ -1,6 +1,7 @@
 import dash_mantine_components as dmc
 import psutil
-from dash import (Input, Output, callback, html, register_page)
+from dash import Input, Output, callback, clientside_callback, html, register_page
+from dash_iconify import DashIconify
 from flask import request
 
 from controllers import cont_settings, db_connection, file_manager
@@ -27,14 +28,19 @@ def layout(l="n", tab="server_info", **kwargs):  # noqa: E741
                 [
                     dmc.TabsList(
                         [
-                            dmc.TabsTab(dmc.Title("Основные настройки", order=5), value="main"),
-                            dmc.TabsTab(dmc.Title("Менеджер файлов", order=5), value="files"),
+                            dmc.TabsTab(
+                                dmc.Title("Основные настройки", order=5), value="main"
+                            ),
+                            dmc.TabsTab(
+                                dmc.Title("Менеджер файлов", order=5), value="files"
+                            ),
                             dmc.TabsTab(
                                 dmc.Title("Настройка виджетов и приложений", order=5),
                                 value="widgets",
                             ),
                             dmc.TabsTab(
-                                dmc.Title("Свойства системы", order=5), value="server_info"
+                                dmc.Title("Свойства системы", order=5),
+                                value="server_info",
                             ),
                         ],
                         grow=True,
@@ -67,6 +73,7 @@ def render_settings_content(active, test=True):
     conn = db_connection.get_conn()
     categories = file_manager.get_categories(conn)
     settings = file_manager.get_settings(conn)
+
     if active == "files":
         return dmc.Stack(
             [
@@ -170,7 +177,7 @@ def render_settings_content(active, test=True):
                             disabled=True,
                         ),
                     ],
-                    gap='xs'
+                    gap="xs",
                 ),
                 dmc.Divider(variant="solid"),
                 # dmc.Title("Лог обновления базы", order=4),
@@ -194,7 +201,7 @@ def render_settings_content(active, test=True):
                     ),
                 ],
                 style={"table-layout": "auto", "width": "100%"},
-                className='no-box-shadow'
+                className="no-box-shadow",
             ),
         ]
     elif active == "widgets":
@@ -331,12 +338,21 @@ def render_settings_content(active, test=True):
             # w='100%'
         )
     else:
-        # main
         return [
             dmc.Space(h=5),
             dmc.Stack(
                 children=[
-                    # dmc.TextInput(label="Какое-то поле ввода"),
+                    dmc.Switch(
+                        onLabel=DashIconify(icon="radix-icons:moon", width=20),
+                        offLabel=DashIconify(icon="radix-icons:sun", width=20),
+                        size="lg",
+                        # id={"type": "color-mode-switch", "index": random.randint(0, 5)},
+                        id="color-mode-switch",
+                        className="nav-item",
+                        persistence_type="session",
+                        persistence=True,
+                        label="Переключить тему приложения",
+                    )
                 ],
             ),
         ]
@@ -380,3 +396,29 @@ def get_cpu_load_rings(_):
             ]
         )
     ]
+
+
+clientside_callback(
+    """
+    (switchOn) => {
+    switchOn = !switchOn
+    document.documentElement.setAttribute("data-bs-theme", switchOn ? "light" : "dark");
+    return window.dash_clientside.no_update
+    }
+    """,
+    Output("dummy-1", "style"),
+    Input("color-mode-switch", "checked"),
+)
+
+
+@callback(
+    Output("mantine_theme", "forceColorScheme"),
+    Input("color-mode-switch", "checked"),
+)
+def make_mantine_theme(value):
+    """
+
+    :param value: color-mode-switch
+    :return: mantine_theme.forceColorScheme
+    """
+    return "dark" if value else "light"

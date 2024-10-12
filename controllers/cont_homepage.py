@@ -10,6 +10,7 @@ from dash_iconify import DashIconify
 
 from controllers import cont_torrents, db_connection, file_manager
 from controllers.cont_torrents import bytes2human
+from controllers.cont_settings import get_readable_bytes
 
 locale.setlocale(locale.LC_ALL, "ru_RU")
 
@@ -34,7 +35,7 @@ def get_torrent_status():
         return ["qbittorrent не отвечает."] * 3
 
 
-def get_color_by_value(current_value, max_value, percent=None):
+def get_color_by_value(current_value=None, max_value=None, percent=None):
     """
 
     :param current_value:
@@ -69,13 +70,13 @@ def get_progress(
     if valid:
         return html.Tr(
             [
-                html.Td(drive),
+                html.Td(drive, style={'text-wrap': 'nowrap'}),
                 html.Td(
                     dmc.ProgressRoot(
                         [
                             dmc.ProgressSection(
                                 dmc.ProgressLabel(
-                                    f"{bytes2human(current_value)} | {bytes2human(max_value)}"
+                                    f"{get_readable_bytes(current_value)} | {get_readable_bytes(max_value)}"
                                 ),
                                 value=int(round(current_value / max_value, 2) * 100),
                                 color=get_color_by_value(current_value, max_value),
@@ -326,11 +327,11 @@ def widget_systeminfo():
                                         "color": get_color_by_value(
                                             percent=psutil.virtual_memory().percent
                                         ),
-                                        "tooltip": f"Занято: {bytes2human(psutil.virtual_memory().used)}",
+                                        "tooltip": f"Занято: {get_readable_bytes(psutil.virtual_memory().used)}",
                                     },
                                 ],
                                 label=dmc.Text(
-                                    bytes2human(psutil.virtual_memory().total),
+                                    get_readable_bytes(psutil.virtual_memory().total),
                                     ta="center",
                                 ),
                                 size=120,
@@ -349,11 +350,11 @@ def widget_systeminfo():
                                         "color": get_color_by_value(
                                             percent=psutil.swap_memory().percent
                                         ),
-                                        "tooltip": f"Занято: {bytes2human(psutil.swap_memory().used)}",
+                                        "tooltip": f"Занято: {get_readable_bytes(psutil.swap_memory().used)}",
                                     },
                                 ],
                                 label=dmc.Text(
-                                    bytes2human(psutil.swap_memory().total),
+                                    get_readable_bytes(psutil.swap_memory().total),
                                     ta="center",
                                 ),
                                 size=120,

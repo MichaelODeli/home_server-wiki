@@ -1,4 +1,4 @@
-from dash import Input, Output, State, no_update, html, clientside_callback
+from dash import Input, Output, State, no_update, html, clientside_callback, ALL, MATCH
 from controllers import db_connection
 from views import v_header
 import dash_mantine_components as dmc
@@ -86,35 +86,3 @@ def get_navbar_search_bar_callbacks(app):
             navbar_children = v_header.render_navbar()
 
         return navbar_children
-
-
-def get_color_switch_callbacks(app):
-    """
-
-    :param app: Flask app
-    :return: callback
-    """
-    # color theme switch
-    clientside_callback(
-        """
-        (switchOn) => {
-        switchOn = !switchOn
-        document.documentElement.setAttribute("data-bs-theme", switchOn ? "light" : "dark");
-        return window.dash_clientside.no_update
-        }
-        """,
-        Output("dummy-1", "style"),
-        Input("color-mode-switch", "checked"),
-    )
-
-    @app.callback(
-        Output("mantine_theme", "forceColorScheme"),
-        Input("color-mode-switch", "checked"),
-    )
-    def make_mantine_theme(value):
-        """
-
-        :param value: color-mode-switch
-        :return: mantine_theme.forceColorScheme
-        """
-        return "dark" if value else "light"

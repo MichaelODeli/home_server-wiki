@@ -67,6 +67,7 @@ def create_video_miniature_container(
                         w=250,
                         className="video-background-image",
                         style={"background-image": f"url('{img_video}')"},
+                        pos='relative'
                     ),
                     dmc.Flex(
                         direction="row",

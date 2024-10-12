@@ -1,6 +1,7 @@
 from dash_bootstrap_components.icons import BOOTSTRAP as BOOTSTRAP_ICONS
 from dash_bootstrap_components.icons import FONT_AWESOME
 from dash_bootstrap_components.themes import ZEPHYR
+from dash_mantine_components import styles
 
 PRIMARY_COLOR = "custom-primary-color"
 FONT_FAMILY = """Inter, -apple-system, BlinkMacSystemFont,
@@ -32,6 +33,6 @@ STYLESHEETS = [
     FONT_AWESOME,
     BOOTSTRAP_ICONS,
     ZEPHYR,
-    "https://unpkg.com/@mantine/notifications@7.11.0/styles.css",
+    styles.NOTIFICATIONS,
     "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap"
 ]

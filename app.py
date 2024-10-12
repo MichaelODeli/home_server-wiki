@@ -85,7 +85,6 @@ app.layout = dmc.MantineProvider(
 call_app.get_server_blocker_callback(app)
 call_app.get_navbar_callbacks(app)
 call_app.get_navbar_search_bar_callbacks(app)
-call_app.get_color_switch_callbacks(app)
 
 
 dev = bool(config["APP_DEBUG_ENABLED"])
