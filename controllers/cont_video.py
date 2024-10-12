@@ -200,7 +200,7 @@ def create_video_search_bar(
 def get_random_videos(conn, counter=28, type_id=None):
     """
 
-    :param conn:
+    :param conn: db connection to PostgreSQL
     :param counter:
     :param type_id:
     :return:

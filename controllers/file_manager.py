@@ -13,7 +13,7 @@ FORBIDDEN_FIRST_SYMBOLS = ["_", "-", "."]
 def define_mime_type(conn, fileway):
     """
 
-    :param conn:
+    :param conn: db connection to PostgreSQL
     :param fileway:
     :return:
     """
@@ -112,7 +112,7 @@ def insert_mime(mime_name, conn) -> dict:
     В противном случае функция возвращает уже существующую запись.
 
     :param mime_name: имя MIME-типа
-    :param conn: соединение с базой данных
+    :param conn: db connection to PostgreSQL
     :return: описание MIME-типа:
     {secondary_mime_id, primary_mime_id, type_name, is_audio, is_video, html_video_ready, html_audio_ready, search_enabled}
     """
@@ -157,7 +157,7 @@ def get_baseway(conn, test: bool = True):
     Если директория, указанная в результате запроса, существует, функция возвращает эту директорию.
     В противном случае функция вызывает исключение NotADirectoryError с сообщением 'Директория не найдена'.
 
-    :param conn: соединение с базой данных
+    :param conn: db connection to PostgreSQL
     :param test: флаг, указывающий на использование тестового значения (по умолчанию True)
     :return: базовый путь в библиотеке
     :raises NotADirectoryError: если директория, указанная в результате запроса, не существует
@@ -181,7 +181,7 @@ def get_baseway(conn, test: bool = True):
 def get_settings(conn):
     """
 
-    :param conn:
+    :param conn: db connection to PostgreSQL
     :return:
     """
     with conn.cursor() as cursor:
@@ -198,7 +198,7 @@ def get_categories(conn, category_id=None):
     Если путь категории является абсолютным, он остается неизменным.
     Если в базе данных нет категорий, функция возвращает None.
 
-    :param conn: соединение с базой данных
+    :param conn: db connection to PostgreSQL
     :param category_id: идентификатор категории. Если None, то выбираются все категории.
     :return: список категорий с актуальными путями или None, если категорий нет в базе данных
     """
@@ -239,7 +239,7 @@ def get_types(conn, category_id, type_id=None):
     Если в базе данных нет типов, функция возвращает None.
 
     :param type_id:
-    :param conn: соединение с базой данных
+    :param conn: db connection to PostgreSQL
     :param category_id: идентификатор категории.
     :return: список типов с актуальными путями или None, если типов нет в базе данных
     """
@@ -278,7 +278,7 @@ def get_files(conn, category_id, type_id, file_id=None):
     Если путь файла является абсолютным, он остается неизменным.
     Если в базе данных нет файлов, функция возвращает None.
 
-    :param conn: соединение с базой данных
+    :param conn: db connection to PostgreSQL
     :param category_id: идентификатор категории
     :param type_id: идентификатор типа
     :param file_id: идентификатор файла. Если None, то выбираются все файлы.
@@ -317,7 +317,7 @@ def update_mime_on_categories_types(conn):
     Функция updateMIMEonCategoriesTypes обновляет основные MIME-типы для категорий и типов в базе данных.
     Она получает основные MIME-типы из таблицы mime_types_secondary и обновляет соответствующие поля в таблицах filestorage_categories и filestorage_types.
 
-    :param conn: соединение с базой данных
+    :param conn: db connection to PostgreSQL
     :return: None
     """
     with conn.cursor() as cursor:
@@ -377,7 +377,7 @@ def parse_categories(
 
     :param add_new:
     :param scan_exists:
-    :param conn: соединение с базой данных
+    :param conn: db connection to PostgreSQL
     :param reset: флаг, указывающий на необходимость полного обновления категорий (по умолчанию False)
     :return: список категорий после обновления
     """
@@ -441,7 +441,7 @@ def parse_types(conn, category_id, reset=False, add_new=False, scan_exists=True)
 
     :param add_new:
     :param scan_exists:
-    :param conn: соединение с базой данных
+    :param conn: db connection to PostgreSQL
     :param category_id: идентификатор категории.
     :param reset: Если True, то все типы и категории будут удалены из базы данных. По умолчанию False.
 
@@ -509,7 +509,7 @@ def parse_files(conn, category_id, type_id, reset=False):
     """
     Функция parseFiles выполняет парсинг файлов из базы данных и удаляет не существующие файлы.
 
-    :param conn: соединение с базой данных
+    :param conn: db connection to PostgreSQL
     :param category_id: идентификатор категории
     :param type_id: идентификатор типа
     :param reset: Если True, то все файлы и типы будут удалены из базы данных. По умолчанию False.
@@ -656,7 +656,7 @@ def parse(conn, mode="update_files"):
     """
     Функция parse выполняет парсинг категорий, типов и файлов из базы данных.
 
-    :param conn: соединение с базой данных
+    :param conn: db connection to PostgreSQL
     :param mode: режим парсинга. Допустимые значения: "update_files", "update_types", "update_categories", "reset".
     :return: None
     """
@@ -718,7 +718,7 @@ def get_file_info(conn, file_id):
     """
     Функция getFileInfo выполняет получение информации о файле из базы данных.
 
-    :param conn: соединение с базой данных
+    :param conn: db connection to PostgreSQL
     :param file_id: идентификатор файла
     :return: словарь с описанием файла
     """
@@ -749,7 +749,7 @@ def get_filesearch_result(
     Функция getFilesearchResult получает результаты поиска файлов в базе данных.
 
     :param from_video:
-    :param conn: соединение с базой данных
+    :param conn: db connection to PostgreSQL
     :param query: поисковый запрос
     :param mode: режим поиска. Допустимые значения: "all", "by_category", "all_from_category", "all_from_category_type", "by_category_type_query".
     :param limit: количество результатов на странице

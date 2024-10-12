@@ -11,11 +11,8 @@ def nested_list_to_html(lst):
     """
     Рекурсивно преобразует вложенный список в маркированный список HTML.
 
-    Параметры:
-    lst (list): Вложенный список, который нужно преобразовать.
-
-    Вывод:
-    str: Строка, содержащая HTML-код маркированного списка.
+    :param lst (list): Вложенный список, который нужно преобразовать.
+    :return (str): Строка, содержащая HTML-код маркированного списка.
 
     Для выделения текста жирным шрифтом, оберните текст в звездочки: *text*.
     """
@@ -43,14 +40,12 @@ def generate_html_table(
     """
     Генерирует HTML-таблицу на основе переданных заголовков и данных.
 
-    Параметры:
-    header (list): Список заголовков столбцов таблицы.
-    data (list): Список списков, представляющих строки данных таблицы.
-    align (str): Выравнивание элементов таблицы
-    variant (str): full/compact
+    :param header (list): Список заголовков столбцов таблицы.
+    :param data (list): Список списков, представляющих строки данных таблицы.
+    :param align (str): Выравнивание элементов таблицы
+    :param variant (str): full/compact
 
-    Вывод:
-    html.Div: HTML-элемент div, содержащий таблицу.
+    :return html.Div: HTML-элемент div, содержащий таблицу.
     """
     header = [
         dmc.TableThead(
@@ -110,7 +105,7 @@ def generate_html_table(
 def block_files_list():
     """
 
-    :return:
+    :return html.Div:
     """
     return html.Div(
         [
@@ -226,8 +221,8 @@ def block_files_list():
 def tree_content(source):
     """
 
-    :param source:
-    :return:
+    :param source: col/drawer
+    :return (dmc.Stack):
     """
     if source == "col":
         label = "Hello! This is on column!"

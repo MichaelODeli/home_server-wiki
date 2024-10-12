@@ -4,9 +4,9 @@ from psycopg2.extensions import AsIs
 def get_audio_types(conn, type_id=None):
     """
 
-    :param conn:
-    :param type_id:
-    :return:
+    :param conn: db connection to PostgreSQL
+    :param type_id: audio type_id (default: None)
+    :return: dict with audio info
     """
     with conn.cursor() as cursor:
         cursor.execute(
@@ -25,9 +25,9 @@ def get_audio_types(conn, type_id=None):
 def get_audio_dict(conn, type_id):
     """
 
-    :param conn:
-    :param type_id:
-    :return:
+    :param conn: db connection to PostgreSQL
+    :param type_id: audio type_id (default: None)
+    :return: dict with audio info
     """
     with conn.cursor() as cursor:
         cursor.execute(

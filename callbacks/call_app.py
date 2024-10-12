@@ -22,8 +22,8 @@ def get_server_blocker_callback(app):
     def server_blocker(style):
         """
 
-        :param style: dummy
-        :return:
+        :param style: dummy prop
+        :return: [bool, html.Div]
         """
         if db_connection.test_conn():
             return True, no_update
@@ -43,7 +43,6 @@ def get_navbar_callbacks(app):
     # add callback for toggling the collapse on small screens
     @app.callback(
         Output("navbar-collapse", "is_open", allow_duplicate=True),
-        # [Input("navbar-toggler", "n_clicks")],
         [Input("navbar-toggler", "opened")],
         [State("navbar-collapse", "is_open")],
         prevent_initial_call=True,
@@ -51,9 +50,9 @@ def get_navbar_callbacks(app):
     def toggle_navbar_collapse(n, is_open):
         """
 
-        :param n:
-        :param is_open:
-        :return:
+        :param n: navbar-toggler
+        :param is_open: navbar-collapse
+        :return: n
         """
         return n
 
@@ -71,8 +70,8 @@ def get_navbar_search_bar_callbacks(app):
     def header_format(pathname):
         """
 
-        :param pathname:
-        :return:
+        :param pathname: url
+        :return: navbar-children
         """
         if "/players/video" in pathname:
             if pathname == "/players/video/search":
@@ -115,7 +114,7 @@ def get_color_switch_callbacks(app):
     def make_mantine_theme(value):
         """
 
-        :param value:
-        :return:
+        :param value: color-mode-switch
+        :return: mantine_theme.forceColorScheme
         """
         return "dark" if value else "light"

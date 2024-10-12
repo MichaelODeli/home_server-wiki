@@ -16,7 +16,7 @@ locale.setlocale(locale.LC_ALL, "ru_RU")
 
 def get_torrent_status():
     """
-    Получает статус торрентов из qBittorrent API.
+    :return List(str):
     """
     try:
         torrents_dict = cont_torrents.get_torrents_data_dict(source_page="main_page")
@@ -34,13 +34,13 @@ def get_torrent_status():
         return ["qbittorrent не отвечает."] * 3
 
 
-def get_color_by_value(current_value=None, max_value=None, percent=None):
+def get_color_by_value(current_value, max_value, percent=None):
     """
 
     :param current_value:
     :param max_value:
-    :param percent:
-    :return:
+    :param percent: additional param
+    :return (str): color name
     """
     if percent is None:
         percent = (current_value / max_value) * 100
@@ -55,18 +55,15 @@ def get_progress(
     max_value: float,
     component_id: str,
     valid: bool,
-    readable=None,
 ):
     """
     Получить прогресс-бар с текущим объемом накопителя
 
-    Параметры:
-    - drive: название диска/раздела
-    - current_value: текущий занятый объем диска
-    - max_value: максимальная емкость раздела
-    - id: идентификатор блока
-    - valid: "существование" раздела. Если нет - то прогресс-бар будет окрашен в красный цвет.
-
+    :param drive: название диска/раздела
+    :param current_value: текущий занятый объем диска
+    :param max_value: максимальная емкость раздела
+    :param id: идентификатор блока
+    :param valid: наличие раздела. Если нет - то прогресс-бар будет окрашен в красный цвет.
     """
 
     if valid:
@@ -117,8 +114,7 @@ def get_drive_size(partition):
     """
     Получить размер диска/раздела в виде кольцевого прогресс-бара.
 
-    Параметры:
-    - partition: путь к разделу
+    :param partition: путь к разделу
     """
     try:
         mountpoint = partition.mountpoint
@@ -139,11 +135,9 @@ def widget_disk_size(**kwargs):
     """
     Функция создает карточку с информацией о свободном месте на дисках.
 
-    Аргументы:
-    **kwargs: любое количество ключевых аргументов.
+    :param **kwargs: любое количество ключевых аргументов.
 
-    Возвращает:
-    dmc.Card: карточка с информацией о свободном месте на дисках.
+    :return (dmc.Card): карточка с информацией о свободном месте на дисках.
     """
     return dmc.Card(
         [
@@ -163,13 +157,11 @@ def get_weather_label(selected_date: str, temperature: list, weather_type="sunny
     """
     Функция создает метку с информацией о погоде.
 
-    Аргументы:
-    selected_date (str): дата в формате DDMMYYYY.
-    temperature (list): список с температурой в формате [day_temp, night_temp].
-    weather_type (str): тип погоды, по умолчанию "sunny".
+    :param (str) selected_date: дата в формате DDMMYYYY.
+    :param (list) temperature: список с температурой в формате [day_temp, night_temp].
+    :param (str) weather_type: тип погоды, по умолчанию "sunny".
 
-    Возвращает:
-    dmc.Stack: метка с информацией о погоде.
+    :return (dmc.Stack): метка с информацией о погоде.
     """
     weather_types = {
         "sunny": "material-symbols:sunny",
@@ -203,11 +195,12 @@ def get_weather_label(selected_date: str, temperature: list, weather_type="sunny
     )
 
 
-def get_date_string(plus=0, pattern="%d%m%Y"):
+def get_date_string(plus: int = 0, pattern="%d%m%Y"):
     """
     Вывод сегодняшней даты с опцией добавление определенного числа дней к числу.
 
-    Паттерн по умолчанию - DDMMYYYY
+    :param (int) plus: кол-во добалвяемых дней к текущей дате
+    :param pattern: паттерн оформления даты. По умолчанию - DDMMYYYY
 
     """
     today = datetime.today()
@@ -219,11 +212,9 @@ def widget_weather(**kwargs):
     """
     Функция создает карточку с информацией о погоде.
 
-    Аргументы:
-    **kwargs: любое количество ключевых аргументов.
+    :param **kwargs: любое количество ключевых аргументов.
 
-    Возвращает:
-    dmc.Card: карточка с информацией о погоде.
+    :return dmc.Card: карточка с информацией о погоде.
     """
     return dmc.Card(
         [
@@ -249,6 +240,8 @@ def widget_weather(**kwargs):
 def widget_torrents():
     """
     Функция создает карточку с информацией о торрентах.
+
+    :return dmc.Card:
     """
     conn = db_connection.get_conn()
     settings = file_manager.get_settings(conn)
@@ -292,11 +285,7 @@ def widget_systeminfo():
     """
     Функция создает карточку с информацией о системе.
 
-    Аргументы:
-    Нет аргументов.
-
-    Возвращает:
-    dmc.Card: карточка с информацией о системе.
+    :return dmc.Card: карточка с информацией о системе.
     """
 
     cpu_usage = int(psutil.cpu_percent(interval=0.1))
@@ -414,7 +403,7 @@ def widget_systeminfo():
 def widget_file_manager_log():
     """
 
-    :return:
+    :return: None
     """
     # статистика по добавленным файлам
     return None

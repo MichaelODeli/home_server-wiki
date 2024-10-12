@@ -228,7 +228,7 @@ def get_types_addition_format_callback(from_video=False):
     """
 
     :param from_video:
-    :return:
+    :return: dash.callback
     """
     @callback(
         Output("n_search_in_types" + ("_video" if from_video else ""), "data"),
@@ -300,11 +300,11 @@ def get_types_addition_format_callback(from_video=False):
             )
 
 
-def get_search_results(conn, query, categories, types, limit, offset, from_video=False):
+def get_search_results(conn, query: str, categories: tuple, types: tuple, limit: int, offset: int, from_video=False):
     """
     Функция getSearchResults получает результаты поиска.
 
-    :param conn:
+    :param conn: db connection to PostgreSQL
     :param query:
     :param categories:
     :param types:
@@ -377,9 +377,9 @@ def get_search_results(conn, query, categories, types, limit, offset, from_video
 def get_categories_for_multi_select(conn, video=False):
     """
 
-    :param conn:
+    :param conn: db connection to PostgreSQL
     :param video:
-    :return:
+    :return (dict):
     """
     category_select_data = [
         {

@@ -9,7 +9,7 @@ from controllers.cont_media import get_duration
 def render_main_page(conn=None):
     """
 
-    :param conn:
+    :param conn: db connection to PostgreSQL
     :return:
     """
     return dmc.Stack(
@@ -24,7 +24,7 @@ def render_main_page(conn=None):
 def render_search_page(conn=None):
     """
 
-    :param conn:
+    :param conn: db connection to PostgreSQL
     :return:
     """
     return "Поиск"
@@ -33,7 +33,7 @@ def render_search_page(conn=None):
 def render_playlist_page(conn, playlist_id):
     """
 
-    :param conn:
+    :param conn: db connection to PostgreSQL
     :param playlist_id:
     :return:
     """
@@ -173,7 +173,7 @@ def render_audio_navbar(source, conn):
     """
 
     :param source:
-    :param conn:
+    :param conn: db connection to PostgreSQL
     :return:
     """
     if source != "col" and source != "drawer":
@@ -240,7 +240,7 @@ def render_audio_navbar(source, conn):
 def render_audio_navbar_drawer(conn):
     """
 
-    :param conn:
+    :param conn: db connection to PostgreSQL
     :return:
     """
     return dmc.Drawer(

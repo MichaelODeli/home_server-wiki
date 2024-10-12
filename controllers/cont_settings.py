@@ -5,12 +5,12 @@ import psutil
 from dash import dcc, html
 
 
-def generate_table_row(param_name, param_value="", head=False):
-    """
+def generate_table_row(param_name: str, param_value="", head=False):
+    """Генерация строки в таблице
 
-    :param param_name:
-    :param param_value:
-    :param head:
+    :param param_name: Данные для 1 столбца
+    :param param_value: Данные для 2 столбца
+    :param (bool) head: Заголовок
     :return:
     """
     return dmc.TableTr(
@@ -36,12 +36,15 @@ def generate_table_row(param_name, param_value="", head=False):
     )
 
 
-def get_readable_bytes(bytes_value, suffix="B"):
+def get_readable_bytes(bytes_value, suffix="B") -> str:
     """
     Scale bytes to its proper format
     e.g:
         1253656 => '1.20MB'
         1253656678 => '1.17GB'
+
+    :param bytes_value: число для конвертации
+    :return (str):
     """
     factor = 1024
     for unit in ["", "K", "M", "G", "T", "P"]:
@@ -50,10 +53,10 @@ def get_readable_bytes(bytes_value, suffix="B"):
         bytes_value /= factor
 
 
-def get_system_info_rows():
-    """
+def get_system_info_rows() -> list:
+    """Получение строк с информацией о системе
 
-    :return:
+    :return (list):
     """
     uname = platform.uname()
     return [
@@ -68,9 +71,9 @@ def get_system_info_rows():
 
 
 def get_cpu_info_rows():
-    """
+    """Получить информацию о ЦП
 
-    :return:
+    :return (list):
     """
     cpufreq = psutil.cpu_freq()
     return [
@@ -103,9 +106,9 @@ def get_cpu_info_rows():
 
 
 def get_ram_swap_info_rows():
-    """
+    """Получить информацию о ОЗУ и SWAP
 
-    :return:
+    :return (list):
     """
     svmem = psutil.virtual_memory()
     swap = psutil.swap_memory()
@@ -127,9 +130,9 @@ def get_ram_swap_info_rows():
 
 
 def get_partitions_info_rows():
-    """
+    """Получить информацию о разделах дисков
 
-    :return:
+    :return (list):
     """
     partitions = psutil.disk_partitions()
     parts_data = []
