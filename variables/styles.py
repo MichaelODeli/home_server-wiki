@@ -1,6 +1,5 @@
 from dash_bootstrap_components.icons import BOOTSTRAP as BOOTSTRAP_ICONS
 from dash_bootstrap_components.icons import FONT_AWESOME
-from dash_bootstrap_components.themes import ZEPHYR
 from dash_mantine_components import styles
 
 PRIMARY_COLOR = "custom-primary-color"
@@ -32,7 +31,6 @@ COLORS = {
 STYLESHEETS = [
     FONT_AWESOME,
     BOOTSTRAP_ICONS,
-    ZEPHYR,
     styles.NOTIFICATIONS,
     "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap"
 ]

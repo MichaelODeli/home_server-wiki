@@ -46,7 +46,9 @@ def get_color_by_value(current_value=None, max_value=None, percent=None):
     if percent is None:
         percent = (current_value / max_value) * 100
     return (
-        'custom-primary-color' if percent < 70 else ("orange" if percent < 90 else "red")
+        "custom-primary-color"
+        if percent < 70
+        else ("orange" if percent < 90 else "red")
     )
 
 
@@ -70,7 +72,7 @@ def get_progress(
     if valid:
         return html.Tr(
             [
-                html.Td(drive, style={'text-wrap': 'nowrap'}),
+                html.Td(drive, style={"text-wrap": "nowrap"}),
                 html.Td(
                     dmc.ProgressRoot(
                         [
@@ -149,7 +151,7 @@ def widget_disk_size(**kwargs):
             dmc.Anchor("Подробные свойства", href="/settings?l=y&tab=server_info"),
         ],
         className="mobile-block",
-        shadow='md'
+        shadow="md",
         # style={"min-height": "100%"},
     )
 
@@ -225,8 +227,12 @@ def widget_weather(**kwargs):
                 [
                     get_weather_label(get_date_string(0), ["+1", "-4"], "cloudy"),
                     get_weather_label(get_date_string(1), ["+10", "-4"], "sunny"),
-                    get_weather_label(get_date_string(2), ["+1", "-4"], "partly-cloudy"),
-                    get_weather_label(get_date_string(3), ["+10", "-4"], "thunderstorm"),
+                    get_weather_label(
+                        get_date_string(2), ["+1", "-4"], "partly-cloudy"
+                    ),
+                    get_weather_label(
+                        get_date_string(3), ["+10", "-4"], "thunderstorm"
+                    ),
                     get_weather_label(get_date_string(4), ["+1", "-40"], "rain"),
                 ],
                 justify="center",
@@ -234,7 +240,7 @@ def widget_weather(**kwargs):
             ),
         ],
         className="mobile-block",
-        shadow='md'
+        shadow="md",
     )
 
 
@@ -277,7 +283,7 @@ def widget_torrents():
             ),
         ],
         className="mobile-block",
-        shadow='md'
+        shadow="md",
         # style={"min-height": "100%"},
     )
 
@@ -364,40 +370,38 @@ def widget_systeminfo():
                         gap=0,
                     ),
                 ],
+                justify="center",
             ),
             dmc.Divider(h=10),
-            dmc.Grid(
+            dmc.Group(
                 [
-                    dmc.GridCol(
-                        dmc.Group(
-                            [
-                                dmc.Text("↓", fw=600),
-                                dmc.Text("NaN b/s"),
-                            ],
-                            justify="center",
-                            c="#369e1f",
-                        ),
-                        span="content",
+                    dmc.Group(
+                        [
+                            dmc.Text("↓", fw=600),
+                            dmc.Text("NaN b/s"),
+                        ],
+                        justify="center",
+                        c="#369e1f",
+                        w="max-content",
                     ),
-                    dmc.GridCol(
-                        dmc.Group(
-                            [
-                                dmc.Text("↑", fw=600),
-                                dmc.Text("NaN b/s"),
-                            ],
-                            justify="center",
-                            c="custom-primary-color",
-                        ),
-                        span="content",
+                    dmc.Group(
+                        [
+                            dmc.Text("↑", fw=600),
+                            dmc.Text("NaN b/s"),
+                        ],
+                        justify="center",
+                        c="custom-primary-color",
+                        w="max-content",
                     ),
                 ],
-                w="100%",
+                # w="100%",
                 grow=True,
+                style={"flex-wrap": "nowrap"},
             ),
         ],
         className="mobile-block",
-        shadow='md',
-        style={"min-height": "100%", "width": "100%"},
+        shadow="md",
+        w='100%'
     )
 
 

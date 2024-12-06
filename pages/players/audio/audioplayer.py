@@ -78,7 +78,6 @@ def layout(l="n", playlist_id=0, artist_id=0, album_id=0, **kwargs):  # noqa: E7
                                 dmc.Group(id="audio-playlist-description"),
                                 dmc.ScrollArea(
                                     children=page_content,
-                                    # className="w-100 overflow-auto",
                                     id="audioplayer-children",
                                     pb="sm",
                                     h="70dvh",
@@ -89,9 +88,11 @@ def layout(l="n", playlist_id=0, artist_id=0, album_id=0, **kwargs):  # noqa: E7
                         ),
                         v_audioplayer.render_audio_navbar_drawer(conn),
                     ],
-                    className="ps-3 pt-1 border-start overflow-hidden no-border-mobile",
+                    className="border-start overflow-hidden no-border-mobile",
                     mah="calc(100dvh - var(--app-shell-header-height) - 10px) !important",
                     mih="calc(100dvh - var(--app-shell-header-height) - 10px) !important",
+                    ps='sm',
+                    pt='.25rem'
                 ),
                 dmc.AppShellFooter(v_audioplayer.render_audio_footer()),
             ],
@@ -102,7 +103,7 @@ def layout(l="n", playlist_id=0, artist_id=0, album_id=0, **kwargs):  # noqa: E7
             },
             footer={"height": "auto"},
             pt=20,
-            className="adaptive-container",
+            maw={"base": "unset", "md": "100%"},
             id="dummy-3",
             # mah="90dvh",
         )

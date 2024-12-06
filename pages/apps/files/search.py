@@ -117,7 +117,7 @@ def layout(
                                 ),
                             ],
                             span=10,
-                            className="adaptive-container",
+                            maw={"base": "unset", "md": "100%"}
                         ),
                         dmc.GridCol(span="auto", className="hided_element"),
                     ],

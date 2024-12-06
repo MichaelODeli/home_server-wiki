@@ -40,9 +40,9 @@ def layout(**kwargs):
                         {"value": "passwd", "label": "Вход по паролю"},
                     ],
                     fullWidth=True,
-                    className="w-100",
+                    w='100%'
                 ),
-                html.Div(id="passwd-field", className='w-100'),
+                dmc.Box(id="passwd-field", w='100%'),
                 dmc.Checkbox(label="Запомнить меня", checked=True, id="login-remember"),
                 dmc.Button(
                     "Войти",

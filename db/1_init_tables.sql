@@ -101,6 +101,8 @@ create table
     "file_id" bytea not null,
     "duration" real not null,
     "fps" int,
+    "width" int,
+    "height" int,
     "codec" varchar(20),
     "created_at" timestamp not null default NOW(),
     "updated_at" timestamp not null default NOW(),

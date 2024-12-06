@@ -26,7 +26,7 @@ order by category_name asc, type_name asc, file_name asc;
 -- mediafiles_summary
 create view filestorage_mediafiles_summary as select * from (select * from filestorage_files_summary where mime_type like '%audio%' or mime_type like '%video%')
 left join (select encode(file_id, 'hex') as file_id, duration as audio_duration, bitrate, sample_rate, artist, audio_title, album_title, "year", genre from filestorage_mediainfo_audio) fma using(file_id)
-left join (select encode(file_id, 'hex') as file_id, duration as video_duration, fps, codec from filestorage_mediainfo_video) fmv using(file_id);
+left join (select encode(file_id, 'hex') as file_id, duration as video_duration, fps, codec, width, height from filestorage_mediainfo_video) fmv using(file_id);
 
 -- mimes_categories
 create view filestorage_mimes_categories as 

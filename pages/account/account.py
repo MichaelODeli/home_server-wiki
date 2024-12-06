@@ -1,5 +1,6 @@
 import dash_mantine_components as dmc
-from dash import (register_page)
+from dash import register_page
+
 # from flask_login import current_user
 
 register_page(
@@ -27,7 +28,7 @@ def layout(l="y", **kwargs):  # noqa: E741
 
     return dmc.Grid(
         [
-            dmc.GridCol(className="adaptive-hide", span=1),
+            dmc.GridCol(span=1, display={"base": "none", "md": "block"}),
             dmc.GridCol(
                 children=dmc.Card(
                     [
@@ -47,14 +48,14 @@ def layout(l="y", **kwargs):  # noqa: E741
                     withBorder=True,
                 ),
                 span=3,
-                className="m-1 p-1 adaptive-width",
+                # className="adaptive-width",
+                m="xs",
+                p="xs",
+                w={"base": "unset", "md": "100%"}
             ),
-            dmc.GridCol(
-                className="m-1 p-1 adaptive-width",
-            ),
-            dmc.GridCol(className="adaptive-hide", span=1),
+            dmc.GridCol(m="xs", p="xs", w={"base": "100%", "sm": "unset"}),
+            dmc.GridCol(span=1, display={"base": "none", "md": "block"}),
         ],
-        style={"paddingTop": "6dvh"},
         className="adaptive-block",
-        maw='99%'
+        maw="99%",
     )

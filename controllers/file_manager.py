@@ -40,13 +40,15 @@ def video_properties_with_open_cv(media_fullway):
     video = cv.VideoCapture(media_fullway)
     if not video.isOpened():
         # need to catch errors
-        duration = 0
+        duration, fps, width, height = [0] * 4
         fps = 0
     else:
         fps = video.get(cv.CAP_PROP_FPS)
         frame_count = int(video.get(cv.CAP_PROP_FRAME_COUNT))
         duration = int(frame_count / fps)
-    return duration, fps
+        width = int(video.get(cv.CAP_PROP_FRAME_WIDTH))  # float `width`
+        height = int(video.get(cv.CAP_PROP_FRAME_HEIGHT))  # float `height`
+    return duration, fps, height, width
 
 
 def audio_properties_with_mutagen(media_fullway):
@@ -421,7 +423,8 @@ def parse_categories(
                 f
                 for f in os.listdir(baseway)
                 if (
-                    (os.path.isdir(baseway + f) or os.path.islink(baseway + f)) and f[0] not in FORBIDDEN_FIRST_SYMBOLS
+                    (os.path.isdir(baseway + f) or os.path.islink(baseway + f))
+                    and f[0] not in FORBIDDEN_FIRST_SYMBOLS
                 )
             ]
 
@@ -492,7 +495,8 @@ def parse_types(conn, category_id, reset=False, add_new=False, scan_exists=True)
                     if (
                         os.path.isdir(category_way + f)
                         or os.path.islink(category_way + f)  # noqa: W503
-                    ) and f[0] not in FORBIDDEN_FIRST_SYMBOLS
+                    )
+                    and f[0] not in FORBIDDEN_FIRST_SYMBOLS
                 ]
 
                 commands = [
@@ -551,7 +555,9 @@ def parse_files(conn, category_id, type_id, reset=False):
 
             # with conn.cursor() as cursor:
             for root, dirs, files in os.walk(type_way):
-                if root[len(type_way):].count(os.sep) <= int(get_settings(conn)['filemanager.depth']):
+                if root[len(type_way) :].count(os.sep) <= int(
+                    get_settings(conn)["filemanager.depth"]
+                ):
                     data = []
                     media_commands = []
                     root = root.replace("\\", "/")
@@ -585,9 +591,13 @@ def parse_files(conn, category_id, type_id, reset=False):
                                 if primary_mime in ["video", "audio"]:
                                     table_name = f"filestorage_mediainfo_{primary_mime}"
                                     if primary_mime == "video":
-                                        values_name = "file_id, duration, fps"
-                                        video_info = video_properties_with_open_cv(full_way)
-                                        values_media = f"decode('{hash_file}', 'hex'), {float(video_info[0])}, {int(video_info[1])}"
+                                        values_name = (
+                                            "file_id, duration, fps, height, width"
+                                        )
+                                        video_info = video_properties_with_open_cv(
+                                            full_way
+                                        )
+                                        values_media = f"decode('{hash_file}', 'hex'), {float(video_info[0])}, {int(video_info[1])}, {int(video_info[2])}, {int(video_info[3])}"
                                     elif primary_mime == "audio":
                                         # print(full_way)
                                         values_name = 'file_id, duration, bitrate, sample_rate, artist, audio_title, album_title, "year", genre'
@@ -595,7 +605,7 @@ def parse_files(conn, category_id, type_id, reset=False):
                                             full_way
                                         )
                                         # values_media = "decode('{}', 'hex'), {}, {}, {}, '{}', '{}', '{}', {}, '{}'".format(
-                                        values_media = "decode('{}', 'hex'), {}, {}, {}, {}, {}, {}, {}, {}".format(
+                                        values_media = "decode('{}', 'hex'), {}, {}, {}, $${}$$, $${}$$, $${}$$, {}, $${}$$".format(
                                             hash_file,
                                             audio_info["audio_duration"],
                                             audio_info["audio_bitrate"],
@@ -825,7 +835,5 @@ def get_filesearch_result(
 
 
 def generate_thubmnails():
-    """
-
-    """
+    """ """
     raise NotImplementedError

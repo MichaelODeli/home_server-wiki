@@ -1,6 +1,5 @@
 from itertools import chain
 
-import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
 from dash import html
 from dash_iconify import DashIconify
@@ -53,7 +52,8 @@ def render_navbar_buttons(collapsed=False):
                 ),
             ],
             trigger="hover",
-            position="bottom" if not collapsed else "left",
+            position="bottom" if not collapsed else "left-start",
+            withArrow=True
         )
         for header_group in navbar_items_dict
     ]
@@ -66,7 +66,7 @@ def get_search_bar(search_target="/search", from_video=False):
     :param from_video:
     :return:
     """
-    search_placeholder = "Поиск" if not from_video else "Поиск по видео"
+    search_placeholder = "Поисковый запрос" if not from_video else "Поиск по видео"
     return html.Form(
         children=[
             dmc.TextInput(

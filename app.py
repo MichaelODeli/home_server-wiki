@@ -72,7 +72,7 @@ app.layout = dmc.MantineProvider(
         html.Div(id="dummy-1"),
     ],
     id="mantine_theme",
-    defaultColorScheme="light",
+    # defaultColorScheme="light",
     theme={
         "primaryColor": styles.PRIMARY_COLOR,
         "fontFamily": styles.FONT_FAMILY,

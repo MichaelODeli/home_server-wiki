@@ -14,9 +14,21 @@ def render_main_page(conn=None):
     """
     return dmc.Stack(
         [
-            html.A("Страница исполнителя", href="/players/audio?l=y&artist_id=90", className='a-color'),
-            html.A("Страница плейлиста", href="/players/audio?l=y&playlist_id=90", className='a-color'),
-            html.A("Страница альбома", href="/players/audio?l=y&album_id=90", className='a-color'),
+            html.A(
+                "Страница исполнителя",
+                href="/players/audio?l=y&artist_id=90",
+                className="a-color",
+            ),
+            html.A(
+                "Страница плейлиста",
+                href="/players/audio?l=y&playlist_id=90",
+                className="a-color",
+            ),
+            html.A(
+                "Страница альбома",
+                href="/players/audio?l=y&album_id=90",
+                className="a-color",
+            ),
         ]
     )
 
@@ -43,32 +55,22 @@ def render_playlist_page(conn, playlist_id):
             dmc.TableThead(
                 dmc.TableTr(
                     [
-                        dmc.TableTh(
-                            className="min-column-width",
-                            px='sm'
-                        ),
-                        dmc.TableTh(
-                            className="min-column-width",
-                            px='sm'
-                        ),
-                        dmc.TableTh(
-                            "Название",
-                            px='sm'
-                        ),
+                        dmc.TableTh(className="min-column-width", px="sm"),
+                        dmc.TableTh(className="min-column-width", px="sm"),
+                        dmc.TableTh("Название", px="sm"),
                         dmc.TableTh(
                             "Альбом",
-                            className="adaptive-hide",
-                            px='sm'
+                            px="sm",
+                            display={"base": "none", "md": "table-cell"},
                         ),
                         dmc.TableTh(
                             "Загружено",
-                            className="min-column-width center-content adaptive-hide",
-                            px='sm'
+                            className="min-column-width center-content",
+                            px="sm",
+                            display={"base": "none", "md": "table-cell"},
                         ),
                         dmc.TableTh(
-                            "🕑",
-                            className="min-column-width center-content",
-                            px='sm'
+                            "🕑", className="min-column-width center-content", px="sm"
                         ),
                     ]
                 ),
@@ -84,11 +86,13 @@ def render_playlist_page(conn, playlist_id):
                                     radius="xl",
                                     children=DashIconify(icon="mdi:play"),
                                 ),
-                                className="min-column-width p-2",
+                                className="min-column-width",
+                                p="xs",
                             ),
                             dmc.TableTd(
                                 dmc.Avatar(radius="sm"),
-                                className="min-column-width p-2",
+                                className="min-column-width",
+                                p="xs",
                             ),
                             dmc.TableTd(
                                 dmc.Stack(
@@ -112,7 +116,7 @@ def render_playlist_page(conn, playlist_id):
                                     ],
                                     gap=0,
                                 ),
-                                p='sm'
+                                p="sm",
                             ),
                             dmc.TableTd(
                                 html.A(
@@ -124,21 +128,23 @@ def render_playlist_page(conn, playlist_id):
                                     className="audio-link w-content",
                                     href="#",
                                 ),
-                                className="p-2 adaptive-hide",
+                                display={"base": "none", "md": "table-cell"},
+                                p="xs",
                             ),
                             dmc.TableTd(
                                 "Недавно",
-                                className="min-column-width p-2 adaptive-hide",
+                                className="min-column-width",
+                                display={"base": "none", "md": "table-cell"},
+                                p='xs'
                             ),
                             dmc.TableTd(
                                 (
                                     get_duration(audio_data["audio_duration"])
-                                    if (
-                                        audio_data["audio_duration"] is not None
-                                    )
+                                    if (audio_data["audio_duration"] is not None)
                                     else "00:00"
                                 ),
-                                className="min-column-width p-2",
+                                className="min-column-width",
+                                p='xs'
                             ),
                         ]
                     )
@@ -146,8 +152,9 @@ def render_playlist_page(conn, playlist_id):
                 ],
             ),
         ],
-        className="w-100 no-box-shadow",
+        className="no-box-shadow",
         highlightOnHover=True,
+        w='100%'
     )
 
 
@@ -231,7 +238,7 @@ def render_audio_navbar(source, conn):
             ),
         ],
         gap=0,
-        ms='sm'
+        ms="sm",
     )
 
     return content
@@ -279,13 +286,14 @@ def render_audio_footer():
             dmc.GridCol(
                 dmc.Stack(
                     [
-                        html.P(
+                        dmc.Text(
                             "Название песни",
                             className="text-default",
-                            style={"margin-bottom": 0, "font-weight": "bold"},
+                            # style={"margin-bottom": 0, "font-weight": "bold"},
                             id="song-name",
+                            fw=600,
                         ),
-                        html.P(
+                        dmc.Text(
                             "Исполнитель",
                             className="text-default",
                             style={"margin-bottom": 0},
@@ -302,7 +310,6 @@ def render_audio_footer():
                         [
                             dmc.Group(
                                 [
-                                    # html.P('Buttons'),
                                     dmc.ActionIcon(
                                         DashIconify(
                                             icon="material-symbols:shuffle",
@@ -310,7 +317,7 @@ def render_audio_footer():
                                             color="dark",
                                         ),
                                         id="control-shuffle",
-                                        className="adaptive-hide",
+                                        display={"base": "none", "md": "block"},
                                         variant="subtle",
                                         size="lg",
                                         color="default",
@@ -367,7 +374,7 @@ def render_audio_footer():
                             ),
                             dmc.Group(
                                 [
-                                    html.P("00:00", id="audio-current-time"),
+                                    dmc.Text("00:00", id="audio-current-time"),
                                     dmc.Slider(
                                         min=0,
                                         max=100,
@@ -378,8 +385,8 @@ def render_audio_footer():
                                         showLabelOnHover=False,
                                         # disabled=True
                                     ),
-                                    html.P(
-                                        "59:59",
+                                    dmc.Text(
+                                        "00:00",
                                         id="audio-full-time",
                                         className="hided_element",
                                     ),
@@ -388,10 +395,12 @@ def render_audio_footer():
                                 align="center",
                                 style={"justify-content": "center"},
                             ),
-                        ]
+                        ],
+                        gap=0,
                     ),
                 ],
                 span="auto",
+                p=0,
             ),
             dmc.GridCol(
                 [
@@ -426,4 +435,5 @@ def render_audio_footer():
         align="center",
         justify="center",
         className="block-background-float",
+        py="md",
     )

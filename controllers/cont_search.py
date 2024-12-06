@@ -135,7 +135,7 @@ def get_search_accordion(category_id, type_id, category_select_data, from_video=
                                             )
                                         ],
                                         span=6,
-                                        className="adaptive-container",
+                                        maw='100%'
                                     ),
                                     dmc.GridCol(
                                         [
@@ -153,7 +153,7 @@ def get_search_accordion(category_id, type_id, category_select_data, from_video=
                                             )
                                         ],
                                         span=6,
-                                        className="adaptive-container",
+                                        maw={"base": "unset", "md": "100%"}
                                     ),
                                 ],
                                 w="100%",

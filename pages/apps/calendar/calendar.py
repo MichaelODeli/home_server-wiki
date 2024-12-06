@@ -64,8 +64,9 @@ def layout(l="n", **kwargs):  # noqa: E741
                     ),
                     h="calc(100dvh - var(--app-shell-header-height) - 40px) !important",
                     mih="calc(100dvh - var(--app-shell-header-height) - 40px) !important",
-                    className="px-3 pt-1",
                     style={"overflow": "hidden"},
+                    px='sm',
+                    pt='.25rem'
                 ),
             ],
             navbar={

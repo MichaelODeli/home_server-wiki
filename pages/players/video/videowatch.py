@@ -94,7 +94,7 @@ def layout(l="n", v=None, **other_unknown_query_strings):  # noqa: E741
                 ),
                 dmc.Space(),
                 dmc.Title(
-                    video_name, style={"width": "100%"}, id="player_videoname", order=3
+                    video_name, id="player_videoname", order=3, w='100%'
                 ),
                 dmc.Grid(
                     children=[
@@ -117,7 +117,7 @@ def layout(l="n", v=None, **other_unknown_query_strings):  # noqa: E741
                             span="content",
                             w="max-content",
                         ),
-                        dmc.GridCol(span="auto", className="adaptive-hide"),
+                        dmc.GridCol(span="auto", display={'base': 'none', 'md': 'block'}),
                         dmc.GridCol(
                             dmc.Group(
                                 children=[
@@ -175,11 +175,10 @@ def layout(l="n", v=None, **other_unknown_query_strings):  # noqa: E741
                     ],
                     align="center",
                     style={"width": "100%"},
-                    # className="adaptive-block",
                 ),
             ],
-            className="mih-100",
             justify=elements_justify,
+            mih='100%'
         )
 
     service.log_printer(request.remote_addr, "videoplayer", f'v_id "{v}"')
@@ -194,8 +193,9 @@ def layout(l="n", v=None, **other_unknown_query_strings):  # noqa: E741
                     children=[
                         dmc.GridCol(
                             children=videoplayer_children,
-                            className="columns-margin adaptive-width p-0",
+                            className="columns-margin adaptive-width",
                             span="auto",
+                            p=0
                         ),
                         dmc.GridCol(
                             children=[
@@ -226,7 +226,6 @@ def layout(l="n", v=None, **other_unknown_query_strings):  # noqa: E741
                             span=3,
                         ),
                     ],
-                    # className="gx-3",
                     gutter="xl",
                     className="adaptive-block",
                 ),

@@ -1,10 +1,5 @@
 @media (max-width: 768px) {
 
-  /* hide from mobile */
-  .adaptive-hide {
-    display: none !important;
-  }
-
   .adaptive-block {
     display: block !important;
   }

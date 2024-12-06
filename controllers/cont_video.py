@@ -48,6 +48,7 @@ def create_video_miniature_container(
                 p=0,
                 mt="xs",
                 mb="sm",
+                mx='xs',
                 maw="250px",
                 children=[
                     dmc.AspectRatio(
@@ -58,8 +59,10 @@ def create_video_miniature_container(
                                 bg="black",
                                 w="max-content",
                                 h="max-content",
-                                className="video-time m-1 px-1",
+                                className="video-time",
                                 size="sm",
+                                m='.25rem',
+                                px='.25rem'
                             )
                         ),
                         ratio=16 / 9,
@@ -130,7 +133,7 @@ def create_video_miniatures_container(children):
         wrap="wrap",
         justify="space-around",
         children=children,
-        className="mx-1",
+        mx='xs'
     )
 
 
@@ -153,7 +156,6 @@ def create_video_search_bar(
         [
             dmc.TextInput(
                 placeholder="Введите запрос",
-                className="w-100",
                 value=input_value,
                 id="n_search_query_video",
                 name="query",
@@ -164,19 +166,20 @@ def create_video_search_bar(
                         n_clicks=search_clicks,
                     )
                 ],
-                rightSectionWidth='max-content'
+                rightSectionWidth='max-content',
+                w='100%'
             ),
             dmc.TextInput(display="none", value="y", name="l"),
             dmc.TextInput(display="none", value="y", name="auto_search"),
         ],
-        className="mx-2 mx-sm-0",
         justify="center",
         wrap="nowrap",
+        mx='xs'
     )
 
     return dmc.Grid(
         [
-            dmc.GridCol(span=3, className="adaptive-hide"),
+            dmc.GridCol(span=3, display={'base': 'none', 'md': 'block'}),  
             dmc.GridCol(
                 span="auto",
                 children=dmc.Stack(
@@ -191,7 +194,7 @@ def create_video_search_bar(
                     gap="xs",
                 ),
             ),
-            dmc.GridCol(span=3, className="adaptive-hide"),
+            dmc.GridCol(span=3, display={'base': 'none', 'md': 'block'}),
         ],
         w="90%",
         m="auto",

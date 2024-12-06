@@ -20,39 +20,36 @@ def layout():
                     dmc.GridCol(
                         [cont_homepage.widget_systeminfo()],
                         span="content",
-                        className="adaptive-width",
-                        mih='100%'
+                        w={"base": "100%", "sm": "unset"} 
                     ),
                     dmc.GridCol(
                         [cont_homepage.widget_disk_size()],
                         span="content",
-                        className="adaptive-width",
                         id="t",
-                        mih='100%'
+                        w={"base": "100%", "sm": "unset"} 
                     ),
                     dmc.GridCol(
                         [cont_homepage.widget_torrents()],
                         span="content",
-                        className="adaptive-width",
                         id="widgetTorrents",
-                        mih='100%'
+                        w={"base": "100%", "sm": "unset"} 
                     ),
                     dmc.GridCol(
                         [cont_homepage.widget_weather()],
                         span="content",
-                        className="adaptive-width",
                         id="widget-weather",
-                        mih='100%'
+                        w={"base": "100%", "sm": "unset"} 
                     ),
                 ],
                 align="stretch",
                 justify="center",
-                className="adaptive-block",
+                display={"base": "flex", "sm": "block"} 
             ),
         ],
         pt=20,
         # style={"paddingTop": 20},
-        className="dmc-container adaptive-container",
+        className="dmc-container",
+        maw={"base": "unset", "md": "100%"}
     )
 
     # print(f'{request.remote_addr} - - [{now}] | homepage {request.base_url}')
